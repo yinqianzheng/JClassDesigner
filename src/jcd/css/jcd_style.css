@@ -1,0 +1,94 @@
+
+
+
+
+.classWindow_style{
+    -fx-background-color: white;
+    -fx-border-color: black;
+}
+.topToolbar_bg{
+    -fx-background-color: lightblue;
+}
+.workPane_style{
+    -fx-background-color: papayawhip;
+}
+.componentBar_view{
+    -fx-spacing: 30; 
+    -fx-border-color: black;
+    -fx-border-width: 2px;
+}
+.variables_methods_edit_window_style{
+    -fx-padding: 15 15 15 15;
+}
+
+.fileToolbar{
+    -fx-background-radius: 5.0;
+    -fx-padding: 2;
+    -fx-spacing: 2;
+    -fx-border-width: 2px;
+    -fx-border-color: #7777dd;
+    -fx-padding: 15 5 5 5;
+}
+.names_Style{
+    -fx-spacing: 25;
+    -fx-padding: 15 15 15 15;
+}
+
+.heading_label {
+    -fx-font-size: 14pt;
+    -fx-font-weight: bold;
+}
+
+.subheading_label {
+    -fx-font-weight: lighter;
+    -fx-font-size: 10pt;
+}
+
+.checkBoxes {
+    -fx-spacing: 5;
+    -fx-padding: 5 5 5 5;
+}
+
+
+.toolbar {
+    -fx-background-radius: 5.0;
+    -fx-padding: 2;
+    -fx-spacing: 2;
+    -fx-border-width: 2px;
+    -fx-border-color: #7777dd;
+    -fx-padding: 5 5 5 5;
+}
+
+.edit_bt_background{
+
+    -fx-background-color: pink; 
+}
+
+.color_chooser_pane {
+    -fx-background-color:seashell;
+    -fx-font-weight:bold;
+    -fx-font-size:20;
+}
+
+.sp_background_color{
+
+    -fx-background-color: #ffe6b3;
+}
+
+.max_pane {
+    -fx-fit-to-height: true;
+    -fx-fit-to-width: true;
+    -fx-background-color: blue;
+}
+
+.bordered_pane {
+    -fx-background-color: #aaaaff;
+    -fx-background-radius: 5.0;
+    -fx-padding: 15;
+    -fx-spacing: 10;
+    -fx-border-width: 2px;
+    -fx-border-color: #7777dd;
+}
+
+
+
