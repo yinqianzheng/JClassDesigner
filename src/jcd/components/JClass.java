@@ -157,7 +157,7 @@ public class JClass extends VBox{
         }
         
         public void setVariableType(String type){
-            this.variableName = type;
+            this.variableType = type;
         }
         
         public void setStatic(){
@@ -168,5 +168,70 @@ public class JClass extends VBox{
             isStatic = false;
         }  
     }
+    
+    public class JMethod extends VBox {
+        private String methodName;
+        private String methodType;
+        private Boolean isStatic;
+        private Boolean isAbstract;
+        private String arg1;
+        private String arg2;
+        private String arg3;
+        
+        public JMethod (){
+            
+        }
+        
+        public void setMethodName(String name){
+            this.methodName = name;
+        }
+        
+        public void setMethodType(String type){
+            this.methodType = type;
+        }
+        
+        public void setStatic(){
+            isStatic = true;
+        }
+        
+        public void setNotStatic(){
+            isStatic = false;
+        }
+        
+        public void setArg1Type(String type){
+            arg1 = type;
+        }
+        
+        public void setArg2Type(String type){
+            arg2 = type;
+        }
+        public void setArg3Type(String type){
+            arg3 = type;
+        }
+        
+        
+        
+        public String getMethodName(){
+            return methodName;
+        }
+        
+        public String getMethodType(){
+            return methodType;
+        }
+   
+        public String getArg1Type(){
+            return arg1;
+        }
+        
+        public String getArg2Type(){
+            return arg2;
+        }
+        public String getArg3Type(){
+            return arg3;
+        }
+        
+    }
+    
+    
     
 }
