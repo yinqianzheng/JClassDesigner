@@ -6,6 +6,12 @@
     -fx-background-color: white;
     -fx-border-color: black;
 }
+
+.variable_method_Boxes_style{
+    -fx-border-color: black;
+    -fx-padding: 5 30 10 5;
+}
+
 .topToolbar_bg{
     -fx-background-color: lightblue;
 }

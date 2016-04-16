@@ -86,7 +86,10 @@ public class DataManager {
                 
                 HandleEvent.getWorkPane().getAddVariableButton().setDisable(false);
                 HandleEvent.getWorkPane().getDeleteVariableButton().setDisable(false);
+                HandleEvent.getWorkPane().getAddMethodButton().setDisable(false);
+                HandleEvent.getWorkPane().getDeleteMethodButton().setDisable(false);
                 HandleEvent.getWorkPane().setVariablePane(selectedJC.getVariableBox().getVariableTable());
+                HandleEvent.getWorkPane().setMethodPane(selectedJC.getMethodBox().getMethodTable());
                 HandleEvent.getWorkPane().setClassNameInput(selectedJC.getClassName());   
                 HandleEvent.getWorkPane().setPackageNameInput(selectedJC.getPackageName());   
             }

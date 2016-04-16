@@ -27,13 +27,15 @@ public class JMethod {
     private SimpleStringProperty arg2;
     private SimpleStringProperty arg3;
     private Label methodLabel;
+    private MethodBox mb;
     public static final Font ITALIC_FONT = Font.font(
                     "Serif",
                     FontPosture.ITALIC,
                     Font.getDefault().getSize()
                 );
     
-    public JMethod(){
+    public JMethod(MethodBox mbox){
+        this.mb = mbox;
         this.methodLabel = new Label();
         this.name = new SimpleStringProperty("");
         this.type = new SimpleStringProperty("");
@@ -43,10 +45,10 @@ public class JMethod {
         this.arg1 = new SimpleStringProperty("");
         this.arg2 = new SimpleStringProperty("");
         this.arg3 = new SimpleStringProperty("");
-        
         setActions();
         methodLabel.setText(toText());
     }
+
     
     public Label getLabel(){
         return methodLabel;
@@ -78,11 +80,11 @@ public class JMethod {
     }
     
     public String getArg2(){
-        return this.arg1.get();
+        return this.arg2.get();
     }
     
     public String getArg3(){
-        return this.arg1.get();
+        return this.arg3.get();
     }
     
     public void setStatic(Boolean b){
@@ -105,16 +107,16 @@ public class JMethod {
         this.access.set(access);
     }
     
-    public void setArg1(String arg1){
-        this.arg1.set(arg1);
+    public void setArg1(String arg){
+        this.arg1.set(arg);
     }
     
-    public void setArg2(String arg2){
-        this.arg2.set(arg2);
+    public void setArg2(String arg){
+        this.arg2.set(arg);
     }
     
-    public void setArg3(String arg3){
-        this.arg3.set(arg3);
+    public void setArg3(String arg){
+        this.arg3.set(arg);
     }
     
     private void setActions(){
@@ -148,6 +150,8 @@ public class JMethod {
                     methodLabel.setFont(ITALIC_FONT);
                 else
                     methodLabel.setFont(Font.getDefault());
+                
+                mb.checkAbstractMethod();
             }
         });
         
@@ -187,35 +191,35 @@ public class JMethod {
     private String toText(){
         String text = "";
         String args = "";
-        if (arg1 != null){
+        if (!arg1.get().equals("")){
             args = "arg1 : " + arg1.get();
-            if (arg2 != null||arg3 != null)
-                args = args + ",";
+            if (!arg2.get().equals("")||!arg3.get().equals(""))
+                args = args + ", ";
         }
-        if (arg2 != null){
+        if (!arg2.get().equals("")){
             args = args + "arg2 : " + arg2.get();
-            if (arg3 != null)
-                args = args + ",";
+            if (!arg3.get().equals(""))
+                args = args + ", ";
         }
-        if (arg3 != null)
+        if (!arg3.get().equals(""))
             args = args + "arg3 : " + arg3.get();
         
         
         
         if (isStatic.get() == false){
             if (access.getValue().equals("public"))
-                text = "+" + name.get() + "("+ args +") : " + type.get();
+                text = "+" + name.get() + "("+ args +" ) : " + type.get();
             else if (access.getValue().equals("private"))
-                text = "-" + name.get() + "("+ args +") : " + type.get();
+                text = "-" + name.get() + "("+ args +" ) : " + type.get();
             else
                 text = name.get() + "("+ args +") : " + type.get();
         }else{
             if (access.getValue().equals("public"))
-                text = "+$" + name.get() + "("+ args +") : " + type.get();
+                text = "+$" + name.get() + "("+ args +" ) : " + type.get();
             else if (access.getValue().equals("private"))
-                text = "-$" + name.get() + "("+ args +") : " + type.get();
+                text = "-$" + name.get() + "("+ args +" ) : " + type.get();
             else
-                text = "$" + name.get() + "("+ args +") : " + type.get();
+                text = "$" + name.get() + "("+ args +" ) : " + type.get();
         }
         return text;
     }

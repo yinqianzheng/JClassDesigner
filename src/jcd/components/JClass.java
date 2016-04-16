@@ -9,6 +9,8 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -26,9 +28,7 @@ import jcd.gui.WorkSpace;
  */
 public class JClass extends VBox{
     final private VBox name = new VBox();
-    final private VBox variables = new VBox();
-    final private VBox methods = new VBox();
-    final private Label classType = new Label("{abstract}");
+    final private Label isAbstract = new Label("{abstract}");
     private Label className = new Label("NewClass");
     private String packageName = "";
     private double sceneX;
@@ -36,23 +36,46 @@ public class JClass extends VBox{
     private double translateX;
     private double translateY;
     VariableBox variableBox;
-    
+    MethodBox methodBox;
     
     public JClass(double x, double y){
         variableBox = new VariableBox();
+        variableBox.getStyleClass().add("variable_method_Boxes_style");
+        methodBox = new MethodBox(this);
+        methodBox.getStyleClass().add("variable_method_Boxes_style");
+        methodBox.getIsContainAbstract().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
+                setAbstract(t1);
+            }
+        });
         this.setLayoutX(x);
         this.setLayoutY(y);
         this.setMinWidth(100);
         this.getStyleClass().add("classWindow_style");
-        name.getStyleClass().add("classWindow_style");
+        name.getStyleClass().add("variable_method_Boxes_style");
         name.getChildren().addAll(className);
-        this.getChildren().addAll(name, variableBox, methods);
+        this.getChildren().addAll(name, variableBox, methodBox);
         this.setOnMousePressed(pressed);
         this.setOnMouseDragged(dragged);
     }
     
     public VariableBox getVariableBox(){
         return variableBox;
+    }
+    
+    public MethodBox getMethodBox(){
+        return methodBox;
+    }
+    
+    public void setAbstract(Boolean b){
+        if (b == true){
+            name.getChildren().clear();
+            name.getChildren().addAll(className, isAbstract);
+        }else{
+            name.getChildren().clear();
+            name.getChildren().add(className);
+        }
     }
     
     private void setPosition(double x, double y){

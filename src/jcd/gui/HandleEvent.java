@@ -116,9 +116,12 @@ public class HandleEvent {
                 wp.clearPackageNameInput();
                 wp.setClassNameInput(jc.getClassName());
                 wp.variablePane.setContent(jc.getVariableBox().getVariableTable());
+                wp.methodPane.setContent(jc.getMethodBox().getMethodTable());
                 if (dataManager.getSelectedJC()!=null)
                     wp.addVariable.setDisable(false);
                     wp.deleteVariable.setDisable(false);
+                    wp.addMethod.setDisable(false);
+                    wp.deleteMethod.setDisable(false);
             }
         }
     };
@@ -135,7 +138,10 @@ public class HandleEvent {
             }else{
                 wp.addVariable.setDisable(true);
                 wp.deleteVariable.setDisable(true);
+                wp.addMethod.setDisable(true);
+                wp.deleteMethod.setDisable(true);
                 wp.variablePane.setContent(null);
+                wp.methodPane.setContent(null);
                 wp.clearClassNameInput();
                 wp.clearPackageNameInput();
             }
@@ -162,21 +168,27 @@ public class HandleEvent {
     static EventHandler deleteVariable = new EventHandler() {
         @Override
         public void handle(Event event) {
-            dataManager.getSelectedJC().getVariableBox().removeVariable();
+            try {
+                dataManager.getSelectedJC().getVariableBox().removeVariable();
+            } catch (Exception e) {
+            }
         }
     };
     
     static EventHandler addMethod = new EventHandler() {
         @Override
         public void handle(Event event) {
-            dataManager.getSelectedJC().getVariableBox().addVariable();
+            dataManager.getSelectedJC().getMethodBox().addMethod();
         }
     };
     
     static EventHandler deleteMethod = new EventHandler() {
         @Override
         public void handle(Event event) {
-            dataManager.getSelectedJC().getVariableBox().removeVariable();
+            try {
+                dataManager.getSelectedJC().getMethodBox().removeMethod();
+            } catch (Exception e) {
+            }
         }
     };
 }

@@ -5,6 +5,7 @@
  */
 package jcd.components;
 
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableCell;
@@ -24,7 +25,12 @@ import javafx.util.Callback;
 public class MethodBox extends VBox{
     private MTableView<JMethod> mTable;
     private MethodBox mb;
-    public MethodBox(){
+    private SimpleBooleanProperty isContainAbstract;
+    private JClass jClass;
+            
+    public MethodBox(JClass jc){
+        jClass = jc;
+        isContainAbstract = new SimpleBooleanProperty(false);
         mTable = new MTableView<JMethod>();
         initTableView();
         mb = this;
@@ -35,9 +41,8 @@ public class MethodBox extends VBox{
         return mTable;
     }
     
-    
-        public void addMethod(){
-        JMethod jm = new JMethod();
+    public void addMethod(){
+        JMethod jm = new JMethod(mb);
         mTable.getItems().add(jm);
         this.getChildren().add(jm.getLabel());
     }
@@ -46,6 +51,23 @@ public class MethodBox extends VBox{
         ObservableList<JMethod> methodSelected = mTable.getSelectionModel().getSelectedItems();
         this.getChildren().remove(methodSelected.get(0).getLabel());
         mTable.getItems().removeAll(methodSelected); 
+    }
+    
+    
+    public SimpleBooleanProperty getIsContainAbstract(){
+        return isContainAbstract;
+    }
+    
+    public Boolean checkAbstractMethod(){
+        ObservableList<JMethod> methods = mTable.getItems();
+        for (JMethod jm : methods){
+            if (jm.getIsAbstract().get() == true){
+                isContainAbstract.set(true);
+                return true;
+            }      
+        }
+        isContainAbstract.set(false);
+        return false;
     }
     
     
@@ -137,7 +159,7 @@ public class MethodBox extends VBox{
         arg1Column.setOnEditCommit(
             (TableColumn.CellEditEvent<JMethod, String> t) -> {
                 ((JMethod) t.getTableView().getItems().get(t.getTablePosition().getRow())
-                    ).setType(t.getNewValue());
+                    ).setArg1(t.getNewValue());
         });
         
         // create arg2 column
@@ -148,7 +170,7 @@ public class MethodBox extends VBox{
         arg2Column.setOnEditCommit(
             (TableColumn.CellEditEvent<JMethod, String> t) -> {
                 ((JMethod) t.getTableView().getItems().get(t.getTablePosition().getRow())
-                    ).setType(t.getNewValue());
+                    ).setArg2(t.getNewValue());
         });
         
         // create arg3 column
@@ -159,7 +181,7 @@ public class MethodBox extends VBox{
         arg3Column.setOnEditCommit(
             (TableColumn.CellEditEvent<JMethod, String> t) -> {
                 ((JMethod) t.getTableView().getItems().get(t.getTablePosition().getRow())
-                    ).setType(t.getNewValue());
+                    ).setArg3(t.getNewValue());
         });
         
         

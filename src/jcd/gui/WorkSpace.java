@@ -33,6 +33,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import jcd.components.JVariable;
+import jcd.components.MethodBox.MTableView;
 import jcd.components.VariableBox.VTableView;
 import jcd.data.DataManager;
 
@@ -275,6 +276,10 @@ public class WorkSpace extends Application{
     
     public void setVariablePane(VTableView vb){
         variablePane.setContent(vb);
+    }
+    
+    public void setMethodPane(MTableView mb){
+        methodPane.setContent(mb);
     }
     
     public Button getAddVariableButton(){
