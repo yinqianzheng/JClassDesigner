@@ -11,6 +11,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -37,6 +38,8 @@ public class JClass extends VBox{
     private double translateY;
     VariableBox variableBox;
     MethodBox methodBox;
+    private SimpleStringProperty jParent = new SimpleStringProperty();
+    
     
     public JClass(double x, double y){
         variableBox = new VariableBox();
@@ -144,8 +147,16 @@ public class JClass extends VBox{
             }
         }
     };
-    
-    
-    
+
+    public void clone(JClass j){
+        ObservableList<JVariable> jvList = this.getVariableBox().getVariableTable().getItems();
+        for (JVariable jv : jvList){
+            j.getVariableBox().addVariable(jv);
+        }
+        ObservableList<JMethod> jmList = this.getMethodBox().getMethodTable().getItems();
+        for (JMethod jm : jmList){
+            j.getMethodBox().addMethod(jm);
+        }
+    }
     
 }

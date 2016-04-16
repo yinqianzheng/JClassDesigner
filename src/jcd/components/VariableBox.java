@@ -45,6 +45,11 @@ public class VariableBox extends VBox{
         this.getChildren().add(jv.getLabel());
     }
     
+    public void addVariable(JVariable jv){
+        vTable.getItems().add(jv);
+        this.getChildren().add(jv.getLabel());
+    }
+    
     public void removeVariable(){
         ObservableList<JVariable> variableSelected = vTable.getSelectionModel().getSelectedItems();
         this.getChildren().remove(variableSelected.get(0).getLabel());

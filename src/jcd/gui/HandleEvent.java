@@ -132,28 +132,39 @@ public class HandleEvent {
             wp.root.getChildren().remove(dataManager.getSelectedJC());
             dataManager.removeClass(dataManager.getSelectedJC());
             dataManager.setSelectedJC(null);
-            if (dataManager.getSelectedJC()!=null){
-                wp.addVariable.setDisable(false);
-                wp.deleteVariable.setDisable(false);
-            }else{
-                wp.addVariable.setDisable(true);
-                wp.deleteVariable.setDisable(true);
-                wp.addMethod.setDisable(true);
-                wp.deleteMethod.setDisable(true);
-                wp.variablePane.setContent(null);
-                wp.methodPane.setContent(null);
+//            if (dataManager.getSelectedJC()!=null){
+//                wp.addVariable.setDisable(false);
+//                wp.deleteVariable.setDisable(false);
+//            }else{
+            wp.addVariable.setDisable(true);
+            wp.deleteVariable.setDisable(true);
+            wp.addMethod.setDisable(true);
+            wp.deleteMethod.setDisable(true);
+            wp.variablePane.setContent(null);
+            wp.methodPane.setContent(null);
+            try {
                 wp.clearClassNameInput();
                 wp.clearPackageNameInput();
+            } catch (Exception e) {
             }
+                
+//            }
         }
     };
     
     public static void changeClassName (String str){
-       DataManager.getSelectedJC().setClassName(str);
+        try {
+            DataManager.getSelectedJC().setClassName(str);
+        } catch (Exception e) {
+        }
+        DataManager.reNewParentList();
     };
     
     public static void changePackageName (String str){
-       DataManager.getSelectedJC().setPackageName(str);
+        try {
+            DataManager.getSelectedJC().setPackageName(str);
+        } catch (Exception e) {
+        }
     };
     
     

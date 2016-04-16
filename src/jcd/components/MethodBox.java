@@ -47,6 +47,11 @@ public class MethodBox extends VBox{
         this.getChildren().add(jm.getLabel());
     }
     
+    public void addMethod(JMethod jm){
+        mTable.getItems().add(jm);
+        this.getChildren().add(jm.getLabel());
+    }
+    
     public void removeMethod(){
         ObservableList<JMethod> methodSelected = mTable.getSelectionModel().getSelectedItems();
         this.getChildren().remove(methodSelected.get(0).getLabel());

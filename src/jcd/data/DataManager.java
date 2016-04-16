@@ -6,7 +6,11 @@
 package jcd.data;
 
 import java.util.LinkedList;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TableView;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -22,12 +26,32 @@ public class DataManager {
     private static DataManager dm;
     private static HandleEvent handler;
     private static WorkSpace workPane;
-    private static LinkedList<JClass> jList = new LinkedList<JClass>();
+    private static TableView<JClass> jList = new TableView<JClass>();
     private static JClass preSelectedJC;
     private static JClass selectedJC;
+    final private static ComboBox parentList = new ComboBox();
     final private static DropShadow highlight = new DropShadow(20, Color.YELLOW);
 
-    private DataManager() {}
+    private DataManager() {
+        jList.getItems().addListener(new ListChangeListener<JClass>() {
+            @Override
+            public void onChanged(ListChangeListener.Change<? extends JClass> change) {
+                reNewParentList();   
+            }
+        });
+    }
+    
+    public static void reNewParentList(){
+        parentList.getItems().clear();
+            for (JClass jclass : jList.getItems()){
+                if (!jclass.equals(selectedJC))
+                    parentList.getItems().add(jclass.getClassName());
+            }     
+    }
+    
+    public static ComboBox getParentList(){
+        return parentList;
+    }
     
     public static DataManager getInstance(HandleEvent e){
         if(handler==null){
@@ -37,12 +61,8 @@ public class DataManager {
         return dm;
     }
 
-    public static LinkedList<JClass> getJClassList(){
+    public static TableView<JClass> getJClassList(){
         return jList;
-    }
-    
-    public static void removeClass(JClass jc){
-        jList.remove(jc);
     }
     
     public static JClass getSelectedJC(){
@@ -56,12 +76,18 @@ public class DataManager {
     public static void addClassToList(JClass j){
         if (selectedJC!=null)
             preSelectedJC = selectedJC;
-        jList.add(j);
+        jList.getItems().add(j);
+        //jList.add(j);        
         selectedJC = j;
         j.setEffect(highlight);
         j.setOnMouseClicked(select);
         if (preSelectedJC!=null)
             preSelectedJC.setEffect(null);
+    }
+    
+        
+    public static void removeClass(JClass jc){
+        jList.getItems().remove(jc);
     }
     
     public static String getSelectedJCName(){
@@ -97,7 +123,7 @@ public class DataManager {
     };
 
     public static void clear(){
-        jList.remove();
+        jList.getItems().clear();
         selectedJC = null;
         preSelectedJC = null;
     }

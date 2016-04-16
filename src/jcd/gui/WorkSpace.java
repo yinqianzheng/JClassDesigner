@@ -62,7 +62,6 @@ public class WorkSpace extends Application{
     final Button addMethod = new Button();
     final Button deleteMethod = new Button();
 
-    //final TableView variableTable = new TableView();
     final TableView methodTable = new TableView();
     
     final CheckBox grid = new CheckBox("Grid");
@@ -121,11 +120,14 @@ public class WorkSpace extends Application{
         });
         packageNameInput = new TextField ();
         packageNameInput.textProperty().addListener((observable, oldValue, newValue) -> {
-            HandleEvent.changePackageName(newValue);
+            try {
+                HandleEvent.changePackageName(newValue);
+            } catch (Exception e) {
+            }
         });
         
         packageNameInput.setPrefWidth(120);
-        parentsList = new ComboBox();
+        parentsList = DataManager.getParentList();
         parentsList.setPrefWidth(120);
         VBox names = new VBox();
         names.getStyleClass().add("names_Style");
@@ -265,7 +267,10 @@ public class WorkSpace extends Application{
 
     }
     public void clearPackageNameInput(){
-        packageNameInput.clear();
+        try {
+            packageNameInput.clear();
+        } catch (Exception e) {
+        }
     }
     
     public void setPackageNameInput(String str){
