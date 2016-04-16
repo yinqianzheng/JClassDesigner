@@ -15,26 +15,34 @@ import javafx.scene.control.Label;
  *
  * @author YinqianZheng
  */
-public class JVariable extends Label {
+public class JVariable {
     private SimpleStringProperty name;
     private SimpleStringProperty type;
     private SimpleBooleanProperty isStatic;
     private SimpleStringProperty access;
     private Label variableLabel;
-    private String vString;
     
     public JVariable(){
-        variableLabel = this;
+        this.variableLabel = new Label();
         this.name = new SimpleStringProperty("");
         this.type = new SimpleStringProperty("");
         this.isStatic = new SimpleBooleanProperty(false);
         this.access = new SimpleStringProperty("");
         
+        setActions();
+        variableLabel.setText(toText());
+    }
+    
+    public Label getLabel(){
+        return variableLabel;
+    }
+    
+    private void setActions(){
         name.addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                 // update label (name)
-                variableLabel.setText(toString());
+                variableLabel.setText(toText());
             }
         });
         
@@ -42,14 +50,14 @@ public class JVariable extends Label {
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                 // update label (type)
-                variableLabel.setText(toString());
+                variableLabel.setText(toText());
             }
         });
         
         isStatic.addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
-                variableLabel.setText(toString());
+                variableLabel.setText(toText());
             }
         });
         
@@ -57,20 +65,18 @@ public class JVariable extends Label {
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                 // update label (acess)
-                variableLabel.setText(toString());
+                variableLabel.setText(toText());
             }
         });
-         
     }
     
-    
-    public SimpleStringProperty getName(){
-        return this.name;
+    public String getName(){
+        return this.name.get();
         
     }
     
-    public SimpleStringProperty getType(){
-        return this.type;
+    public String getType(){
+        return this.type.get();
     }
     
     public SimpleStringProperty getAccess(){
@@ -98,17 +104,31 @@ public class JVariable extends Label {
     }
     
     
-    public String toString(){
-        vString = "";
-        if (access.getValue().equals("public"))
-            vString = vString + "+";
-        else if (access.getValue().equals("private"))
-            vString = vString + "-";
-        else 
-            vString = vString + "*"; 
-        vString = vString + name.getValue() + " : " + type.getValue();
-
-        return vString;
+    // generate label's text
+    public String toText(){
+        String str = "";
+        
+        if (isStatic.get() == false){
+            if (access.getValue().equals("public"))
+                str = "+" + name.get() + " : " + type.get();
+            else if (access.getValue().equals("private"))
+                str = "-"+ name.get() + " : " + type.get();
+            else if (access.getValue().equals("protected"))
+                str = "*"+ name.get() + " : " + type.get();
+            else
+                str = name.get() + " : " + type.get();
+        }else{
+            if (access.getValue().equals("public"))
+                str = "+$" + name.get() + " : " + type.get();
+            else if (access.getValue().equals("private"))
+                str = "-$"+ name.get() + " : " + type.get();
+            else if (access.getValue().equals("protected"))
+                str = "*$"+ name.get() + " : " + type.get();
+            else
+                str = "$" + name.get() + " : " + type.get();
+        }
+        
+        return str;
     }
   
     
