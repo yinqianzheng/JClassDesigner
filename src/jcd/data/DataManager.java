@@ -37,6 +37,10 @@ public class DataManager {
         return dm;
     }
 
+    public static LinkedList<JClass> getJClassList(){
+        return jList;
+    }
+    
     public static void removeClass(JClass jc){
         jList.remove(jc);
     }
@@ -79,12 +83,20 @@ public class DataManager {
                 selectedJC.setEffect(highlight);   
                 if (preSelectedJC!=null&&preSelectedJC!=selectedJC)
                     preSelectedJC.setEffect(null);
+                
+                HandleEvent.getWorkPane().getAddVariableButton().setDisable(false);
+                HandleEvent.getWorkPane().getDeleteVariableButton().setDisable(false);
+                HandleEvent.getWorkPane().setVariablePane(selectedJC.getVariableBox().getVariableTable());
                 HandleEvent.getWorkPane().setClassNameInput(selectedJC.getClassName());   
                 HandleEvent.getWorkPane().setPackageNameInput(selectedJC.getPackageName());   
             }
         }
     };
 
-    
+    public static void clear(){
+        jList.remove();
+        selectedJC = null;
+        preSelectedJC = null;
+    }
     
 }

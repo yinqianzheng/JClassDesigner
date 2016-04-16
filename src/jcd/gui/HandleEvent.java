@@ -87,6 +87,7 @@ public class HandleEvent {
         @Override
         public void handle(Event event) {
             wp.canvas.setDisable(true);
+            wp.canvas.toBack();
             wp.root.setCursor(Cursor.HAND);
             WorkSpace.isSelectMode = true;
         }
@@ -95,11 +96,13 @@ public class HandleEvent {
     static EventHandler addEvent = new EventHandler() {
         @Override
         public void handle(Event event) {
+            wp.canvas.toFront();
             wp.canvas.setCursor(Cursor.CROSSHAIR);
             wp.canvas.setDisable(false);
             WorkSpace.isSelectMode = false;
         }
     };
+    
     
         
     static EventHandler addClass = new EventHandler<MouseEvent>() {
@@ -112,6 +115,10 @@ public class HandleEvent {
                 dataManager.setSelectedJC(jc);
                 wp.clearPackageNameInput();
                 wp.setClassNameInput(jc.getClassName());
+                wp.variablePane.setContent(jc.getVariableBox().getVariableTable());
+                if (dataManager.getSelectedJC()!=null)
+                    wp.addVariable.setDisable(false);
+                    wp.deleteVariable.setDisable(false);
             }
         }
     };
@@ -121,6 +128,17 @@ public class HandleEvent {
         public void handle(Event event) {
             wp.root.getChildren().remove(dataManager.getSelectedJC());
             dataManager.removeClass(dataManager.getSelectedJC());
+            dataManager.setSelectedJC(null);
+            if (dataManager.getSelectedJC()!=null){
+                wp.addVariable.setDisable(false);
+                wp.deleteVariable.setDisable(false);
+            }else{
+                wp.addVariable.setDisable(true);
+                wp.deleteVariable.setDisable(true);
+                wp.variablePane.setContent(null);
+                wp.clearClassNameInput();
+                wp.clearPackageNameInput();
+            }
         }
     };
     
@@ -130,5 +148,35 @@ public class HandleEvent {
     
     public static void changePackageName (String str){
        DataManager.getSelectedJC().setPackageName(str);
+    };
+    
+    
+    
+    static EventHandler addVariable = new EventHandler() {
+        @Override
+        public void handle(Event event) {
+            dataManager.getSelectedJC().getVariableBox().addVariable();
+        }
+    };
+    
+    static EventHandler deleteVariable = new EventHandler() {
+        @Override
+        public void handle(Event event) {
+            dataManager.getSelectedJC().getVariableBox().removeVariable();
+        }
+    };
+    
+    static EventHandler addMethod = new EventHandler() {
+        @Override
+        public void handle(Event event) {
+            dataManager.getSelectedJC().getVariableBox().addVariable();
+        }
+    };
+    
+    static EventHandler deleteMethod = new EventHandler() {
+        @Override
+        public void handle(Event event) {
+            dataManager.getSelectedJC().getVariableBox().removeVariable();
+        }
     };
 }

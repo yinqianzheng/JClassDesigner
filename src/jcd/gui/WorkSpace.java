@@ -7,6 +7,8 @@ package jcd.gui;
 
 import javafx.application.Application;
 import static javafx.application.Application.launch;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -30,6 +32,9 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import jcd.components.JVariable;
+import jcd.components.VariableBox.VTableView;
+import jcd.data.DataManager;
 
 
 
@@ -49,7 +54,14 @@ public class WorkSpace extends Application{
     final HBox editToolbar = new HBox();
     final HBox viewToolbar = new HBox();
     final Canvas canvas= new Canvas(3000, 3000);
-    final TableView variableTable = new TableView();
+    final ScrollPane variablePane = new ScrollPane();
+    final ScrollPane methodPane = new ScrollPane();
+    final Button addVariable = new Button();
+    final Button deleteVariable = new Button();
+    final Button addMethod = new Button();
+    final Button deleteMethod = new Button();
+
+    //final TableView variableTable = new TableView();
     final TableView methodTable = new TableView();
     
     final CheckBox grid = new CheckBox("Grid");
@@ -83,6 +95,8 @@ public class WorkSpace extends Application{
         canvas.setStyle("-fx-background-color: lightgoldenrodyellow;");
         canvas.setDisable(true);
         root.getChildren().add(canvas);
+        
+
         component.setStyle("-fx-background-color: papayawhip;");
         root.setStyle("-fx-background-color: lightgoldenrodyellow;");
         canvas.setOnMouseClicked(HandleEvent.addClass);       
@@ -134,11 +148,8 @@ public class WorkSpace extends Application{
         VBox vB = new VBox();
         vB.getStyleClass().add("variables_methods_edit_window_style");
         HBox variables = new HBox();
-        ScrollPane vscrollPane = new ScrollPane();
-        initVTable();
-        vscrollPane.setContent(variableTable);
         StackPane sp = new StackPane();
-        sp.getChildren().add(vscrollPane);
+        sp.getChildren().add(variablePane);
         sp.setPrefSize(300, 200);
         vB.getChildren().addAll(variables, sp);
         component.getChildren().add(vB);
@@ -147,18 +158,30 @@ public class WorkSpace extends Application{
         hp.setStyle("-fx-spacing: 5;");
         variables.getChildren().addAll(titles,hp);
         variables.setStyle("-fx-spacing: 10;");
-        initbuttons(hp, "file:./images/add.png" , 20, 20, "add variable", HandleEvent.newEvent, true);
-        initbuttons(hp, "file:./images/delete.png" , 20, 20, "remove variable", HandleEvent.newEvent, true);
+        
+        addVariable.setTooltip(new Tooltip("add variable"));
+        ImageView images = new ImageView(new Image("file:./images/add.png"));
+        images.setFitWidth(20);
+        images.setFitHeight(20);
+        addVariable.setGraphic(images);
+        addVariable.setOnAction(HandleEvent.addVariable);
+        addVariable.setDisable(true);
+        hp.getChildren().add(addVariable);
+        deleteVariable.setTooltip(new Tooltip("remove variable"));
+        images = new ImageView(new Image("file:./images/delete.png"));
+        images.setFitWidth(20);
+        images.setFitHeight(20);
+        deleteVariable.setGraphic(images);
+        deleteVariable.setOnAction(HandleEvent.deleteVariable);
+        deleteVariable.setDisable(true);
+        hp.getChildren().add(deleteVariable);
         
         
         VBox mB = new VBox();
         mB.getStyleClass().add("variables_methods_edit_window_style");
         HBox methods = new HBox();
-        ScrollPane mscrollPane = new ScrollPane();
-        initMTable();
-        mscrollPane.setContent(methodTable);
         sp = new StackPane();
-        sp.getChildren().add(mscrollPane);
+        sp.getChildren().add(methodPane);
         sp.setPrefSize(300, 200);
         mB.getChildren().addAll(methods, sp);
         component.getChildren().add(mB);
@@ -167,31 +190,26 @@ public class WorkSpace extends Application{
         fp2.setStyle("-fx-spacing: 5;");
         methods.getChildren().addAll(titles,fp2);
         methods.setStyle("-fx-spacing: 10;");
-        initbuttons(fp2, "file:./images/add.png" , 20, 20, "add method", HandleEvent.newEvent, true);
-        initbuttons(fp2, "file:./images/delete.png" , 20, 20, "remove method", HandleEvent.newEvent, true);
+        
+        addMethod.setTooltip(new Tooltip("add method"));
+        images = new ImageView(new Image("file:./images/add.png"));
+        images.setFitWidth(20);
+        images.setFitHeight(20);
+        addMethod.setGraphic(images);
+        addMethod.setOnAction(HandleEvent.addMethod);
+        addMethod.setDisable(true);
+        fp2.getChildren().add(addMethod);
+        deleteMethod.setTooltip(new Tooltip("remove method"));
+        images = new ImageView(new Image("file:./images/delete.png"));
+        images.setFitWidth(20);
+        images.setFitHeight(20);
+        deleteMethod.setGraphic(images);
+        deleteMethod.setOnAction(HandleEvent.deleteMethod);
+        deleteMethod.setDisable(true);
+        fp2.getChildren().add(deleteMethod);
         component.getStyleClass().add("componentBar_view");
     }
-        
-    private void initVTable(){
-        TableColumn variableName = new TableColumn("Name");
-        TableColumn variableType = new TableColumn("Type");
-        TableColumn isStatic = new TableColumn("Static");
-        TableColumn access = new TableColumn("Access");
-        variableTable.getColumns().addAll(variableName, variableType, isStatic, access);
-        
-    }
-    
-    private void initMTable(){
-        TableColumn methodName = new TableColumn("Name");
-        TableColumn returnType = new TableColumn("Type");
-        TableColumn isStatic = new TableColumn("Static");
-        TableColumn access = new TableColumn("Access");
-        TableColumn arg1 = new TableColumn("arg1");
-        TableColumn arg2 = new TableColumn("arg2");
-        TableColumn arg3 = new TableColumn("arg3");
-        methodTable.getColumns().addAll(methodName, returnType, isStatic, access, arg1, arg2, arg3);
-     
-    }
+
     
     private void initbuttons(HBox toolbar, String path, double width, double hight,
                                            String toolTip, EventHandler e, boolean tf){
@@ -251,10 +269,39 @@ public class WorkSpace extends Application{
         if (str!=null)
             packageNameInput.setText(str);
     }
+    
+    public void setVariablePane(VTableView vb){
+        variablePane.setContent(vb);
+    }
+    
+    public Button getAddVariableButton(){
+        return addVariable;
+    }
+    
+    public Button getDeleteVariableButton(){
+        return deleteVariable;
+    }
+    
+    public Button getAddMethodButton(){
+        return addMethod;
+    }
+    
+    public Button getDeleteMethodButton(){
+        return deleteMethod;
+    }
 
     public void reload(){
         root.getChildren().clear();
         root.getChildren().add(canvas);
+        variablePane.setContent(null);
+        methodPane.setContent(null);
+        addVariable.setDisable(true);
+        deleteVariable.setDisable(true);
+        addMethod.setDisable(true);
+        deleteMethod.setDisable(true);
+        clearClassNameInput();
+        clearPackageNameInput();
+        DataManager.clear();
     }
     public static void main(String[] args) {
         launch(args);
