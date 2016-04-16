@@ -31,15 +31,12 @@ public class JClass extends VBox{
     final private Label classType = new Label("{abstract}");
     private Label className = new Label("NewClass");
     private String packageName = "";
-    private TableView variableTableView;
-    private TableView methodTableView;
-    //final DropShadow highlight = new DropShadow(20, Color.YELLOW);
     private double sceneX;
     private double sceneY;
     private double translateX;
     private double translateY;
     VariableBox variableBox;
-    TableView<JVariable> methodTable;
+    
     
     public JClass(double x, double y){
         variableBox = new VariableBox();
@@ -49,8 +46,6 @@ public class JClass extends VBox{
         this.getStyleClass().add("classWindow_style");
         name.getStyleClass().add("classWindow_style");
         name.getChildren().addAll(className);
-        initVariableTableView();
-        initMethodTableView();
         this.getChildren().addAll(name, variableBox, methods);
         this.setOnMousePressed(pressed);
         this.setOnMouseDragged(dragged);
@@ -82,32 +77,6 @@ public class JClass extends VBox{
         return packageName;
     }
     
-    
-    public void initVariableTableView(){
-        variableTableView = new TableView();
-        TableColumn variableName = new TableColumn("Name");
-        TableColumn variableType = new TableColumn("Type");
-        TableColumn isStatic = new TableColumn("Static");
-        TableColumn access = new TableColumn("Access");
-        variableTableView.getColumns().addAll(variableName, variableType, isStatic, access);
-    }
-    
-    public void initMethodTableView(){
-        methodTableView = new TableView();
-        TableColumn methodName = new TableColumn("Name");
-        TableColumn returnType = new TableColumn("Type");
-        TableColumn isStatic = new TableColumn("Static");
-        TableColumn access = new TableColumn("Access");
-        TableColumn arg1 = new TableColumn("arg1");
-        TableColumn arg2 = new TableColumn("arg2");
-        TableColumn arg3 = new TableColumn("arg3");
-        methodTableView.getColumns().addAll(methodName, returnType, isStatic, access, arg1, arg2, arg3);
-    }
-    
-    public void addVariable(){
-        JVariable jv = new JVariable();
-        
-    }
     
     public void changeSceneX(double x){
         this.sceneX = x;
