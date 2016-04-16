@@ -6,6 +6,7 @@
 package jcd.components;
 
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -21,74 +22,89 @@ import javafx.util.Callback;
  * @author YinqianZheng
  */
 public class MethodBox extends VBox{
-    private MTableView<JVariable> mTable;
+    private MTableView<JMethod> mTable;
     private MethodBox mb;
     public MethodBox(){
-        mTable = new MTableView<JVariable>();
+        mTable = new MTableView<JMethod>();
         initTableView();
         mb = this;
     }
     
     
-    public MTableView<JVariable> getMethodTable(){
+    public MTableView<JMethod> getMethodTable(){
         return mTable;
     }
+    
+    
+        public void addMethod(){
+        JMethod jm = new JMethod();
+        mTable.getItems().add(jm);
+        this.getChildren().add(jm.getLabel());
+    }
+    
+    public void removeMethod(){
+        ObservableList<JMethod> methodSelected = mTable.getSelectionModel().getSelectedItems();
+        this.getChildren().remove(methodSelected.get(0).getLabel());
+        mTable.getItems().removeAll(methodSelected); 
+    }
+    
+    
     
     public void initTableView(){
         mTable.setEditable(true);
         
         // create name column
-        TableColumn<JVariable, String> nameColumn = new TableColumn<>("Name");
+        TableColumn<JMethod, String> nameColumn = new TableColumn<>("Name");
         nameColumn.setMinWidth(50);
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-        nameColumn.setCellFactory(TextFieldTableCell.<JVariable>forTableColumn());
+        nameColumn.setCellFactory(TextFieldTableCell.<JMethod>forTableColumn());
         nameColumn.setOnEditCommit(
-            (TableColumn.CellEditEvent<JVariable, String> t) -> {
-                ((JVariable) t.getTableView().getItems().get(t.getTablePosition().getRow())
+            (TableColumn.CellEditEvent<JMethod, String> t) -> {
+                ((JMethod) t.getTableView().getItems().get(t.getTablePosition().getRow())
                     ).setName(t.getNewValue());
         });
         
         
         // create access column
-        TableColumn<JVariable, String> accessColumn = new TableColumn<>("Access");
+        TableColumn<JMethod, String> accessColumn = new TableColumn<>("Access");
         accessColumn.setMinWidth(50);
-        accessColumn.setCellFactory(ComboBoxTableCell.forTableColumn("private","public", "protected"));
-        accessColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<JVariable, String>, ObservableValue<String>>(){
+        accessColumn.setCellFactory(ComboBoxTableCell.forTableColumn("private","public"));
+        accessColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<JMethod, String>, ObservableValue<String>>(){
             @Override
-            public ObservableValue<String> call(TableColumn.CellDataFeatures<JVariable, String> p) {
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<JMethod, String> p) {
                 return p.getValue().getAccess();
             }
         });
-        accessColumn.setOnEditCommit((TableColumn.CellEditEvent<JVariable, String> t) -> {
-                ((JVariable) t.getTableView().getItems().get(t.getTablePosition().getRow())
+        accessColumn.setOnEditCommit((TableColumn.CellEditEvent<JMethod, String> t) -> {
+                ((JMethod) t.getTableView().getItems().get(t.getTablePosition().getRow())
                     ).setAccess(t.getNewValue());
         });
         
         
         // create type column
-        TableColumn<JVariable, String> returnColumn = new TableColumn<>("Type");
+        TableColumn<JMethod, String> returnColumn = new TableColumn<>("Type");
         returnColumn.setMinWidth(50);
         returnColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
-        returnColumn.setCellFactory(TextFieldTableCell.<JVariable>forTableColumn());
+        returnColumn.setCellFactory(TextFieldTableCell.<JMethod>forTableColumn());
         returnColumn.setOnEditCommit(
-            (TableColumn.CellEditEvent<JVariable, String> t) -> {
-                ((JVariable) t.getTableView().getItems().get(t.getTablePosition().getRow())
+            (TableColumn.CellEditEvent<JMethod, String> t) -> {
+                ((JMethod) t.getTableView().getItems().get(t.getTablePosition().getRow())
                     ).setType(t.getNewValue());
         });
         
         
         // create static column
-        TableColumn<JVariable, Boolean> staticColumn = new TableColumn<>("Static");
+        TableColumn<JMethod, Boolean> staticColumn = new TableColumn<>("Static");
         staticColumn.setMinWidth(50);
         staticColumn.setCellValueFactory(new PropertyValueFactory<>("isStatic"));   
-        staticColumn.setCellFactory(new Callback<TableColumn<JVariable, Boolean>, TableCell<JVariable, Boolean>>() {
+        staticColumn.setCellFactory(new Callback<TableColumn<JMethod, Boolean>, TableCell<JMethod, Boolean>>() {
             @Override
-            public TableCell<JVariable, Boolean> call(TableColumn<JVariable, Boolean> p) {
+            public TableCell<JMethod, Boolean> call(TableColumn<JMethod, Boolean> p) {
                 final CheckBoxTableCell checkCell = new CheckBoxTableCell<>();
                     checkCell.setSelectedStateCallback((new Callback<Integer, ObservableValue<Boolean>>() {
                         @Override
                         public ObservableValue<Boolean> call(Integer index) {
-                            return ((JVariable)mTable.getItems().get(index)).getIsStatic();
+                            return ((JMethod)mTable.getItems().get(index)).getIsStatic();
                         }
                     }));
                     return checkCell;
@@ -96,17 +112,17 @@ public class MethodBox extends VBox{
         });
         
         // create abstract column
-        TableColumn<JVariable, Boolean> abstractColumn = new TableColumn<>("Abstract");
+        TableColumn<JMethod, Boolean> abstractColumn = new TableColumn<>("Abstract");
         abstractColumn.setMinWidth(50);
         abstractColumn.setCellValueFactory(new PropertyValueFactory<>("isAbstract"));   
-        abstractColumn.setCellFactory(new Callback<TableColumn<JVariable, Boolean>, TableCell<JVariable, Boolean>>() {
+        abstractColumn.setCellFactory(new Callback<TableColumn<JMethod, Boolean>, TableCell<JMethod, Boolean>>() {
             @Override
-            public TableCell<JVariable, Boolean> call(TableColumn<JVariable, Boolean> p) {
+            public TableCell<JMethod, Boolean> call(TableColumn<JMethod, Boolean> p) {
                 final CheckBoxTableCell checkCell = new CheckBoxTableCell<>();
                     checkCell.setSelectedStateCallback((new Callback<Integer, ObservableValue<Boolean>>() {
                         @Override
                         public ObservableValue<Boolean> call(Integer index) {
-                            return ((JVariable)mTable.getItems().get(index)).getIsStatic();
+                            return ((JMethod)mTable.getItems().get(index)).getIsAbstract();
                         }
                     }));
                     return checkCell;
@@ -114,41 +130,41 @@ public class MethodBox extends VBox{
         });
         
         // create arg1 column
-        TableColumn<JVariable, String> arg1Column = new TableColumn<>("Arg1");
+        TableColumn<JMethod, String> arg1Column = new TableColumn<>("Arg1");
         arg1Column.setMinWidth(50);
         arg1Column.setCellValueFactory(new PropertyValueFactory<>("arg1"));
-        arg1Column.setCellFactory(TextFieldTableCell.<JVariable>forTableColumn());
+        arg1Column.setCellFactory(TextFieldTableCell.<JMethod>forTableColumn());
         arg1Column.setOnEditCommit(
-            (TableColumn.CellEditEvent<JVariable, String> t) -> {
-                ((JVariable) t.getTableView().getItems().get(t.getTablePosition().getRow())
+            (TableColumn.CellEditEvent<JMethod, String> t) -> {
+                ((JMethod) t.getTableView().getItems().get(t.getTablePosition().getRow())
                     ).setType(t.getNewValue());
         });
         
         // create arg2 column
-        TableColumn<JVariable, String> arg2Column = new TableColumn<>("Arg2");
+        TableColumn<JMethod, String> arg2Column = new TableColumn<>("Arg2");
         arg2Column.setMinWidth(50);
         arg2Column.setCellValueFactory(new PropertyValueFactory<>("arg2"));
-        arg2Column.setCellFactory(TextFieldTableCell.<JVariable>forTableColumn());
+        arg2Column.setCellFactory(TextFieldTableCell.<JMethod>forTableColumn());
         arg2Column.setOnEditCommit(
-            (TableColumn.CellEditEvent<JVariable, String> t) -> {
-                ((JVariable) t.getTableView().getItems().get(t.getTablePosition().getRow())
+            (TableColumn.CellEditEvent<JMethod, String> t) -> {
+                ((JMethod) t.getTableView().getItems().get(t.getTablePosition().getRow())
                     ).setType(t.getNewValue());
         });
         
         // create arg3 column
-        TableColumn<JVariable, String> arg3Column = new TableColumn<>("Arg3");
+        TableColumn<JMethod, String> arg3Column = new TableColumn<>("Arg3");
         arg3Column.setMinWidth(50);
         arg3Column.setCellValueFactory(new PropertyValueFactory<>("arg3"));
-        arg3Column.setCellFactory(TextFieldTableCell.<JVariable>forTableColumn());
+        arg3Column.setCellFactory(TextFieldTableCell.<JMethod>forTableColumn());
         arg3Column.setOnEditCommit(
-            (TableColumn.CellEditEvent<JVariable, String> t) -> {
-                ((JVariable) t.getTableView().getItems().get(t.getTablePosition().getRow())
+            (TableColumn.CellEditEvent<JMethod, String> t) -> {
+                ((JMethod) t.getTableView().getItems().get(t.getTablePosition().getRow())
                     ).setType(t.getNewValue());
         });
         
         
         // add columns into table
-        mTable.getColumns().addAll(nameColumn, returnColumn, staticColumn, abstractColumn, accessColumn);
+        mTable.getColumns().addAll(nameColumn, returnColumn, staticColumn, abstractColumn, accessColumn, arg1Column, arg2Column, arg3Column);
     }
     
     public class MTableView<JVariable> extends TableView{

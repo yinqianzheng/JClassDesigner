@@ -27,7 +27,7 @@ public class JVariable {
         this.name = new SimpleStringProperty("");
         this.type = new SimpleStringProperty("");
         this.isStatic = new SimpleBooleanProperty(false);
-        this.access = new SimpleStringProperty("");
+        this.access = new SimpleStringProperty("public");
         
         setActions();
         variableLabel.setText(toText());
@@ -123,7 +123,7 @@ public class JVariable {
             else if (access.getValue().equals("private"))
                 str = "-$"+ name.get() + " : " + type.get();
             else if (access.getValue().equals("protected"))
-                str = "*$"+ name.get() + " : " + type.get();
+                str = "#$"+ name.get() + " : " + type.get();
             else
                 str = "$" + name.get() + " : " + type.get();
         }
