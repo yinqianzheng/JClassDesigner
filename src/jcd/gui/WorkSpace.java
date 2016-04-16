@@ -113,7 +113,10 @@ public class WorkSpace extends Application{
         classNameInput = new TextField ();
         classNameInput.setPrefWidth(120);
         classNameInput.textProperty().addListener((observable, oldValue, newValue) -> {
+            try{
             HandleEvent.changeClassName(newValue);
+            }catch(Exception ex){
+            }
         });
         packageNameInput = new TextField ();
         packageNameInput.textProperty().addListener((observable, oldValue, newValue) -> {
