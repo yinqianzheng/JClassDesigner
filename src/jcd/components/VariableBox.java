@@ -7,6 +7,7 @@ package jcd.components;
 
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -23,18 +24,18 @@ import javafx.util.Callback;
  * @author YinqianZheng
  */
 public class VariableBox extends VBox{
-    final private VTableView<JVariable> vTable;
+    private VTableView<JVariable> vTable;
     private VariableBox vb;
     public VariableBox(){
-        vTable = new VTableView<>();
-        vb = this;
+        vTable = new VTableView<JVariable>();
         initTableView();
+        vb = this;
     }
     
     
     
     
-    public TableView<JVariable> getVariableTable(){
+    public VTableView<JVariable> getVariableTable(){
         return vTable;
     }
     
@@ -50,12 +51,12 @@ public class VariableBox extends VBox{
         vTable.getItems().removeAll(variableSelected); 
     }
     
-    private void initTableView(){
+    public void initTableView(){
         vTable.setEditable(true);
         
         // create name column
         TableColumn<JVariable, String> nameColumn = new TableColumn<>("Name");
-        nameColumn.setMinWidth(100);
+        nameColumn.setMinWidth(50);
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         nameColumn.setCellFactory(TextFieldTableCell.<JVariable>forTableColumn());
         nameColumn.setOnEditCommit(
@@ -67,7 +68,8 @@ public class VariableBox extends VBox{
         
         // create access column
         TableColumn<JVariable, String> accessColumn = new TableColumn<>("Access");
-        accessColumn.setCellFactory(ComboBoxTableCell.forTableColumn("Private","Public", "Protected"));
+        accessColumn.setMinWidth(50);
+        accessColumn.setCellFactory(ComboBoxTableCell.forTableColumn("private","public", "protected"));
         accessColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<JVariable, String>, ObservableValue<String>>(){
             @Override
             public ObservableValue<String> call(TableColumn.CellDataFeatures<JVariable, String> p) {
@@ -82,7 +84,7 @@ public class VariableBox extends VBox{
         
         // create type column
         TableColumn<JVariable, String> typeColumn = new TableColumn<>("Type");
-        typeColumn.setMinWidth(100);
+        typeColumn.setMinWidth(50);
         typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
         typeColumn.setCellFactory(TextFieldTableCell.<JVariable>forTableColumn());
         typeColumn.setOnEditCommit(
@@ -94,6 +96,7 @@ public class VariableBox extends VBox{
         
         // create static column
         TableColumn<JVariable, Boolean> staticColumn = new TableColumn<>("Static");
+        staticColumn.setMinWidth(50);
         staticColumn.setCellValueFactory(new PropertyValueFactory<>("isStatic"));   
         staticColumn.setCellFactory(new Callback<TableColumn<JVariable, Boolean>, TableCell<JVariable, Boolean>>() {
             @Override
@@ -108,6 +111,9 @@ public class VariableBox extends VBox{
                     return checkCell;
                 }
         });
+        
+        // add columns into table
+        vTable.getColumns().addAll(nameColumn, typeColumn, staticColumn, accessColumn);
     }
     
     public class VTableView<JVariable> extends TableView{

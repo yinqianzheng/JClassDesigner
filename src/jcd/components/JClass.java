@@ -5,6 +5,10 @@
  */
 package jcd.components;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.event.EventHandler;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -34,9 +38,11 @@ public class JClass extends VBox{
     private double sceneY;
     private double translateX;
     private double translateY;
-    
+    VariableBox variableBox;
+    TableView<JVariable> methodTable;
     
     public JClass(double x, double y){
+        variableBox = new VariableBox();
         this.setLayoutX(x);
         this.setLayoutY(y);
         this.setMinWidth(100);
@@ -45,9 +51,13 @@ public class JClass extends VBox{
         name.getChildren().addAll(className);
         initVariableTableView();
         initMethodTableView();
-        this.getChildren().addAll(name, variables, methods);
+        this.getChildren().addAll(name, variableBox, methods);
         this.setOnMousePressed(pressed);
         this.setOnMouseDragged(dragged);
+    }
+    
+    public VariableBox getVariableBox(){
+        return variableBox;
     }
     
     private void setPosition(double x, double y){
@@ -143,94 +153,6 @@ public class JClass extends VBox{
         }
     };
     
-    public class JVariable extends VBox {
-        private String variableName;
-        private String variableType;
-        private Boolean isStatic;
-        
-        public JVariable (){
-            
-        }
-        
-        public void setVariableName(String name){
-            this.variableName = name;
-        }
-        
-        public void setVariableType(String type){
-            this.variableType = type;
-        }
-        
-        public void setStatic(){
-            isStatic = true;
-        }
-        
-        public void setNotStatic(){
-            isStatic = false;
-        }  
-    }
-    
-    public class JMethod extends VBox {
-        private String methodName;
-        private String methodType;
-        private Boolean isStatic;
-        private Boolean isAbstract;
-        private String arg1;
-        private String arg2;
-        private String arg3;
-        
-        public JMethod (){
-            
-        }
-        
-        public void setMethodName(String name){
-            this.methodName = name;
-        }
-        
-        public void setMethodType(String type){
-            this.methodType = type;
-        }
-        
-        public void setStatic(){
-            isStatic = true;
-        }
-        
-        public void setNotStatic(){
-            isStatic = false;
-        }
-        
-        public void setArg1Type(String type){
-            arg1 = type;
-        }
-        
-        public void setArg2Type(String type){
-            arg2 = type;
-        }
-        public void setArg3Type(String type){
-            arg3 = type;
-        }
-        
-        
-        
-        public String getMethodName(){
-            return methodName;
-        }
-        
-        public String getMethodType(){
-            return methodType;
-        }
-   
-        public String getArg1Type(){
-            return arg1;
-        }
-        
-        public String getArg2Type(){
-            return arg2;
-        }
-        public String getArg3Type(){
-            return arg3;
-        }
-        
-    }
     
     
     
