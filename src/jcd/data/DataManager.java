@@ -36,12 +36,12 @@ public class DataManager {
         jList.getItems().addListener(new ListChangeListener<JClass>() {
             @Override
             public void onChanged(ListChangeListener.Change<? extends JClass> change) {
-                reNewParentList();   
+                renewParentList();
             }
         });
     }
     
-    public static void reNewParentList(){
+    public static void renewParentList(){
         parentList.getItems().clear();
             for (JClass jclass : jList.getItems()){
                 if (!jclass.equals(selectedJC))

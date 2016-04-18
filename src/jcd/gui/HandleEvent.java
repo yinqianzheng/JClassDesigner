@@ -6,6 +6,7 @@
 package jcd.gui;
 
 import java.util.Optional;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
@@ -110,6 +111,24 @@ public class HandleEvent {
         public void handle(MouseEvent click) {
             if (click.getClickCount() == 2){     
                 JClass jc = new JClass(click.getX(), click.getY());
+                String name;
+                SimpleBooleanProperty validName = new SimpleBooleanProperty(true);
+                
+                for (int i = 1; i < 100; i++){
+                    name = "NewClass" + String.valueOf(i);
+                    validName.set(true);
+                    for (JClass jclass : DataManager.getJClassList().getItems()){
+                        if ((jclass.getClassName()).equals(name)){
+                            validName.set(false);
+                        }           
+                    }
+                    
+                    if (validName.get() == true){
+                        jc.setClassName(name);
+                        break;
+                    }
+                }
+               
                 wp.root.getChildren().add(jc);
                 dataManager.addClassToList(jc);
                 dataManager.setSelectedJC(jc);
@@ -132,10 +151,6 @@ public class HandleEvent {
             wp.root.getChildren().remove(dataManager.getSelectedJC());
             dataManager.removeClass(dataManager.getSelectedJC());
             dataManager.setSelectedJC(null);
-//            if (dataManager.getSelectedJC()!=null){
-//                wp.addVariable.setDisable(false);
-//                wp.deleteVariable.setDisable(false);
-//            }else{
             wp.addVariable.setDisable(true);
             wp.deleteVariable.setDisable(true);
             wp.addMethod.setDisable(true);
@@ -152,12 +167,25 @@ public class HandleEvent {
         }
     };
     
-    public static void changeClassName (String str){
+    public static Boolean changeClassName (String str){
+        wp.classNameInput.setStyle(null);
         try {
+            String newName = DataManager.getSelectedJC().getPackageName() + "." + str;
+            for (JClass jclass : DataManager.getJClassList().getItems()){
+                if (!jclass.equals(DataManager.getSelectedJC()))
+                    if ((jclass.getPackageName()+"."+jclass.getClassName()).equals(newName)){
+                        wp.classNameInput.setId("failed");
+                        wp.classNameInput.setStyle("-fx-text-fill: red;"); ;
+                        return true;
+                    }           
+            }    
             DataManager.getSelectedJC().setClassName(str);
         } catch (Exception e) {
         }
-        DataManager.reNewParentList();
+        wp.classNameInput.setId("pass");
+        wp.classNameInput.setStyle(null);
+        DataManager.renewParentList();
+        return false;
     };
     
     public static void changePackageName (String str){

@@ -30,7 +30,7 @@ import jcd.gui.WorkSpace;
 public class JClass extends VBox{
     final private VBox name = new VBox();
     final private Label isAbstract = new Label("{abstract}");
-    private Label className = new Label("NewClass");
+    private Label className = new Label("NewClass1");
     private String packageName = "";
     private double sceneX;
     private double sceneY;
@@ -38,7 +38,8 @@ public class JClass extends VBox{
     private double translateY;
     VariableBox variableBox;
     MethodBox methodBox;
-    private SimpleStringProperty jParent = new SimpleStringProperty();
+    private SimpleStringProperty jParentName = new SimpleStringProperty();
+    private JClass jParent;
     
     
     public JClass(double x, double y){

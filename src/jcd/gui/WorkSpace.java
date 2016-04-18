@@ -67,8 +67,8 @@ public class WorkSpace extends Application{
     final CheckBox grid = new CheckBox("Grid");
     final CheckBox snap = new CheckBox("Snap");
     final DropShadow highlight = new DropShadow(20, Color.YELLOW);
-    private TextField classNameInput;
-    private TextField packageNameInput;
+    public TextField classNameInput;
+    public TextField packageNameInput;
     private ComboBox parentsList;
     public static boolean isSelectMode = false;
 
