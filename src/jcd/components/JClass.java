@@ -22,6 +22,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import jcd.data.DataManager;
 import jcd.gui.WorkSpace;
 
 /**
@@ -33,13 +34,13 @@ public class JClass extends VBox{
     final private Label isAbstract = new Label("{abstract}");
     private Label className = new Label("NewClass1");
     private String packageName = "";
-    private double sceneX;
-    private double sceneY;
-    private double translateX;
-    private double translateY;
+    public double sceneX;
+    public double sceneY;
+    public double translateX;
+    public double translateY;
     VariableBox variableBox;
     MethodBox methodBox;
-    private SimpleStringProperty jParentName = new SimpleStringProperty();
+    //private SimpleStringProperty jParentName = new SimpleStringProperty();
     private JClass jParent;
     private Line linkToParent;
     
@@ -61,10 +62,9 @@ public class JClass extends VBox{
         this.getStyleClass().add("classWindow_style");
         name.getStyleClass().add("variable_method_Boxes_style");
         name.getChildren().addAll(className);
-        this.getChildren().addAll(name, variableBox, methodBox);
-        this.setOnMousePressed(pressed);
-        this.setOnMouseDragged(dragged);
+        this.getChildren().addAll(name, variableBox, methodBox);    
     }
+
     
     public void setJParent(JClass parent){
         jParent = parent;
@@ -77,26 +77,28 @@ public class JClass extends VBox{
     public Line setLinkToJParent(){
         if (jParent!=null){
             if (linkToParent != null){
-                linkToParent.setEndX(jParent.getLayoutX());
-                linkToParent.setEndY(jParent.getLayoutY());
+                linkToParent.setEndX(jParent.getLayoutX()+jParent.getTranslateX());
+                linkToParent.setEndY(jParent.getLayoutY()+jParent.getTranslateY());
             }else{
-                linkToParent = new Line(this.getLayoutX(),this.getLayoutY(),jParent.getLayoutX(),jParent.getLayoutY());
+                linkToParent = new Line(this.getLayoutX()+this.getTranslateX(),
+                        this.getLayoutY()+this.getTranslateY(),
+                        jParent.getLayoutX()+jParent.getTranslateX(),
+                        jParent.getLayoutY()+jParent.getTranslateY());
             return linkToParent;
             }
         }
         return linkToParent;
     }
     
+    public void setEndPoint(double x, double y){
+        if (linkToParent!=null){
+            linkToParent.setEndX(x);
+            linkToParent.setEndY(y);
+        }
+    }
+    
     public Line getLine(){
         return linkToParent;
-    }
-    
-    public void setJParentName(){
-        jParentName.set(jParent.getPackageName()+"."+jParent.getClassName());
-    }
-    
-    public String getJParentName(){
-        return jParentName.get();
     }
     
     public VariableBox getVariableBox(){
@@ -156,50 +158,6 @@ public class JClass extends VBox{
         this.translateY = y;
     }
     
-//    public double getJSceneX(){
-//        return this.sceneX;
-//    }
-//    
-//    public double getJSceneY(){
-//        return this.sceneY;
-//    }
-//    
-//    public double getJTranslateX(){
-//        return this.translateX;
-//    }
-//    
-//    public double getJTranslateY(){
-//        return this.translateY;
-//    }
-    
-    
-    EventHandler pressed = new EventHandler<MouseEvent>() {
-        @Override
-        public void handle(MouseEvent click) {
-            
-            sceneX = click.getSceneX();
-            sceneY = click.getSceneY();
-            
-            translateX = ((JClass)click.getSource()).getTranslateX();
-            translateY = ((JClass)click.getSource()).getTranslateY();
-        }
-    };
-    
-    EventHandler dragged = new EventHandler<MouseEvent>() {
-        @Override
-        public void handle(MouseEvent click) {
-            if (WorkSpace.isSelectMode==true){
-                double offsetX = click.getSceneX() - sceneX;
-                double offsetY = click.getSceneY() - sceneY;
-                double newTranslateX = translateX + offsetX;
-                double newTranslateY = translateY + offsetY;
-
-                ((JClass)(click.getSource())).setTranslateX(newTranslateX);
-                ((JClass)(click.getSource())).setTranslateY(newTranslateY);
-            }
-        }
-    };
-
     public void clone(JClass j){
         ObservableList<JVariable> jvList = this.getVariableBox().getVariableTable().getItems();
         for (JVariable jv : jvList){

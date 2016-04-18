@@ -163,7 +163,7 @@ public class HandleEvent {
                     wp.clearClassNameInput();
                     wp.clearPackageNameInput();
                    // DataManager.renewParentList();
-                    //wp.parentsList.setValue(null);
+                   wp.parentsList.setValue(null);
                 } catch (Exception e) {
                 }
             }
@@ -177,7 +177,6 @@ public class HandleEvent {
             for (JClass jclass : DataManager.getJClassList().getItems()){
                 if (!jclass.equals(DataManager.getSelectedJC()))
                     if ((jclass.getPackageName()+"."+jclass.getClassName()).equals(newName)){
-                        wp.classNameInput.setId("failed");
                         wp.classNameInput.setStyle("-fx-text-fill: red;"); ;
                         return true;
                     }           
@@ -185,9 +184,10 @@ public class HandleEvent {
             DataManager.getSelectedJC().setClassName(str);
         } catch (Exception e) {
         }
-        wp.classNameInput.setId("pass");
         wp.classNameInput.setStyle(null);
         DataManager.renewParentList();
+        wp.parentsList.setValue(DataManager.getSelectedJC().getJParent().getPackageName()+
+                "."+DataManager.getSelectedJC().getJParent().getClassName());
         return false;
     };
     

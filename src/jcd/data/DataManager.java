@@ -28,7 +28,7 @@ public class DataManager {
     private static DataManager dm;
     private static HandleEvent handler;
     private static WorkSpace workPane;
-    private static TableView<JClass> jList = new TableView<JClass>();
+    public static TableView<JClass> jList = new TableView<JClass>();
     private static JClass preSelectedJC;
     private static JClass selectedJC;
     final private static ComboBox<String> parentList = new ComboBox<String>();
@@ -46,35 +46,43 @@ public class DataManager {
         parentList.valueProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                
-                for (JClass jclass : jList.getItems()){
-                    if ((jclass.getPackageName()+"."+ jclass.getClassName()).equals(t1)){
-                        selectedJC.setJParent(jclass);
-                        selectedJC.setJParentName();
-                        try {
-                            HandleEvent.getWorkPane().root.getChildren().add(selectedJC.setLinkToJParent());
-                        } catch (Exception e) {
+                try {
+                    if (t1.equals("none")){
+                    selectedJC.setJParent(null);
+                    HandleEvent.getWorkPane().root.getChildren().remove(selectedJC.getLine());
+                }else {
+                    for (JClass jclass : jList.getItems()){
+                        if ((jclass.getPackageName()+"."+ jclass.getClassName()).equals(t1)){
+                            selectedJC.setJParent(jclass);
+                            try {
+                                HandleEvent.getWorkPane().root.getChildren().add(selectedJC.setLinkToJParent());
+                            } catch (Exception e) {
+                            }
+                            break;
                         }
-                        break;
                     }
                 }
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+                
             }
         });
     }
     
     public void removeChildrenLines(){
-        
         for (JClass jclass : jList.getItems()){
             if (jclass.getJParent()!=null){
-            if (jclass.getJParent().equals(selectedJC)){
-                HandleEvent.getWorkPane().root.getChildren().remove(jclass.getLine());
-            }
+                if (jclass.getJParent().equals(selectedJC)){
+                    HandleEvent.getWorkPane().root.getChildren().remove(jclass.getLine());
+                }
             }
         }
     }
     
     public static void renewParentList(){
         parentList.getItems().clear();
+        parentList.getItems().add("none");
             for (JClass jclass : jList.getItems()){
                 if (!jclass.equals(selectedJC))
                     parentList.getItems().add(jclass.getPackageName()+
@@ -112,7 +120,8 @@ public class DataManager {
         jList.getItems().add(j);        
         selectedJC = j;
         j.setEffect(highlight);
-        j.setOnMouseClicked(select);
+        j.setOnMousePressed(pressed);
+        j.setOnMouseDragged(dragged);
         if (preSelectedJC!=null)
             preSelectedJC.setEffect(null);
     }
@@ -130,9 +139,12 @@ public class DataManager {
     private static HandleEvent getHandler(){
         return handler;
     }
-    private static EventHandler select = new EventHandler<MouseEvent>() {
+    
+    
+    private static EventHandler pressed = new EventHandler<MouseEvent>() {
         @Override
-        public void handle(MouseEvent click) { 
+        public void handle(MouseEvent click) {
+            
             if (WorkSpace.isSelectMode==true){
                 if (selectedJC!=null)
                     preSelectedJC = selectedJC;
@@ -154,6 +166,43 @@ public class DataManager {
                     HandleEvent.getWorkPane().parentsList.setValue(selectedJC.getJParent().getPackageName()+"."+
                     selectedJC.getJParent().getClassName());    
                 } catch (Exception e) {
+                }
+            }
+            try {
+                selectedJC.sceneX = click.getSceneX();
+                selectedJC.sceneY = click.getSceneY();
+                selectedJC.translateX = ((JClass)click.getSource()).getTranslateX();
+                selectedJC.translateY = ((JClass)click.getSource()).getTranslateY();
+          
+            } catch (Exception e) {
+            }  
+        }
+    };
+    
+    private static EventHandler dragged = new EventHandler<MouseEvent>() {
+        @Override
+        public void handle(MouseEvent click) {
+            if (HandleEvent.getWorkPane().isSelectMode==true){
+                double offsetX = click.getSceneX() - selectedJC.sceneX;
+                double offsetY = click.getSceneY() - selectedJC.sceneY;
+                double newTranslateX = selectedJC.translateX + offsetX;
+                double newTranslateY = selectedJC.translateY + offsetY;
+
+                ((JClass)(click.getSource())).setTranslateX(newTranslateX);
+                ((JClass)(click.getSource())).setTranslateY(newTranslateY);
+                try {
+                    selectedJC.getLine().setStartX(((JClass)(click.getSource())).getLayoutX()+newTranslateX);
+                    selectedJC.getLine().setStartY(((JClass)(click.getSource())).getLayoutY()+newTranslateY);
+                } catch (Exception e) {
+                }
+                
+                for (JClass jclass : jList.getItems()){
+                    if (jclass.getJParent()!=null){
+                        if (jclass.getJParent().equals(selectedJC)){
+                            jclass.getLine().setEndX(jclass.getJParent().getLayoutX()+jclass.getJParent().getTranslateX());
+                            jclass.getLine().setEndY(jclass.getJParent().getLayoutY()+jclass.getJParent().getTranslateY());
+                        }
+                    }
                 }
             }
         }
