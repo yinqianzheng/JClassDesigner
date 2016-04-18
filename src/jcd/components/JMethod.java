@@ -37,8 +37,8 @@ public class JMethod {
     public JMethod(MethodBox mbox){
         this.mb = mbox;
         this.methodLabel = new Label();
-        this.name = new SimpleStringProperty("");
-        this.type = new SimpleStringProperty("");
+        this.name = new SimpleStringProperty("method1");
+        this.type = new SimpleStringProperty("void");
         this.isStatic = new SimpleBooleanProperty(false);
         this.isAbstract = new SimpleBooleanProperty(false);
         this.access = new SimpleStringProperty("public");

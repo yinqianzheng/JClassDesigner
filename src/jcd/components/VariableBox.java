@@ -5,6 +5,7 @@
  */
 package jcd.components;
 
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -18,6 +19,7 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
+import jcd.data.DataManager;
 
 /**
  *
@@ -41,6 +43,24 @@ public class VariableBox extends VBox{
     
     public void addVariable(){
         JVariable jv = new JVariable();
+        String varName;
+        SimpleBooleanProperty validName = new SimpleBooleanProperty(true);
+        ObservableList<JVariable> variables = vTable.getItems();        
+ 
+        
+        for (int i = 1; i < 100; i++){
+            varName = "var" + String.valueOf(i);
+            validName.set(true);
+            for (JVariable j: variables){
+                if ((j.getName()).equals(varName)){
+                    validName.set(false);
+                }           
+            }        
+            if (validName.get() == true){
+                jv.setName(varName);
+                break;
+            }
+        }
         vTable.getItems().add(jv);
         this.getChildren().add(jv.getLabel());
     }

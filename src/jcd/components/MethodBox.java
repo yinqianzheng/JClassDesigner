@@ -7,6 +7,7 @@ package jcd.components;
 
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -33,6 +34,12 @@ public class MethodBox extends VBox{
         isContainAbstract = new SimpleBooleanProperty(false);
         mTable = new MTableView<JMethod>();
         initTableView();
+        mTable.getItems().addListener(new ListChangeListener(){
+            @Override
+            public void onChanged(ListChangeListener.Change change) {
+                checkAbstractMethod();
+            }
+        } );
         mb = this;
     }
     
@@ -43,6 +50,24 @@ public class MethodBox extends VBox{
     
     public void addMethod(){
         JMethod jm = new JMethod(mb);
+        String methodName;
+        SimpleBooleanProperty validName = new SimpleBooleanProperty(true);
+        ObservableList<JMethod> methods = mTable.getItems();        
+ 
+        
+        for (int i = 1; i < 100; i++){
+            methodName = "method" + String.valueOf(i);
+            validName.set(true);
+            for (JMethod j: methods){
+                if ((j.getName()).equals(methodName)){
+                    validName.set(false);
+                }           
+            }        
+            if (validName.get() == true){
+                jm.setName(methodName);
+                break;
+            }
+        }
         mTable.getItems().add(jm);
         this.getChildren().add(jm.getLabel());
     }

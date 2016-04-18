@@ -63,7 +63,6 @@ public class DataManager {
                     }
                 }
                 } catch (Exception e) {
-                    System.out.println(e.getMessage());
                 }
                 
             }

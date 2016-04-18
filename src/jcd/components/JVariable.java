@@ -24,8 +24,8 @@ public class JVariable {
     
     public JVariable(){
         this.variableLabel = new Label();
-        this.name = new SimpleStringProperty("");
-        this.type = new SimpleStringProperty("");
+        this.name = new SimpleStringProperty("var1");
+        this.type = new SimpleStringProperty("void");
         this.isStatic = new SimpleBooleanProperty(false);
         this.access = new SimpleStringProperty("public");
         
