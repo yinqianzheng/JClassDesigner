@@ -5,16 +5,21 @@
  */
 package jcd.gui;
 
+import static java.awt.SystemColor.window;
+import java.io.File;
 import java.util.Optional;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.TextField;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.FileChooser;
+import javax.imageio.ImageIO;
 import jcd.components.JClass;
 import jcd.data.DataManager;
 
@@ -73,6 +78,30 @@ public class HandleEvent {
         @Override
         public void handle(Event event) {
             System.out.println("saveAs");
+        }
+    };
+    
+    static EventHandler exportPhoto = new EventHandler() {
+        @Override
+        public void handle(Event event) {
+            WritableImage wim = new WritableImage(1000, 1000);
+            WritableImage snapImage = wp.root.snapshot(new SnapshotParameters(), wim);
+            try{
+                FileChooser.ExtensionFilter extFilter = 
+                        new FileChooser.ExtensionFilter("Image files (*.png)", "*.png");
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.getExtensionFilters().add(extFilter);
+                fileChooser.setTitle("Save Image");
+                File file = fileChooser.showSaveDialog(WorkSpace.primaryStageWindow);
+      
+            if (file != null) 
+                
+                try {
+                    ImageIO.write(SwingFXUtils.fromFXImage(wim, null), "png", file);
+                } catch (Exception s) {
+                }
+            }catch(Exception ex){
+                }
         }
     };
     

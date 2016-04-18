@@ -33,6 +33,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import jcd.components.JVariable;
 import jcd.components.MethodBox.MTableView;
 import jcd.components.VariableBox.VTableView;
@@ -62,7 +63,7 @@ public class WorkSpace extends Application{
     final Button deleteVariable = new Button();
     final Button addMethod = new Button();
     final Button deleteMethod = new Button();
-
+    
     final TableView methodTable = new TableView();
     
     final CheckBox grid = new CheckBox("Grid");
@@ -72,9 +73,11 @@ public class WorkSpace extends Application{
     public TextField packageNameInput;
     public ComboBox parentsList;
     public static boolean isSelectMode = false;
+    public static Window primaryStageWindow;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        primaryStageWindow = primaryStage;
         initToolbar();
         initComponentToolbar();
         initWindow();
@@ -237,7 +240,7 @@ public class WorkSpace extends Application{
         initbuttons(fileToolbar, "file:./images/Load.png" , 25, 25, "load", HandleEvent.loadEvent, true);
         initbuttons(fileToolbar, "file:./images/Save.png" , 25, 25, "save", HandleEvent.saveEvent, true);
         initbuttons(fileToolbar, "file:./images/SaveAs.png" , 25, 25, "save as", HandleEvent.saveAsEvent, true);
-        initbuttons(fileToolbar, "file:./images/ExportImage.png" , 25, 25, "export photo", HandleEvent.selectEvent, true);
+        initbuttons(fileToolbar, "file:./images/ExportImage.png" , 25, 25, "export photo", HandleEvent.exportPhoto, false);
         initbuttons(fileToolbar, "file:./images/ExportCode.png" , 25, 25, "export code", HandleEvent.selectEvent, true);
         initbuttons(fileToolbar, "file:./images/Exit.png" , 25, 25, "exit", HandleEvent.exitEvent, false);
        
