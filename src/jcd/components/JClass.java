@@ -21,6 +21,7 @@ import javafx.scene.effect.Shadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import jcd.gui.WorkSpace;
 
 /**
@@ -40,6 +41,7 @@ public class JClass extends VBox{
     MethodBox methodBox;
     private SimpleStringProperty jParentName = new SimpleStringProperty();
     private JClass jParent;
+    private Line linkToParent;
     
     
     public JClass(double x, double y){
@@ -62,6 +64,39 @@ public class JClass extends VBox{
         this.getChildren().addAll(name, variableBox, methodBox);
         this.setOnMousePressed(pressed);
         this.setOnMouseDragged(dragged);
+    }
+    
+    public void setJParent(JClass parent){
+        jParent = parent;
+    }
+    
+    public JClass getJParent(){
+        return jParent;
+    }
+    
+    public Line setLinkToJParent(){
+        if (jParent!=null){
+            if (linkToParent != null){
+                linkToParent.setEndX(jParent.getLayoutX());
+                linkToParent.setEndY(jParent.getLayoutY());
+            }else{
+                linkToParent = new Line(this.getLayoutX(),this.getLayoutY(),jParent.getLayoutX(),jParent.getLayoutY());
+            return linkToParent;
+            }
+        }
+        return linkToParent;
+    }
+    
+    public Line getLine(){
+        return linkToParent;
+    }
+    
+    public void setJParentName(){
+        jParentName.set(jParent.getPackageName()+"."+jParent.getClassName());
+    }
+    
+    public String getJParentName(){
+        return jParentName.get();
     }
     
     public VariableBox getVariableBox(){
@@ -120,6 +155,22 @@ public class JClass extends VBox{
     public void changeTranslateY(double y){
         this.translateY = y;
     }
+    
+//    public double getJSceneX(){
+//        return this.sceneX;
+//    }
+//    
+//    public double getJSceneY(){
+//        return this.sceneY;
+//    }
+//    
+//    public double getJTranslateX(){
+//        return this.translateX;
+//    }
+//    
+//    public double getJTranslateY(){
+//        return this.translateY;
+//    }
     
     
     EventHandler pressed = new EventHandler<MouseEvent>() {

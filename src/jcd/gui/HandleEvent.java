@@ -148,22 +148,25 @@ public class HandleEvent {
     static EventHandler removeClass = new EventHandler() {
         @Override
         public void handle(Event event) {
-            wp.root.getChildren().remove(dataManager.getSelectedJC());
-            dataManager.removeClass(dataManager.getSelectedJC());
-            dataManager.setSelectedJC(null);
-            wp.addVariable.setDisable(true);
-            wp.deleteVariable.setDisable(true);
-            wp.addMethod.setDisable(true);
-            wp.deleteMethod.setDisable(true);
-            wp.variablePane.setContent(null);
-            wp.methodPane.setContent(null);
-            try {
-                wp.clearClassNameInput();
-                wp.clearPackageNameInput();
-            } catch (Exception e) {
+            if (dataManager.getSelectedJC()!=null){
+                wp.root.getChildren().removeAll(dataManager.getSelectedJC(), dataManager.getSelectedJC().getLine());
+                dataManager.removeChildrenLines();
+                dataManager.removeClass(dataManager.getSelectedJC());
+                dataManager.setSelectedJC(null);
+                wp.addVariable.setDisable(true);
+                wp.deleteVariable.setDisable(true);
+                wp.addMethod.setDisable(true);
+                wp.deleteMethod.setDisable(true);
+                wp.variablePane.setContent(null);
+                wp.methodPane.setContent(null);
+                try {
+                    wp.clearClassNameInput();
+                    wp.clearPackageNameInput();
+                   // DataManager.renewParentList();
+                    //wp.parentsList.setValue(null);
+                } catch (Exception e) {
+                }
             }
-                
-//            }
         }
     };
     

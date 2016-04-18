@@ -31,6 +31,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 import jcd.components.JVariable;
 import jcd.components.MethodBox.MTableView;
@@ -48,7 +49,7 @@ public class WorkSpace extends Application{
     final BorderPane window = new BorderPane();
     final HBox topToolbar = new HBox();
     final SplitPane splitPane = new SplitPane();
-    final Pane root = new Pane();
+    final public Pane root = new Pane();
     final ScrollPane workPane = new ScrollPane(root);
     final VBox component = new VBox();
     final HBox fileToolbar = new HBox();
@@ -69,7 +70,7 @@ public class WorkSpace extends Application{
     final DropShadow highlight = new DropShadow(20, Color.YELLOW);
     public TextField classNameInput;
     public TextField packageNameInput;
-    private ComboBox parentsList;
+    public ComboBox parentsList;
     public static boolean isSelectMode = false;
 
     @Override
