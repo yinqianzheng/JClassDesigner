@@ -237,11 +237,11 @@ public class WorkSpace extends Application{
     
     private void initToolbar(){
         initbuttons(fileToolbar, "file:./images/New.png" , 25, 25, "new", HandleEvent.newEvent, false);
-        initbuttons(fileToolbar, "file:./images/Load.png" , 25, 25, "load", HandleEvent.loadEvent, true);
+        initbuttons(fileToolbar, "file:./images/Load.png" , 25, 25, "load", HandleEvent.loadEvent, false);
         initbuttons(fileToolbar, "file:./images/Save.png" , 25, 25, "save", HandleEvent.saveEvent, true);
-        initbuttons(fileToolbar, "file:./images/SaveAs.png" , 25, 25, "save as", HandleEvent.saveAsEvent, true);
+        initbuttons(fileToolbar, "file:./images/SaveAs.png" , 25, 25, "save as", HandleEvent.saveAsEvent, false);
         initbuttons(fileToolbar, "file:./images/ExportImage.png" , 25, 25, "export photo", HandleEvent.exportPhoto, false);
-        initbuttons(fileToolbar, "file:./images/ExportCode.png" , 25, 25, "export code", HandleEvent.selectEvent, true);
+        initbuttons(fileToolbar, "file:./images/ExportCode.png" , 25, 25, "export code", HandleEvent.exportCode, false);
         initbuttons(fileToolbar, "file:./images/Exit.png" , 25, 25, "exit", HandleEvent.exitEvent, false);
        
         initbuttons(editToolbar, "file:./images/Select.png" , 35, 40, "select", HandleEvent.selectEvent, false);

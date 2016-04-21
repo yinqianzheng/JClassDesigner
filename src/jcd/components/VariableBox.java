@@ -6,6 +6,7 @@
 package jcd.components;
 
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -63,6 +64,21 @@ public class VariableBox extends VBox{
         }
         vTable.getItems().add(jv);
         this.getChildren().add(jv.getLabel());
+    }
+    
+    public void addVariable(String access, String type, String name, boolean b){
+        JVariable jv = new JVariable(access, type, name, b);
+        vTable.getItems().add(jv);
+        this.getChildren().add(jv.getLabel());
+    }
+    
+    public String toCode(){
+        ObservableList<JVariable> variables = vTable.getItems();
+        String variableCode = "";
+        for (JVariable j: variables){
+            variableCode = variableCode + "\n" + j.toCode();       
+        }    
+        return variableCode;
     }
     
     public void addVariable(JVariable jv){
@@ -139,6 +155,25 @@ public class VariableBox extends VBox{
         
         // add columns into table
         vTable.getColumns().addAll(nameColumn, typeColumn, staticColumn, accessColumn);
+    }
+    
+    @Override
+    public String toString(){
+        String str="";
+        ObservableList<JVariable> variables = vTable.getItems();
+        if (variables.isEmpty()){
+            str ="{}";
+        }else{
+            SimpleIntegerProperty i = new SimpleIntegerProperty(0);
+            for (JVariable jv : variables){
+                str = str+ "{\""+i.get()+"\":" + jv.toString() + "},\n";
+                i.set(i.get()+1);
+            }
+               str = str + "{\""+i.get()+"\":{}}\n"; 
+        }
+        // {"0":{"name":"hahahah","x":100.0,"y":100.0}},{"1":{"variables":[]}},{"2":{"methods":[]}}
+               
+        return str;
     }
     
     public class VTableView<JVariable> extends TableView{

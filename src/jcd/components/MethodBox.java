@@ -28,7 +28,9 @@ public class MethodBox extends VBox{
     private MethodBox mb;
     private SimpleBooleanProperty isContainAbstract;
     private JClass jClass;
-            
+    public TableColumn<JMethod, Boolean> staticColumn;
+    public TableColumn<JMethod, Boolean> abstractColumn;
+    
     public MethodBox(JClass jc){
         jClass = jc;
         isContainAbstract = new SimpleBooleanProperty(false);
@@ -71,6 +73,16 @@ public class MethodBox extends VBox{
         mTable.getItems().add(jm);
         this.getChildren().add(jm.getLabel());
     }
+    
+    public String toCode(){
+        ObservableList<JMethod> methods = mTable.getItems();
+        String methodCode = "";
+        for (JMethod j: methods){
+            methodCode = methodCode + "\n" + j.toCode();  
+        }  
+        return methodCode;
+    }      
+    
     
     public void addMethod(JMethod jm){
         mTable.getItems().add(jm);
@@ -146,7 +158,7 @@ public class MethodBox extends VBox{
         
         
         // create static column
-        TableColumn<JMethod, Boolean> staticColumn = new TableColumn<>("Static");
+        staticColumn = new TableColumn<>("Static");
         staticColumn.setMinWidth(50);
         staticColumn.setCellValueFactory(new PropertyValueFactory<>("isStatic"));   
         staticColumn.setCellFactory(new Callback<TableColumn<JMethod, Boolean>, TableCell<JMethod, Boolean>>() {
@@ -164,7 +176,7 @@ public class MethodBox extends VBox{
         });
         
         // create abstract column
-        TableColumn<JMethod, Boolean> abstractColumn = new TableColumn<>("Abstract");
+        abstractColumn = new TableColumn<>("Abstract");
         abstractColumn.setMinWidth(50);
         abstractColumn.setCellValueFactory(new PropertyValueFactory<>("isAbstract"));   
         abstractColumn.setCellFactory(new Callback<TableColumn<JMethod, Boolean>, TableCell<JMethod, Boolean>>() {

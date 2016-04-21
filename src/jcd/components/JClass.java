@@ -32,6 +32,7 @@ import jcd.gui.WorkSpace;
 public class JClass extends VBox{
     final private VBox name = new VBox();
     final private Label isAbstract = new Label("{abstract}");
+    final private Label isInterface = new Label("{interface}");
     private Label className = new Label("NewClass1");
     private String packageName = "";
     public double sceneX;
@@ -167,6 +168,53 @@ public class JClass extends VBox{
         for (JMethod jm : jmList){
             j.getMethodBox().addMethod(jm);
         }
+    }
+    
+    public String toCode(){
+        String code = "";
+        String isAbstractClass = "";
+        if (name.getChildren().contains(isAbstract))
+            isAbstractClass = "abstract ";
+        
+        code = "public " + isAbstractClass +"class "+className.getText()+
+                "{\n";
+        code = code + variableBox.toCode() +"\n"+ methodBox.toCode() +"\n}\n";
+        
+        return code;
+    }
+    
+    @Override
+    public String toString(){
+        String str = "";
+        str = "{\n"
+                +"\"class\":[\n"
+                
+                +"{\n"
+                +"\"0\":{\n"  
+                +"\"name\":\""+ className.getText()+"\",\n" 
+                +"\"x\":"+ (this.getLayoutX()+this.getTranslateX())+",\n"
+                +"\"y\":"+ (this.getLayoutY()+this.getTranslateY())+"\n"
+                +"}\n" 
+                +"},\n" 
+                +"{\n"
+                +"\"1\":{\n"
+                +"\"variables\":["
+                +this.getVariableBox().toString()
+                + "]"
+                +"}\n"
+                +"},\n"
+                
+                +"{\n"
+                +"\"2\":{\n"
+                +"\"methods\":["
+                // for methods
+                + "]"
+                +"}\n"
+                +"}\n"
+                +"]\n"
+                +"}\n";
+                  
+        return str;
     }
     
 }

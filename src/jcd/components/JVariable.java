@@ -25,9 +25,19 @@ public class JVariable {
     public JVariable(){
         this.variableLabel = new Label();
         this.name = new SimpleStringProperty("var1");
-        this.type = new SimpleStringProperty("void");
+        this.type = new SimpleStringProperty("int");
         this.isStatic = new SimpleBooleanProperty(false);
         this.access = new SimpleStringProperty("public");
+        
+        setActions();
+        variableLabel.setText(toText());
+    }
+    public JVariable(String access, String type, String name, boolean b){
+        this.variableLabel = new Label();
+        this.name = new SimpleStringProperty(name);
+        this.type = new SimpleStringProperty(type);
+        this.isStatic = new SimpleBooleanProperty(b);
+        this.access = new SimpleStringProperty(access);
         
         setActions();
         variableLabel.setText(toText());
@@ -114,7 +124,7 @@ public class JVariable {
             else if (access.getValue().equals("private"))
                 str = "-"+ name.get() + " : " + type.get();
             else if (access.getValue().equals("protected"))
-                str = "*"+ name.get() + " : " + type.get();
+                str = "#"+ name.get() + " : " + type.get();
             else
                 str = name.get() + " : " + type.get();
         }else{
@@ -130,6 +140,23 @@ public class JVariable {
         
         return str;
     }
-  
     
+    // generate code for the variable
+    public String toCode(){
+        String isStaticVariable = "";
+        if (isStatic.get()==true)
+            isStaticVariable = "static ";
+        String code = "";
+        code = access.get()+" "+isStaticVariable+ type.get()+" "+name.get()+";";
+        return code;
+    }
+    
+    @Override
+    public String toString(){
+        String str = "{\n\"name\":\""+name.get()+"\",\n"
+                + "\"type\":\""+type.get()+"\",\n"
+                + "\"access\":\""+access.get()+"\",\n"
+                + "\"isStatic\":"+isStatic.get()+"\n}";
+        return str;
+    }
 }

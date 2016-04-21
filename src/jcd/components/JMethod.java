@@ -5,6 +5,8 @@
  */
 package jcd.components;
 
+import java.util.HashMap;
+import java.util.Map;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -28,13 +30,27 @@ public class JMethod {
     private SimpleStringProperty arg3;
     private Label methodLabel;
     private MethodBox mb;
+    public static HashMap<String,Object> returnMap;
+    static{
+        returnMap = new HashMap();
+        returnMap.put("int", 0);
+        returnMap.put("double", 0);
+        returnMap.put("boolean", true);
+        returnMap.put("short", 0);
+        returnMap.put("long", 0);
+        returnMap.put("String", "\"\" ");
+        returnMap.put("float", 0);
+        returnMap.put("char", " '0' ");
+        returnMap.put("byte", 0);
+    }
+    
     public static final Font ITALIC_FONT = Font.font(
                     "Serif",
                     FontPosture.ITALIC,
                     Font.getDefault().getSize()
                 );
     
-    public JMethod(MethodBox mbox){
+    public JMethod(MethodBox mbox){  
         this.mb = mbox;
         this.methodLabel = new Label();
         this.name = new SimpleStringProperty("method1");
@@ -140,17 +156,23 @@ public class JMethod {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
                 methodLabel.setText(toText());
+                if (isStatic.get() == true)
+                    mb.abstractColumn.setEditable(false);
+                else
+                    mb.abstractColumn.setEditable(true);
             }
         });
         
         isAbstract.addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
-                if (isAbstract.get() == true)
+                if (isAbstract.get() == true){
                     methodLabel.setFont(ITALIC_FONT);
-                else
+                    mb.staticColumn.setEditable(false);
+                }else{
                     methodLabel.setFont(Font.getDefault());
-                
+                    mb.staticColumn.setEditable(true);
+                }
                 mb.checkAbstractMethod();
             }
         });
@@ -225,5 +247,42 @@ public class JMethod {
     }
     
     
+    public String toCode(){
+        String isStaticMethod = "";
+        String args= "";
+        if (!arg1.get().equals("")){
+            args =  arg1.get() + " arg1";
+            if (!arg2.get().equals("")||!arg3.get().equals(""))
+                args = args + ", ";
+        }
+        if (!arg2.get().equals("")){
+            args = args + arg2.get() + " arg2";
+            if (!arg3.get().equals(""))
+                args = args + ", ";
+        }
+        if (!arg3.get().equals(""))
+            args = args +arg3.get()  + " arg3";
+        
+        
+        if (isStatic.get()==true)
+            isStaticMethod = "static ";
+        
+        String initValue = "";
+        if (returnMap.containsKey(type.get()))
+            initValue = String.valueOf(returnMap.get(type.get()));
+        else
+            initValue = "new "+type.get()+"()";
+        
+        String code = "";
+        if (isAbstract.get()==true){
+            code = access.get()+" abstract "+ type.get()+" "+name.get()+"();";
+        }else{
+            code = access.get()+" "+isStaticMethod+ type.get()+" "+name.get()+"("+ args +"){\n";
+            if (!type.get().equals("void"))
+                code = code + " "+type.get()+" value = " +initValue +";\n  return value;";
+            code = code + "\n}\n";
+        }
+        return code;
+    }
     
 }

@@ -7,7 +7,12 @@ package jcd.gui;
 
 import static java.awt.SystemColor.window;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.Event;
@@ -20,7 +25,9 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javax.imageio.ImageIO;
+import javax.json.JsonObject;
 import jcd.components.JClass;
+import jcd.controller.JFileManager;
 import jcd.data.DataManager;
 
 /**
@@ -33,7 +40,7 @@ public class HandleEvent {
     private static WorkSpace wp;
     private static DataManager dataManager;
     private HandleEvent() {}
-    
+     
     public static HandleEvent getInstance(WorkSpace workspace){
         if(obj==null){
             obj = new HandleEvent();
@@ -63,7 +70,13 @@ public class HandleEvent {
     static EventHandler loadEvent = new EventHandler() {
         @Override
         public void handle(Event event) {
-            System.out.println("load");
+            try {
+                JsonObject jsonObj = JFileManager.loadFile(wp.primaryStageWindow);
+                JFileManager.createJObject(jsonObj);
+
+            } catch (IOException ex) {
+                Logger.getLogger(HandleEvent.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     };
     
@@ -77,7 +90,7 @@ public class HandleEvent {
     static  EventHandler saveAsEvent = new EventHandler() {
         @Override
         public void handle(Event event) {
-            System.out.println("saveAs");
+            JFileManager.saveAs(DataManager.getSelectedJC(), wp.primaryStageWindow);
         }
     };
     
@@ -102,6 +115,36 @@ public class HandleEvent {
                 }
             }catch(Exception ex){
                 }
+        }
+    };
+    
+     
+    static EventHandler exportCode = new EventHandler() {
+        @Override
+        public void handle(Event event) {
+            
+            FileChooser.ExtensionFilter extFilter = 
+                        new FileChooser.ExtensionFilter("TEXT files (*.java)", "*.java");
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setInitialFileName(DataManager.getSelectedJCName()+".java");
+            fileChooser.getExtensionFilters().add(extFilter);
+            fileChooser.setTitle("Save Work");
+        
+            File file = fileChooser.showSaveDialog(wp.primaryStageWindow);
+            File jfile = new File(file.getPath());
+            
+            
+            jfile = new File(jfile.getPath());
+            
+            PrintWriter pw;
+            try {
+                pw = new PrintWriter(jfile);
+                pw.write(DataManager.getSelectedJC().toCode());
+                pw.close();
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(HandleEvent.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
         }
     };
     
@@ -158,7 +201,25 @@ public class HandleEvent {
                     }
                 }
                
-                wp.root.getChildren().add(jc);
+                addToScreen(jc);
+//                wp.root.getChildren().add(jc);
+//                dataManager.addClassToList(jc);
+//                dataManager.setSelectedJC(jc);
+//                wp.clearPackageNameInput();
+//                wp.setClassNameInput(jc.getClassName());
+//                wp.variablePane.setContent(jc.getVariableBox().getVariableTable());
+//                wp.methodPane.setContent(jc.getMethodBox().getMethodTable());
+//                if (dataManager.getSelectedJC()!=null)
+//                    wp.addVariable.setDisable(false);
+//                    wp.deleteVariable.setDisable(false);
+//                    wp.addMethod.setDisable(false);
+//                    wp.deleteMethod.setDisable(false);
+            }
+        }
+    };
+    
+    public static void addToScreen(JClass jc){
+                        wp.root.getChildren().add(jc);
                 dataManager.addClassToList(jc);
                 dataManager.setSelectedJC(jc);
                 wp.clearPackageNameInput();
@@ -170,9 +231,7 @@ public class HandleEvent {
                     wp.deleteVariable.setDisable(false);
                     wp.addMethod.setDisable(false);
                     wp.deleteMethod.setDisable(false);
-            }
-        }
-    };
+    }
     
     static EventHandler removeClass = new EventHandler() {
         @Override
