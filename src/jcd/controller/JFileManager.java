@@ -95,13 +95,11 @@ public class JFileManager {
         JClass j;
         JsonObject temp = ((JsonObject)((JsonObject)((JsonArray)jObj.get("class")).get(0)).get("0"));
         JsonObject variableList = ((JsonObject)((JsonObject)((JsonArray)jObj.get("class")).get(1)).get("1"));
-        System.out.println(variableList);
         JsonObject tempvList;
-//        variableList = ((JsonObject)((JsonObject)((JsonArray)variableList.get("variables")).get(0)).get("0"));
-//        System.out.println(variableList);
-//        JsonObject methodList = ((JsonObject)((JsonObject)((JsonArray)jObj.get("class")).get(2)).get("3"));
-//        methodList = ((JsonObject)((JsonObject)((JsonArray)methodList.get("methods")).get(0)).get("0"));
-//        
+
+        JsonObject methodList = ((JsonObject)((JsonObject)((JsonArray)jObj.get("class")).get(2)).get("2"));
+        JsonObject tempmList;
+        
 
         
         double x = Double.parseDouble(temp.get("x").toString());
@@ -111,31 +109,24 @@ public class JFileManager {
         j = new JClass(x, y);
         j.setClassName(name);
         
-        for (int i = 0; i<100; i++){
-            
+        for (int i = 0; i<100; i++){   
             tempvList = ((JsonObject)((JsonObject)((JsonArray)variableList.get("variables")).get(i)).get(String.valueOf(i)));
-            System.out.println("9876jghhj"+variableList.get("name"));
             if (tempvList.get("name")==null)
                 break;
             else
                 createVariable(tempvList, j);
-        }
-//        String varName = variableList.get("name").toString();
-//        System.out.println(varName);
-//        varName = varName.substring(1, varName.length()-1);
-//        System.out.println(varName);
-//        String varType = variableList.get("type").toString();
-//        varType = varType.substring(1, varType.length()-1);
-//        
-//        String varAccess = variableList.get("access").toString();
-//        varAccess = varAccess.substring(1, varAccess.length()-1);
-//        
-//        String varStatic = variableList.get("isStatic").toString();
-//        
-//        System.out.println(variableList.get("isStatic"));
-//        System.out.println(Boolean.parseBoolean(varStatic));
-//        j.getVariableBox().addVariable(varAccess, varType, varName, Boolean.parseBoolean(varStatic));
-//        createVariable(variableList, j);
+        }  
+        
+//        for (int i = 0; i<100; i++){   
+//        tempmList = ((JsonObject)((JsonObject)((JsonArray)methodList.get("methods")).get(i)).get(String.valueOf(i)));
+//
+//        if (tempmList.get("name")==null)
+//                break;
+//            else
+//                createMethod(tempmList, j);
+//        }  
+        
+        
         
         HandleEvent.addToScreen(j);
     }
@@ -147,15 +138,16 @@ public class JFileManager {
         System.out.println(varName);
         String varType = variableList.get("type").toString();
         varType = varType.substring(1, varType.length()-1);
-        
         String varAccess = variableList.get("access").toString();
         varAccess = varAccess.substring(1, varAccess.length()-1);
-        
         String varStatic = variableList.get("isStatic").toString();
-        
         System.out.println(variableList.get("isStatic"));
         System.out.println(Boolean.parseBoolean(varStatic));
         j.getVariableBox().addVariable(varAccess, varType, varName, Boolean.parseBoolean(varStatic));
+        
+    }
+    
+    private static void createMethod(JsonObject methodList, JClass j){
         
     }
 }
