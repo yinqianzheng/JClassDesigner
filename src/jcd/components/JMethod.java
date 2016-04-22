@@ -64,6 +64,22 @@ public class JMethod {
         setActions();
         methodLabel.setText(toText());
     }
+    
+    public JMethod(MethodBox mbox,  String methodAccess, String methodType, String methodName, boolean s,
+            boolean a, String arg1, String arg2, String arg3){  
+        this.mb = mbox;
+        this.methodLabel = new Label();
+        this.name = new SimpleStringProperty(methodName);
+        this.type = new SimpleStringProperty(methodType);
+        this.isStatic = new SimpleBooleanProperty(s);
+        this.isAbstract = new SimpleBooleanProperty(a);
+        this.access = new SimpleStringProperty(methodAccess);
+        this.arg1 = new SimpleStringProperty(arg1);
+        this.arg2 = new SimpleStringProperty(arg2);
+        this.arg3 = new SimpleStringProperty(arg3);
+        setActions();
+        methodLabel.setText(toText());
+    }
 
     
     public Label getLabel(){
@@ -283,6 +299,22 @@ public class JMethod {
             code = code + "\n}\n";
         }
         return code;
+    }
+    
+    @Override
+    public String toString(){
+        String str =  "{\n\"name\":\""+name.get()+"\",\n"
+                + "\"type\":\""+type.get()+"\",\n"
+                + "\"access\":\""+access.get()+"\",\n"
+                + "\"isStatic\":"+isStatic.get()+",\n"
+                + "\"isAbstract\":"+isAbstract.get()+",\n"
+                + "\"arg1\":\""+arg1.get()+"\",\n"
+                + "\"arg2\":\""+arg2.get()+"\",\n"
+                + "\"arg3\":\""+arg3.get()+"\"\n"
+                + "}";
+        
+        
+        return str;
     }
     
 }

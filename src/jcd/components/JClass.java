@@ -207,7 +207,7 @@ public class JClass extends VBox{
                 +"{\n"
                 +"\"2\":{\n"
                 +"\"methods\":["
-                // for methods
+                +this.getMethodBox().toString()
                 + "]"
                 +"}\n"
                 +"}\n"

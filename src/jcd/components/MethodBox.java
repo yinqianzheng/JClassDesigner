@@ -6,6 +6,7 @@
 package jcd.components;
 
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -70,6 +71,13 @@ public class MethodBox extends VBox{
                 break;
             }
         }
+        mTable.getItems().add(jm);
+        this.getChildren().add(jm.getLabel());
+    }
+    
+    public void addMethod(String methodAccess, String methodType, String methodName, boolean s,
+            boolean a, String arg1, String arg2, String arg3){
+        JMethod jm = new JMethod(mb, methodAccess, methodType, methodName, s, a, arg1, arg2, arg3);
         mTable.getItems().add(jm);
         this.getChildren().add(jm.getLabel());
     }
@@ -229,6 +237,23 @@ public class MethodBox extends VBox{
         
         // add columns into table
         mTable.getColumns().addAll(nameColumn, returnColumn, staticColumn, abstractColumn, accessColumn, arg1Column, arg2Column, arg3Column);
+    }
+    
+    @Override
+    public String toString(){
+        String str="";
+        ObservableList<JMethod> methods = mTable.getItems();
+        if (methods.isEmpty()){
+            str ="{}";
+        }else{
+            SimpleIntegerProperty i = new SimpleIntegerProperty(0);
+            for (JMethod jm : methods){
+                str = str+ "{\""+i.get()+"\":" + jm.toString() + "},\n";
+                i.set(i.get()+1);
+            }
+               str = str + "{\""+i.get()+"\":{}}\n"; 
+        }               
+        return str;
     }
     
     public class MTableView<JVariable> extends TableView{
