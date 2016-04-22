@@ -95,9 +95,9 @@ public class HandleEvent {
         public void handle(Event event) {
             System.out.println("save");
             if (DataManager.hasDirectory.get())
-                JFileManager.saveData(DataManager.getSelectedJC(), DataManager.getDirectory());
+                JFileManager.saveData(DataManager.getInstance(obj), DataManager.getDirectory());
             else
-                JFileManager.saveAs(DataManager.getSelectedJC(), wp.primaryStageWindow);
+                JFileManager.saveAs(DataManager.getInstance(obj), wp.primaryStageWindow);
             DataManager.setSaved(true);
         }
     };
@@ -105,7 +105,7 @@ public class HandleEvent {
     static  EventHandler saveAsEvent = new EventHandler() {
         @Override
         public void handle(Event event) {
-            JFileManager.saveAs(DataManager.getSelectedJC(), wp.primaryStageWindow);
+            JFileManager.saveAs(DataManager.getInstance(obj), wp.primaryStageWindow);
             DataManager.setSaved(true);
         }
     };

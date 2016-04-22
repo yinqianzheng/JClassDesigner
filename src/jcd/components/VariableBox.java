@@ -171,7 +171,6 @@ public class VariableBox extends VBox{
             }
                str = str + "{\""+i.get()+"\":{}}\n"; 
         }
-        // {"0":{"name":"hahahah","x":100.0,"y":100.0}},{"1":{"variables":[]}},{"2":{"methods":[]}}
                
         return str;
     }

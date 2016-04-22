@@ -7,6 +7,7 @@ package jcd.data;
 
 import java.util.LinkedList;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
@@ -118,7 +119,7 @@ public class DataManager {
         }
         return dm;
     }
-
+    
     public static TableView<JClass> getJClassList(){
         return jList;
     }
@@ -173,7 +174,8 @@ public class DataManager {
                 if (selectedJC!=null)
                     preSelectedJC = selectedJC;
                 selectedJC = ((JClass)click.getSource());
-            
+                jList.getItems().remove(selectedJC);
+                jList.getItems().add(selectedJC);
                 selectedJC.setEffect(highlight);   
                 if (preSelectedJC!=null&&preSelectedJC!=selectedJC)
                     preSelectedJC.setEffect(null);
@@ -243,4 +245,22 @@ public class DataManager {
         preSelectedJC = null;
     }
     
+    @Override
+    public String toString(){
+        String str = "";
+               
+        if (jList.getItems().isEmpty()){
+            str ="{}";
+        }else{
+            str ="{\n"
+                +"\"classes\":[\n";
+            SimpleIntegerProperty i = new SimpleIntegerProperty(0);
+            for (JClass jc : jList.getItems()){
+                str = str+ "{\""+i.get()+"\":" + jc.toString() + "},\n";
+                i.set(i.get()+1);
+            }
+               str = str + "{\""+i.get()+"\":{}}]}\n"; 
+        }          
+        return str;
+    }
 }

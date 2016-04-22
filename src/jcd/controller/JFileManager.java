@@ -14,6 +14,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -84,7 +86,7 @@ public class JFileManager {
         JsonObject jsonList = createJsonObject(file.getPath());
         DataManager.hasDirectory.set(true);
         DataManager.setDirectory(file.getAbsolutePath());
-        return  jsonList;
+        return  jsonList;    
     }
     
     private static JsonObject createJsonObject(String jsonFilePath) throws IOException {
@@ -95,8 +97,19 @@ public class JFileManager {
 	is.close();
 	return json;
         }
-    
     public static void createClasses(JsonObject jObj){
+        JsonObject classes;
+        for (int i = 0; i<100; i++){   
+            classes = ((JsonObject)((JsonObject)((JsonArray)jObj.get("classes")).get(i)).get(String.valueOf(i)));
+            if (classes==null)
+                break;
+            if (classes.get("class")==null)
+                break;
+            else
+                createClass(classes);
+        }
+    }
+    public static void createClass(JsonObject jObj){
         JClass j;
         JsonObject temp = ((JsonObject)((JsonObject)((JsonArray)jObj.get("class")).get(0)).get("0"));
         JsonObject variableList = ((JsonObject)((JsonObject)((JsonArray)jObj.get("class")).get(1)).get("1"));
@@ -116,6 +129,7 @@ public class JFileManager {
         j.setClassName(name);
         j.setPackageName(packageName);
         j.setAbstract(isAbstract);
+        
         // create variables
         for (int i = 0; i<100; i++){   
             tempvList = ((JsonObject)((JsonObject)((JsonArray)variableList.get("variables")).get(i)).get(String.valueOf(i)));
