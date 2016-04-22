@@ -47,10 +47,14 @@ public class JFileManager {
         fileChooser.getExtensionFilters().add(extFilter);
         fileChooser.setTitle("Save Work");
         File file = fileChooser.showSaveDialog(window);
-        if (saveData(ob.toString(), file.getPath()))
+        
+        if (saveData(ob.toString(), file.getPath())){
+            DataManager.hasDirectory.set(true);
+            DataManager.setDirectory(file.getAbsolutePath());
             return true;
-        else 
+        }else{ 
             return false;
+        }
     }
     
     // save file to the target location
@@ -77,12 +81,13 @@ public class JFileManager {
         fileChooser.getExtensionFilters().add(extFilter);
         fileChooser.setTitle("Load Work");
         File file = fileChooser.showOpenDialog(window);
-        JsonObject jsonList = loadJSONFile(file.getPath());
-
+        JsonObject jsonList = createJsonObject(file.getPath());
+        DataManager.hasDirectory.set(true);
+        DataManager.setDirectory(file.getAbsolutePath());
         return  jsonList;
     }
     
-    private static JsonObject loadJSONFile(String jsonFilePath) throws IOException {
+    private static JsonObject createJsonObject(String jsonFilePath) throws IOException {
 	InputStream is = new FileInputStream(jsonFilePath);
 	JsonReader jsonReader = Json.createReader(is);
 	JsonObject json = jsonReader.readObject();
@@ -91,7 +96,7 @@ public class JFileManager {
 	return json;
         }
     
-    public static void createJObject(JsonObject jObj){
+    public static void createClasses(JsonObject jObj){
         JClass j;
         JsonObject temp = ((JsonObject)((JsonObject)((JsonArray)jObj.get("class")).get(0)).get("0"));
         JsonObject variableList = ((JsonObject)((JsonObject)((JsonArray)jObj.get("class")).get(1)).get("1"));
@@ -114,6 +119,8 @@ public class JFileManager {
         // create variables
         for (int i = 0; i<100; i++){   
             tempvList = ((JsonObject)((JsonObject)((JsonArray)variableList.get("variables")).get(i)).get(String.valueOf(i)));
+            if (tempvList==null)
+                break;
             if (tempvList.get("name")==null)
                 break;
             else
@@ -123,11 +130,12 @@ public class JFileManager {
         // create methods
         for (int i = 0; i<100; i++){   
         tempmList = ((JsonObject)((JsonObject)((JsonArray)methodList.get("methods")).get(i)).get(String.valueOf(i)));
-
+        if (tempmList==null)
+            break;
         if (tempmList.get("name")==null)
-                break;
-            else
-                createMethod(tempmList, j);
+            break;
+        else
+            createMethod(tempmList, j);
         }  
 
         HandleEvent.addToScreen(j);

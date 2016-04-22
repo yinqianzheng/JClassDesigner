@@ -5,6 +5,7 @@
  */
 package jcd.gui;
 
+import java.util.HashMap;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.beans.value.ChangeListener;
@@ -74,6 +75,7 @@ public class WorkSpace extends Application{
     public ComboBox parentsList;
     public static boolean isSelectMode = false;
     public static Window primaryStageWindow;
+    public HashMap<String, Button> buttonMap = new HashMap<>();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -232,6 +234,7 @@ public class WorkSpace extends Application{
         bt.setOnAction(e);
         bt.setDisable(tf);
         toolbar.getChildren().add(bt);
+        buttonMap.put(toolTip, bt);
     }
     
     
@@ -240,8 +243,8 @@ public class WorkSpace extends Application{
         initbuttons(fileToolbar, "file:./images/Load.png" , 25, 25, "load", HandleEvent.loadEvent, false);
         initbuttons(fileToolbar, "file:./images/Save.png" , 25, 25, "save", HandleEvent.saveEvent, true);
         initbuttons(fileToolbar, "file:./images/SaveAs.png" , 25, 25, "save as", HandleEvent.saveAsEvent, false);
-        initbuttons(fileToolbar, "file:./images/ExportImage.png" , 25, 25, "export photo", HandleEvent.exportPhoto, false);
-        initbuttons(fileToolbar, "file:./images/ExportCode.png" , 25, 25, "export code", HandleEvent.exportCode, false);
+        initbuttons(fileToolbar, "file:./images/ExportImage.png" , 25, 25, "export photo", HandleEvent.exportPhoto, true);
+        initbuttons(fileToolbar, "file:./images/ExportCode.png" , 25, 25, "export code", HandleEvent.exportCode, true);
         initbuttons(fileToolbar, "file:./images/Exit.png" , 25, 25, "exit", HandleEvent.exitEvent, false);
        
         initbuttons(editToolbar, "file:./images/Select.png" , 35, 40, "select", HandleEvent.selectEvent, false);

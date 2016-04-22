@@ -20,6 +20,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
@@ -59,11 +60,16 @@ public class HandleEvent {
     static EventHandler newEvent = new EventHandler() {
         @Override
         public void handle(Event event) {
-           wp.reload();
+            if (!DataManager.isSaved.get())
+                if (!promoteUserToSave())
+                    return;
+            wp.reload();
+            DataManager.hasDirectory.set(false);
             Alert imformDialog = new  Alert(Alert.AlertType.INFORMATION);
             imformDialog.setTitle("New Work!");
             imformDialog.setHeaderText("New work space is ready for editting!");          
             Optional<ButtonType> result = imformDialog.showAndWait();
+            DataManager.setSaved(true);
         }
     };
     
@@ -71,10 +77,13 @@ public class HandleEvent {
         @Override
         public void handle(Event event) {
             try {
+                if (!DataManager.isSaved.get())
+                    if (!promoteUserToSave())
+                        return;
                 wp.reload();
                 JsonObject jsonObj = JFileManager.loadFile(wp.primaryStageWindow);
-                JFileManager.createJObject(jsonObj);
-
+                JFileManager.createClasses(jsonObj);
+                DataManager.setSaved(true);
             } catch (IOException ex) {
                 Logger.getLogger(HandleEvent.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -85,6 +94,11 @@ public class HandleEvent {
         @Override
         public void handle(Event event) {
             System.out.println("save");
+            if (DataManager.hasDirectory.get())
+                JFileManager.saveData(DataManager.getSelectedJC(), DataManager.getDirectory());
+            else
+                JFileManager.saveAs(DataManager.getSelectedJC(), wp.primaryStageWindow);
+            DataManager.setSaved(true);
         }
     };
     
@@ -92,6 +106,7 @@ public class HandleEvent {
         @Override
         public void handle(Event event) {
             JFileManager.saveAs(DataManager.getSelectedJC(), wp.primaryStageWindow);
+            DataManager.setSaved(true);
         }
     };
     
@@ -152,6 +167,9 @@ public class HandleEvent {
     static EventHandler exitEvent = new EventHandler() {
         @Override
         public void handle(Event event) {
+            if (!DataManager.isSaved.get())
+                if (!promoteUserToSave())
+                    return;
             System.exit(0);
         }
     };
@@ -203,18 +221,8 @@ public class HandleEvent {
                 }
                
                 addToScreen(jc);
-//                wp.root.getChildren().add(jc);
-//                dataManager.addClassToList(jc);
-//                dataManager.setSelectedJC(jc);
-//                wp.clearPackageNameInput();
-//                wp.setClassNameInput(jc.getClassName());
-//                wp.variablePane.setContent(jc.getVariableBox().getVariableTable());
-//                wp.methodPane.setContent(jc.getMethodBox().getMethodTable());
-//                if (dataManager.getSelectedJC()!=null)
-//                    wp.addVariable.setDisable(false);
-//                    wp.deleteVariable.setDisable(false);
-//                    wp.addMethod.setDisable(false);
-//                    wp.deleteMethod.setDisable(false);
+                DataManager.setSaved(false);
+                System.out.println("add to screen");
             }
         }
     };
@@ -252,7 +260,6 @@ public class HandleEvent {
                 try {
                     wp.clearClassNameInput();
                     wp.clearPackageNameInput();
-                   // DataManager.renewParentList();
                    wp.parentsList.setValue(null);
                 } catch (Exception e) {
                 }
@@ -272,18 +279,21 @@ public class HandleEvent {
                     }           
             }    
             DataManager.getSelectedJC().setClassName(str);
+            DataManager.setSaved(false);
         } catch (Exception e) {
         }
         wp.classNameInput.setStyle(null);
         DataManager.renewParentList();
         wp.parentsList.setValue(DataManager.getSelectedJC().getJParent().getPackageName()+
                 "."+DataManager.getSelectedJC().getJParent().getClassName());
+        
         return false;
     };
     
     public static void changePackageName (String str){
         try {
             DataManager.getSelectedJC().setPackageName(str);
+            DataManager.setSaved(false);
         } catch (Exception e) {
         }
     };
@@ -294,6 +304,7 @@ public class HandleEvent {
         @Override
         public void handle(Event event) {
             dataManager.getSelectedJC().getVariableBox().addVariable();
+            DataManager.setSaved(false);
         }
     };
     
@@ -302,6 +313,7 @@ public class HandleEvent {
         public void handle(Event event) {
             try {
                 dataManager.getSelectedJC().getVariableBox().removeVariable();
+                DataManager.setSaved(false);
             } catch (Exception e) {
             }
         }
@@ -311,6 +323,7 @@ public class HandleEvent {
         @Override
         public void handle(Event event) {
             dataManager.getSelectedJC().getMethodBox().addMethod();
+            DataManager.setSaved(false);
         }
     };
     
@@ -319,8 +332,34 @@ public class HandleEvent {
         public void handle(Event event) {
             try {
                 dataManager.getSelectedJC().getMethodBox().removeMethod();
+                DataManager.setSaved(false);
             } catch (Exception e) {
             }
         }
     };
+    
+    static boolean promoteUserToSave(){
+        Alert yesNoDialog = new  Alert(Alert.AlertType.CONFIRMATION);
+            yesNoDialog.setTitle("Unsaved work!");
+            yesNoDialog.setHeaderText("Do you want to save the unsaved work?");
+            ButtonType buttonTypeYes = new ButtonType("YES");
+            ButtonType buttonTypeNo = new ButtonType("NO");
+            ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+            yesNoDialog.getButtonTypes().setAll(buttonTypeYes, buttonTypeNo, buttonTypeCancel);
+            Optional<ButtonType> result = yesNoDialog.showAndWait();
+            if (result.get() == buttonTypeYes) {
+                if (DataManager.hasDirectory.get())
+                    JFileManager.saveData(DataManager.getSelectedJC(), DataManager.getDirectory());
+                else
+                    JFileManager.saveAs(DataManager.getSelectedJC(), wp.primaryStageWindow);
+                return true;
+            }else if (result.get() == buttonTypeNo){
+                return true;
+            }else{
+                return false;
+            }
+                
+    }
+    
+    
 }

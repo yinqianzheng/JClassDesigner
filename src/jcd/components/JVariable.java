@@ -10,6 +10,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Label;
+import jcd.data.DataManager;
 
 /**
  *
@@ -53,6 +54,7 @@ public class JVariable {
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                 // update label (name)
                 variableLabel.setText(toText());
+                DataManager.setSaved(false);
             }
         });
         
@@ -61,6 +63,7 @@ public class JVariable {
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                 // update label (type)
                 variableLabel.setText(toText());
+                DataManager.setSaved(false);
             }
         });
         
@@ -68,6 +71,7 @@ public class JVariable {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
                 variableLabel.setText(toText());
+                DataManager.setSaved(false);
             }
         });
         
@@ -76,6 +80,7 @@ public class JVariable {
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                 // update label (acess)
                 variableLabel.setText(toText());
+                DataManager.setSaved(false);
             }
         });
     }

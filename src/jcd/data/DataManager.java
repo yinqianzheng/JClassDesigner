@@ -6,6 +6,7 @@
 package jcd.data;
 
 import java.util.LinkedList;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
@@ -33,12 +34,22 @@ public class DataManager {
     private static JClass selectedJC;
     final private static ComboBox<String> parentList = new ComboBox<String>();
     final private static DropShadow highlight = new DropShadow(20, Color.YELLOW);
+    public static SimpleBooleanProperty isSaved = new SimpleBooleanProperty(true);
+    public static SimpleBooleanProperty hasDirectory = new SimpleBooleanProperty(false);
+    private static String directory = "";
 
     private DataManager() {
+        // renew parent list
         jList.getItems().addListener(new ListChangeListener<JClass>() {
             @Override
             public void onChanged(ListChangeListener.Change<? extends JClass> change) {
                 renewParentList();
+                HandleEvent.getWorkPane().buttonMap.get("export code").setDisable(jList.getItems().isEmpty());
+                HandleEvent.getWorkPane().buttonMap.get("export photo").setDisable(jList.getItems().isEmpty());
+                HandleEvent.getWorkPane().buttonMap.get("save as").setDisable(jList.getItems().isEmpty());
+                HandleEvent.getWorkPane().buttonMap.get("save").setDisable(jList.getItems().isEmpty());
+                if (jList.getItems().isEmpty())
+                    setSaved(true);
             }
         });
         
@@ -65,6 +76,13 @@ public class DataManager {
                 } catch (Exception e) {
                 }
                 
+            }
+        });
+        
+        isSaved.addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
+                    HandleEvent.getWorkPane().buttonMap.get("save").setDisable(isSaved.get());
             }
         });
     }
@@ -134,6 +152,13 @@ public class DataManager {
         return selectedJC.getClassName();
     }
     
+    public static void setDirectory(String dir){
+        directory = dir;
+    }
+    
+    public static String getDirectory(){
+        return directory;
+    }
     
     private static HandleEvent getHandler(){
         return handler;
@@ -204,9 +229,14 @@ public class DataManager {
                     }
                 }
             }
+            DataManager.setSaved(false);
         }
     };
-
+    
+    public static void setSaved(boolean b){
+        isSaved.set(b);
+    }
+    
     public static void clear(){
         jList.getItems().clear();
         selectedJC = null;

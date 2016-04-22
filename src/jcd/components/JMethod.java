@@ -14,6 +14,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Label;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
+import jcd.data.DataManager;
 
 /**
  *
@@ -159,6 +160,7 @@ public class JMethod {
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                 // update label (name)
                 methodLabel.setText(toText());
+                DataManager.setSaved(false);
             }
         });
         
@@ -167,6 +169,7 @@ public class JMethod {
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                 // update label (type)
                 methodLabel.setText(toText());
+                DataManager.setSaved(false);
             }
         });
         
@@ -174,6 +177,7 @@ public class JMethod {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
                 methodLabel.setText(toText());
+                DataManager.setSaved(false);
                 if (isStatic.get() == true)
                     isAbstract.set(false);
             }
@@ -188,6 +192,7 @@ public class JMethod {
                 }else{
                     methodLabel.setFont(Font.getDefault());
                 }
+                DataManager.setSaved(false);
                 mb.checkAbstractMethod();
             }
         });
@@ -197,6 +202,7 @@ public class JMethod {
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                 // update label (acess)
                 methodLabel.setText(toText());
+                DataManager.setSaved(false);
             }
         });
         
@@ -205,6 +211,7 @@ public class JMethod {
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                 // update label (acess)
                 methodLabel.setText(toText());
+                DataManager.setSaved(false);
             }
         });
         
@@ -213,6 +220,7 @@ public class JMethod {
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                 // update label (acess)
                 methodLabel.setText(toText());
+                DataManager.setSaved(false);
             }
         });
         
@@ -221,6 +229,7 @@ public class JMethod {
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                 // update label (acess)
                 methodLabel.setText(toText());
+                DataManager.setSaved(false);
             }
         });
     }
