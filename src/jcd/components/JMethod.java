@@ -203,6 +203,8 @@ public class JMethod {
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                 // update label (acess)
                 methodLabel.setText(toText());
+                if (t1.equals("private"))
+                    isAbstract.set(false);
                 DataManager.setSaved(false);
             }
         });
