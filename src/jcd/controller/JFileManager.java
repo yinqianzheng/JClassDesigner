@@ -116,15 +116,18 @@ public class JFileManager {
             else
                 createVariable(tempvList, j);
         }  
+//        
+//        tempmList = ((JsonObject)((JsonObject)((JsonArray)methodList.get("methods")).get(0)).get("0"));
+//        System.out.println(tempmList);
         
-//        for (int i = 0; i<100; i++){   
-//        tempmList = ((JsonObject)((JsonObject)((JsonArray)methodList.get("methods")).get(i)).get(String.valueOf(i)));
-//
-//        if (tempmList.get("name")==null)
-//                break;
-//            else
-//                createMethod(tempmList, j);
-//        }  
+        for (int i = 0; i<100; i++){   
+        tempmList = ((JsonObject)((JsonObject)((JsonArray)methodList.get("methods")).get(i)).get(String.valueOf(i)));
+
+        if (tempmList.get("name")==null)
+                break;
+            else
+                createMethod(tempmList, j);
+        }  
         
         
         
@@ -148,6 +151,36 @@ public class JFileManager {
     }
     
     private static void createMethod(JsonObject methodList, JClass j){
+        String methodName = methodList.get("name").toString();
+        System.out.println(methodName);
+        methodName = methodName.substring(1, methodName.length()-1);
+        System.out.println(methodName);
+        String methodType = methodList.get("type").toString();
+        methodType = methodType.substring(1, methodType.length()-1);
+        String arg1 = methodList.get("arg1").toString();
+        if (arg1.equals("\"\""))
+            arg1 = "";
+        else
+            arg1 = methodType.substring(1, methodType.length()-1);
+        System.out.println(arg1);
+        String arg2 = methodList.get("arg2").toString();
+        if (arg2.equals("\"\""))
+            arg2 = "";
+        else
+            arg2 = methodType.substring(1, methodType.length()-1);
+        System.out.println(arg2);
+        String arg3 = methodList.get("arg3").toString();
+        if (arg3.equals("\"\""))
+            arg3 = "";
+        else
+            arg3 = methodType.substring(1, methodType.length()-1);
+        System.out.println(arg3);
+        String methodAccess = methodList.get("access").toString();
+        methodAccess = methodAccess.substring(1, methodAccess.length()-1);
+        String methodStatic = methodList.get("isStatic").toString();
+        String methodAbstract = methodList.get("isAbstract").toString();
+        j.getMethodBox().addMethod(methodAccess, methodType, methodName, Boolean.parseBoolean(methodStatic),
+                Boolean.parseBoolean(methodAbstract), arg1, arg2, arg3);
         
     }
 }

@@ -71,6 +71,7 @@ public class HandleEvent {
         @Override
         public void handle(Event event) {
             try {
+                wp.reload();
                 JsonObject jsonObj = JFileManager.loadFile(wp.primaryStageWindow);
                 JFileManager.createJObject(jsonObj);
 
