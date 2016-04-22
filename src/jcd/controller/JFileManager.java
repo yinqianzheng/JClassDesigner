@@ -76,7 +76,7 @@ public class JFileManager {
     }
     
     
-    public static JsonObject loadFile(Window window) throws IOException{
+    public static String getDirectory(Window window){
         FileChooser.ExtensionFilter extFilter = 
                         new FileChooser.ExtensionFilter("TEXT files (*.json)", "*.json");
                
@@ -84,9 +84,13 @@ public class JFileManager {
         fileChooser.getExtensionFilters().add(extFilter);
         fileChooser.setTitle("Load Work");
         File file = fileChooser.showOpenDialog(window);
-        JsonObject jsonList = createJsonObject(file.getPath());
+        return file.getPath();
+    }
+    
+    public static JsonObject loadFile(String path) throws IOException{
+        JsonObject jsonList = createJsonObject(path);
         DataManager.hasDirectory.set(true);
-        DataManager.setDirectory(file.getAbsolutePath());
+        DataManager.setDirectory(path);
         return  jsonList;    
     }
     

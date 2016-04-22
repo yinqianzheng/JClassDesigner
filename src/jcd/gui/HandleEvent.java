@@ -82,7 +82,8 @@ public class HandleEvent {
                     if (!promoteUserToSave())
                         return;
                 wp.reload();
-                JsonObject jsonObj = JFileManager.loadFile(wp.primaryStageWindow);
+                String path = JFileManager.getDirectory(wp.primaryStageWindow);
+                JsonObject jsonObj = JFileManager.loadFile(path);
                 JFileManager.createClasses(jsonObj);
                 DataManager.setSaved(true);
             } catch (IOException ex) {
