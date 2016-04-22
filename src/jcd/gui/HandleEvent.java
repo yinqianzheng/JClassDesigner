@@ -94,7 +94,6 @@ public class HandleEvent {
     static  EventHandler saveEvent = new EventHandler() {
         @Override
         public void handle(Event event) {
-            System.out.println("save");
             if (DataManager.hasDirectory.get())
                 JFileManager.saveData(DataManager.getInstance(obj), DataManager.getDirectory());
             else
@@ -203,7 +202,6 @@ public class HandleEvent {
                
                 addToScreen(jc);
                 DataManager.setSaved(false);
-                System.out.println("add to screen");
             }
         }
     };

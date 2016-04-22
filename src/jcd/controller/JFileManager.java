@@ -171,7 +171,6 @@ public class JFileManager {
     private static void createMethod(JsonObject methodList, JClass j){
         // obtain the name of method
         String methodName = methodList.get("name").toString();
-        System.out.println(methodName);
         methodName = methodName.substring(1, methodName.length()-1);
         // obtain the type of method
         String methodType = methodList.get("type").toString();
@@ -204,13 +203,11 @@ public class JFileManager {
             
         
             File file = folderChooser.showDialog(HandleEvent.getWorkPane().primaryStageWindow);
-            System.out.println(file.getPath());
+            
             
             String path = file.getPath();
             int i = path.indexOf("src", 0);
-            System.out.println(i);
-            System.out.println(path.substring(i));
-            System.out.println(path.substring(i).substring(4));
+            
             if (i < 0){
                 for (JClass jc : DataManager.jList.getItems()){
                     String newPath = path;
@@ -242,7 +239,7 @@ public class JFileManager {
                         else
                             packageStr = packageStr + pcgstr.charAt(index);
                     }
-                    //packageStr = packageStr + ";";
+
                     
                     if (!jc.getPackageName().equals("")){
                         newPath = newPath + "/" + jc.getPackageName();
@@ -253,8 +250,10 @@ public class JFileManager {
                     File jfile = new File(newPath);
                     if (!jfile.exists())
                         jfile.mkdirs();
-                        jfile = new File(newPath+"/"+jc.getClassName()+".java");
-                        PrintWriter pw;
+                    
+                    jfile = new File(newPath+"/"+jc.getClassName()+".java");
+                    PrintWriter pw;
+                    
                     try {
                         pw = new PrintWriter(jfile);
                         pw.write(packageStr+"\n\n"+jc.toCode());

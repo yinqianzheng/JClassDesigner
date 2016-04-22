@@ -189,6 +189,7 @@ public class JMethod {
                 if (isAbstract.get() == true){
                     methodLabel.setFont(ITALIC_FONT);
                     isStatic.set(false);
+                    access.set("public");
                 }else{
                     methodLabel.setFont(Font.getDefault());
                 }
