@@ -62,8 +62,12 @@ public class HandleEvent {
         @Override
         public void handle(Event event) {
             if (!DataManager.isSaved.get())
-                if (!promoteUserToSave())
-                    return;
+                try {
+                    if (!promoteUserToSave())
+                        return;
+            } catch (IOException ex) {
+                Logger.getLogger(HandleEvent.class.getName()).log(Level.SEVERE, null, ex);
+            }
             wp.reload();
             DataManager.hasDirectory.set(false);
             Alert imformDialog = new  Alert(Alert.AlertType.INFORMATION);
@@ -96,9 +100,17 @@ public class HandleEvent {
         @Override
         public void handle(Event event) {
             if (DataManager.hasDirectory.get())
-                JFileManager.saveData(DataManager.getInstance(obj), DataManager.getDirectory());
+                try {
+                    JFileManager.saveData(DataManager.getInstance(obj), DataManager.getDirectory());
+            } catch (IOException ex) {
+                Logger.getLogger(HandleEvent.class.getName()).log(Level.SEVERE, null, ex);
+            }
             else
-                JFileManager.saveAs(DataManager.getInstance(obj), wp.primaryStageWindow);
+                try {
+                    JFileManager.saveAs(DataManager.getInstance(obj), wp.primaryStageWindow);
+            } catch (IOException ex) {
+                Logger.getLogger(HandleEvent.class.getName()).log(Level.SEVERE, null, ex);
+            }
             DataManager.setSaved(true);
         }
     };
@@ -106,7 +118,11 @@ public class HandleEvent {
     static  EventHandler saveAsEvent = new EventHandler() {
         @Override
         public void handle(Event event) {
-            JFileManager.saveAs(DataManager.getInstance(obj), wp.primaryStageWindow);
+            try {
+                JFileManager.saveAs(DataManager.getInstance(obj), wp.primaryStageWindow);
+            } catch (IOException ex) {
+                Logger.getLogger(HandleEvent.class.getName()).log(Level.SEVERE, null, ex);
+            }
             DataManager.setSaved(true);
         }
     };
@@ -149,8 +165,12 @@ public class HandleEvent {
         @Override
         public void handle(Event event) {
             if (!DataManager.isSaved.get())
-                if (!promoteUserToSave())
-                    return;
+                try {
+                    if (!promoteUserToSave())
+                        return;
+            } catch (IOException ex) {
+                Logger.getLogger(HandleEvent.class.getName()).log(Level.SEVERE, null, ex);
+            }
             System.exit(0);
         }
     };
@@ -318,7 +338,7 @@ public class HandleEvent {
         }
     };
     
-    static boolean promoteUserToSave(){
+    static boolean promoteUserToSave() throws IOException{
         Alert yesNoDialog = new  Alert(Alert.AlertType.CONFIRMATION);
             yesNoDialog.setTitle("Unsaved work!");
             yesNoDialog.setHeaderText("Do you want to save the unsaved work?");

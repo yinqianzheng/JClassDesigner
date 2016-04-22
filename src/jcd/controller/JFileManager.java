@@ -42,7 +42,7 @@ import jcd.gui.HandleEvent;
  */
 public class JFileManager {
     
-    public static boolean saveAs(Object ob, Window window) {
+    public static boolean saveAs(Object ob, Window window) throws IOException {
         
         FileChooser.ExtensionFilter extFilter = 
                 new FileChooser.ExtensionFilter("TEXT files (*.json)", "*.json");
@@ -61,9 +61,13 @@ public class JFileManager {
     }
     
     // save file to the target location
-    public static boolean saveData(Object ob, String path){
+    public static boolean saveData(Object ob, String path) throws IOException{
         PrintWriter pw;
         File jfile = new File(path); 
+        if (!jfile.getParentFile().exists())
+            jfile.getParentFile().mkdirs();
+        if (!jfile.exists())
+            jfile.createNewFile();
         try {
             pw = new PrintWriter(jfile);
             pw.write(ob.toString());  
