@@ -220,11 +220,12 @@ public class HandleEvent {
     };
     
     public static void addToScreen(JClass jc){
-                        wp.root.getChildren().add(jc);
+                wp.root.getChildren().add(jc);
                 dataManager.addClassToList(jc);
                 dataManager.setSelectedJC(jc);
                 wp.clearPackageNameInput();
                 wp.setClassNameInput(jc.getClassName());
+                wp.setPackageNameInput(jc.getPackageName());
                 wp.variablePane.setContent(jc.getVariableBox().getVariableTable());
                 wp.methodPane.setContent(jc.getMethodBox().getMethodTable());
                 if (dataManager.getSelectedJC()!=null)

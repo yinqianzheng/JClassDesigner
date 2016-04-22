@@ -79,6 +79,8 @@ public class JMethod {
         this.arg3 = new SimpleStringProperty(arg3);
         setActions();
         methodLabel.setText(toText());
+        if (a==true)
+            methodLabel.setFont(ITALIC_FONT);  
     }
 
     
@@ -173,9 +175,7 @@ public class JMethod {
             public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
                 methodLabel.setText(toText());
                 if (isStatic.get() == true)
-                    mb.abstractColumn.setEditable(false);
-                else
-                    mb.abstractColumn.setEditable(true);
+                    isAbstract.set(false);
             }
         });
         
@@ -184,10 +184,9 @@ public class JMethod {
             public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
                 if (isAbstract.get() == true){
                     methodLabel.setFont(ITALIC_FONT);
-                    mb.staticColumn.setEditable(false);
+                    isStatic.set(false);
                 }else{
                     methodLabel.setFont(Font.getDefault());
-                    mb.staticColumn.setEditable(true);
                 }
                 mb.checkAbstractMethod();
             }

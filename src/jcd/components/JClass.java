@@ -31,8 +31,10 @@ import jcd.gui.WorkSpace;
  */
 public class JClass extends VBox{
     final private VBox name = new VBox();
-    final private Label isAbstract = new Label("{abstract}");
-    final private Label isInterface = new Label("{interface}");
+    final private Label abstractLabel = new Label("{abstract}");
+    final private Label interfaceLabel = new Label("{interface}");
+    private SimpleBooleanProperty isAbstract;
+    private SimpleBooleanProperty isInterface;
     private Label className = new Label("NewClass1");
     private String packageName = "";
     public double sceneX;
@@ -41,12 +43,12 @@ public class JClass extends VBox{
     public double translateY;
     VariableBox variableBox;
     MethodBox methodBox;
-    //private SimpleStringProperty jParentName = new SimpleStringProperty();
     private JClass jParent;
     private Line linkToParent;
     
     
     public JClass(double x, double y){
+        isAbstract = new SimpleBooleanProperty(false);
         variableBox = new VariableBox();
         variableBox.getStyleClass().add("variable_method_Boxes_style");
         methodBox = new MethodBox(this);
@@ -112,9 +114,11 @@ public class JClass extends VBox{
     
     public void setAbstract(Boolean b){
         if (b == true){
+            isAbstract.set(true);
             name.getChildren().clear();
-            name.getChildren().addAll(className, isAbstract);
+            name.getChildren().addAll(className, abstractLabel);
         }else{
+            isAbstract.set(false);
             name.getChildren().clear();
             name.getChildren().add(className);
         }
@@ -173,7 +177,7 @@ public class JClass extends VBox{
     public String toCode(){
         String code = "";
         String isAbstractClass = "";
-        if (name.getChildren().contains(isAbstract))
+        if (isAbstract.get()==true)
             isAbstractClass = "abstract ";
         
         code = "public " + isAbstractClass +"class "+className.getText()+
@@ -192,6 +196,8 @@ public class JClass extends VBox{
                 +"{\n"
                 +"\"0\":{\n"  
                 +"\"name\":\""+ className.getText()+"\",\n" 
+                +"\"package\":\""+ packageName+"\",\n" 
+                +"\"abstract\":"+ isAbstract.get()+",\n" 
                 +"\"x\":"+ (this.getLayoutX()+this.getTranslateX())+",\n"
                 +"\"y\":"+ (this.getLayoutY()+this.getTranslateY())+"\n"
                 +"}\n" 

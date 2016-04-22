@@ -29,8 +29,6 @@ public class MethodBox extends VBox{
     private MethodBox mb;
     private SimpleBooleanProperty isContainAbstract;
     private JClass jClass;
-    public TableColumn<JMethod, Boolean> staticColumn;
-    public TableColumn<JMethod, Boolean> abstractColumn;
     
     public MethodBox(JClass jc){
         jClass = jc;
@@ -166,7 +164,7 @@ public class MethodBox extends VBox{
         
         
         // create static column
-        staticColumn = new TableColumn<>("Static");
+        TableColumn<JMethod, Boolean> staticColumn = new TableColumn<>("Static");
         staticColumn.setMinWidth(50);
         staticColumn.setCellValueFactory(new PropertyValueFactory<>("isStatic"));   
         staticColumn.setCellFactory(new Callback<TableColumn<JMethod, Boolean>, TableCell<JMethod, Boolean>>() {
@@ -184,7 +182,7 @@ public class MethodBox extends VBox{
         });
         
         // create abstract column
-        abstractColumn = new TableColumn<>("Abstract");
+        TableColumn<JMethod, Boolean> abstractColumn = new TableColumn<>("Abstract");
         abstractColumn.setMinWidth(50);
         abstractColumn.setCellValueFactory(new PropertyValueFactory<>("isAbstract"));   
         abstractColumn.setCellFactory(new Callback<TableColumn<JMethod, Boolean>, TableCell<JMethod, Boolean>>() {
