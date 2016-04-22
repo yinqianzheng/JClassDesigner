@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.Event;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -153,6 +154,7 @@ public class JFileManager {
         }  
 
         HandleEvent.addToScreen(j);
+        System.out.println(j.toCode());
     }
         
     private static void createVariable(JsonObject variableList, JClass j){
@@ -193,5 +195,76 @@ public class JFileManager {
         j.getMethodBox().addMethod(methodAccess, methodType, methodName, Boolean.parseBoolean(methodStatic),
                 Boolean.parseBoolean(methodAbstract), arg1, arg2, arg3);
         
+    }
+    
+    public static void exportCode(){
+            
+        DirectoryChooser folderChooser = new DirectoryChooser();
+            folderChooser.setTitle("Export Code");
+            
+        
+            File file = folderChooser.showDialog(HandleEvent.getWorkPane().primaryStageWindow);
+            System.out.println(file.getPath());
+            
+            String path = file.getPath();
+            int i = path.indexOf("src", 0);
+            System.out.println(i);
+            System.out.println(path.substring(i));
+            System.out.println(path.substring(i).substring(4));
+            if (i < 0){
+                for (JClass jc : DataManager.jList.getItems()){
+                    String newPath = path;
+                    if (!jc.getPackageName().equals(""))
+                        newPath = newPath + "/" + jc.getPackageName();
+                    File jfile = new File(newPath);
+                    if (!jfile.exists())
+                        jfile.mkdirs();
+                    
+                        jfile = new File(newPath+"/"+jc.getClassName()+".java");
+                        PrintWriter pw;
+                    try {
+                        pw = new PrintWriter(jfile);
+                        pw.write(jc.toCode());
+                        pw.close();
+                    } catch (FileNotFoundException ex) {
+                        Logger.getLogger(HandleEvent.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }else{
+                for (JClass jc : DataManager.jList.getItems()){
+                    String newPath = path;
+                    String pcgstr = path.substring(i);
+                    pcgstr = pcgstr.substring(4);
+                    String packageStr = "package ";
+                    for (int index = 0; index < pcgstr.length(); index++){
+                        if (pcgstr.charAt(index)=='/')
+                            packageStr = packageStr + ".";
+                        else
+                            packageStr = packageStr + pcgstr.charAt(index);
+                    }
+                    //packageStr = packageStr + ";";
+                    
+                    if (!jc.getPackageName().equals("")){
+                        newPath = newPath + "/" + jc.getPackageName();
+                        packageStr = packageStr + "." + jc.getPackageName();
+                    }
+                    packageStr = packageStr + ";";
+                    
+                    File jfile = new File(newPath);
+                    if (!jfile.exists())
+                        jfile.mkdirs();
+                        jfile = new File(newPath+"/"+jc.getClassName()+".java");
+                        PrintWriter pw;
+                    try {
+                        pw = new PrintWriter(jfile);
+                        pw.write(packageStr+"\n\n"+jc.toCode());
+                        pw.close();
+                    } catch (FileNotFoundException ex) {
+                        Logger.getLogger(HandleEvent.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            
+                
+            } 
     }
 }

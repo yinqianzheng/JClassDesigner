@@ -182,7 +182,7 @@ public class JClass extends VBox{
         
         code = "public " + isAbstractClass +"class "+className.getText()+
                 "{\n";
-        code = code + variableBox.toCode() +"\n"+ methodBox.toCode() +"\n}\n";
+        code = code + variableBox.toCode() +"\n"+ methodBox.toCode() +"\n}\n\n";
         
         return code;
     }

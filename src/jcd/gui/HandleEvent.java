@@ -24,6 +24,7 @@ import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javax.imageio.ImageIO;
 import javax.json.JsonObject;
@@ -139,27 +140,7 @@ public class HandleEvent {
         @Override
         public void handle(Event event) {
             
-            FileChooser.ExtensionFilter extFilter = 
-                        new FileChooser.ExtensionFilter("TEXT files (*.java)", "*.java");
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setInitialFileName(DataManager.getSelectedJCName()+".java");
-            fileChooser.getExtensionFilters().add(extFilter);
-            fileChooser.setTitle("Save Work");
-        
-            File file = fileChooser.showSaveDialog(wp.primaryStageWindow);
-            File jfile = new File(file.getPath());
-            
-            
-            jfile = new File(jfile.getPath());
-            
-            PrintWriter pw;
-            try {
-                pw = new PrintWriter(jfile);
-                pw.write(DataManager.getSelectedJC().toCode());
-                pw.close();
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(HandleEvent.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            JFileManager.exportCode();
             
         }
     };
