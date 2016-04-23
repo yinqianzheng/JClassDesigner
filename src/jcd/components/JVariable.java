@@ -5,6 +5,7 @@
  */
 package jcd.components;
 
+import java.util.HashMap;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -22,8 +23,23 @@ public class JVariable {
     private SimpleBooleanProperty isStatic;
     private SimpleStringProperty access;
     private Label variableLabel;
+    private VariableBox variableBox;
+    private static HashMap<String,Object> returnMap;
+    static{
+        returnMap = new HashMap();
+        returnMap.put("int", 0);
+        returnMap.put("double", 0);
+        returnMap.put("boolean", true);
+        returnMap.put("short", 0);
+        returnMap.put("long", 0);
+        returnMap.put("String", "\"\" ");
+        returnMap.put("float", 0);
+        returnMap.put("char", " '0' ");
+        returnMap.put("byte", 0);
+    }
     
-    public JVariable(){
+    public JVariable(VariableBox vb){
+        variableBox = vb;
         this.variableLabel = new Label();
         this.name = new SimpleStringProperty("var1");
         this.type = new SimpleStringProperty("int");
@@ -33,7 +49,8 @@ public class JVariable {
         setActions();
         variableLabel.setText(toText());
     }
-    public JVariable(String access, String type, String name, boolean b){
+    public JVariable(VariableBox vb, String access, String type, String name, boolean b){
+        variableBox = vb;
         this.variableLabel = new Label();
         this.name = new SimpleStringProperty(name);
         this.type = new SimpleStringProperty(type);
@@ -48,6 +65,9 @@ public class JVariable {
         return variableLabel;
     }
     
+    public VariableBox getVariableBox(){
+        return variableBox;
+    }
     private void setActions(){
         name.addListener(new ChangeListener<String>() {
             @Override
@@ -152,7 +172,12 @@ public class JVariable {
         if (isStatic.get()==true)
             isStaticVariable = "static ";
         String code = "";
-        code = access.get()+" "+isStaticVariable+ type.get()+" "+name.get()+";";
+        code = access.get()+" "+isStaticVariable+ type.get()+" "+name.get()+" ";
+        if (variableBox.getJClass().getInterface().get()){
+            if (returnMap.containsKey(type.get()))
+                code = code + "= " + String.valueOf(returnMap.get(type.get()));
+        }
+        code = code +";";
         return code;
     }
     

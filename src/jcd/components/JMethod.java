@@ -32,7 +32,7 @@ public class JMethod {
     private Label methodLabel;
     private MethodBox mb;
     private SimpleBooleanProperty isInterface = new SimpleBooleanProperty(false);
-    public static HashMap<String,Object> returnMap;
+    private static HashMap<String,Object> returnMap;
     static{
         returnMap = new HashMap();
         returnMap.put("int", 0);

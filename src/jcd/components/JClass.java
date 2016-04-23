@@ -51,7 +51,7 @@ public class JClass extends VBox{
     public JClass(double x, double y){
         isAbstract = new SimpleBooleanProperty(false);
         isInterface = new SimpleBooleanProperty(false);
-        variableBox = new VariableBox();
+        variableBox = new VariableBox(this);
         variableBox.getStyleClass().add("variable_method_Boxes_style");
         methodBox = new MethodBox(this);
         methodBox.getStyleClass().add("variable_method_Boxes_style");
@@ -206,10 +206,17 @@ public class JClass extends VBox{
     public String toCode(){
         String code = "";
         String isAbstractClass = "";
+
         if (isAbstract.get()==true)
             isAbstractClass = "abstract ";
         
-        code = "public " + isAbstractClass +"class "+className.getText()+
+        String title ="";
+        if (!isInterface.get())
+            title = isAbstractClass + "class ";
+        else
+            title = "interface ";
+        
+        code = "public " + title +className.getText()+
                 "{\n";
         code = code + variableBox.toCode() +"\n"+ methodBox.toCode() +"\n}\n\n";
         

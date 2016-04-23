@@ -29,12 +29,14 @@ import jcd.data.DataManager;
 public class VariableBox extends VBox{
     private VTableView<JVariable> vTable;
     private VariableBox vb;
+    private JClass jclass;
     private TableColumn<JVariable, Boolean> staticColumn;
     private TableColumn<JVariable, String> accessColumn;
-    public VariableBox(){
+    public VariableBox(JClass jc){
         vTable = new VTableView<JVariable>();
         initTableView();
         vb = this;
+        jclass = jc;
     }
     
     
@@ -61,9 +63,12 @@ public class VariableBox extends VBox{
         accessColumn.setEditable(true);
     }
     
+    public JClass getJClass(){
+        return jclass;
+    }
     
     public void addVariable(){
-        JVariable jv = new JVariable();
+        JVariable jv = new JVariable(vb);
         String varName;
         SimpleBooleanProperty validName = new SimpleBooleanProperty(true);
         ObservableList<JVariable> variables = vTable.getItems();        
@@ -87,7 +92,7 @@ public class VariableBox extends VBox{
     }
     
     public void addVariable(String access, String type, String name, boolean b){
-        JVariable jv = new JVariable(access, type, name, b);
+        JVariable jv = new JVariable(vb, access, type, name, b);
         vTable.getItems().add(jv);
         this.getChildren().add(jv.getLabel());
     }
