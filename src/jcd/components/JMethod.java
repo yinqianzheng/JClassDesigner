@@ -31,6 +31,7 @@ public class JMethod {
     private SimpleStringProperty arg3;
     private Label methodLabel;
     private MethodBox mb;
+    private SimpleBooleanProperty isInterface = new SimpleBooleanProperty(false);
     public static HashMap<String,Object> returnMap;
     static{
         returnMap = new HashMap();
@@ -51,7 +52,7 @@ public class JMethod {
                     Font.getDefault().getSize()
                 );
     
-    public JMethod(MethodBox mbox){  
+    public JMethod(MethodBox mbox){
         this.mb = mbox;
         this.methodLabel = new Label();
         this.name = new SimpleStringProperty("method1");
@@ -83,7 +84,14 @@ public class JMethod {
         if (a==true)
             methodLabel.setFont(ITALIC_FONT);  
     }
-
+    
+    public void setForInterface(){
+        isInterface.set(true);
+    }
+    
+    public void setForClass(){
+        isInterface.set(false);
+    }
     
     public Label getLabel(){
         return methodLabel;
@@ -231,6 +239,14 @@ public class JMethod {
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                 // update label (acess)
+                methodLabel.setText(toText());
+                DataManager.setSaved(false);
+            }
+        });
+        
+        isInterface.addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
                 methodLabel.setText(toText());
                 DataManager.setSaved(false);
             }

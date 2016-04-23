@@ -5,6 +5,7 @@
  */
 package jcd.components;
 
+import java.lang.reflect.Modifier;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -49,6 +50,7 @@ public class JClass extends VBox{
     
     public JClass(double x, double y){
         isAbstract = new SimpleBooleanProperty(false);
+        isInterface = new SimpleBooleanProperty(false);
         variableBox = new VariableBox();
         variableBox.getStyleClass().add("variable_method_Boxes_style");
         methodBox = new MethodBox(this);
@@ -65,9 +67,36 @@ public class JClass extends VBox{
         this.getStyleClass().add("classWindow_style");
         name.getStyleClass().add("variable_method_Boxes_style");
         name.getChildren().addAll(className);
-        this.getChildren().addAll(name, variableBox, methodBox);    
+        this.getChildren().addAll(name, variableBox, methodBox);
+        listenerForInterface();
     }
 
+    private void listenerForInterface(){
+        isInterface.addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
+                if (t1){
+                    variableBox.setVariableForInterface();
+                    methodBox.setMethodForInterface();
+                    name.getChildren().clear();
+                    name.getChildren().addAll(className, interfaceLabel);
+                }else{
+                    variableBox.setVariableForClass();
+                    methodBox.setMethodForClass();
+                    name.getChildren().clear();
+                    name.getChildren().addAll(className, abstractLabel);
+                }
+            }
+        });
+    };
+    
+    public void setInterface(boolean tf){
+        isInterface.set(tf);
+    }
+    
+    public SimpleBooleanProperty getInterface(){
+        return isInterface;
+    }
     
     public void setJParent(JClass parent){
         jParent = parent;
@@ -198,6 +227,7 @@ public class JClass extends VBox{
                 +"\"name\":\""+ className.getText()+"\",\n" 
                 +"\"package\":\""+ packageName+"\",\n" 
                 +"\"abstract\":"+ isAbstract.get()+",\n" 
+                +"\"interface\":"+ isInterface.get()+",\n" 
                 +"\"x\":"+ (this.getLayoutX()+this.getTranslateX())+",\n"
                 +"\"y\":"+ (this.getLayoutY()+this.getTranslateY())+"\n"
                 +"}\n" 

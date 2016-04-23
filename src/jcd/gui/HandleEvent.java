@@ -234,6 +234,7 @@ public class HandleEvent {
                 wp.clearPackageNameInput();
                 wp.setClassNameInput(jc.getClassName());
                 wp.setPackageNameInput(jc.getPackageName());
+                wp.interfaceCheckBox.setSelected(jc.getInterface().get());
                 wp.variablePane.setContent(jc.getVariableBox().getVariableTable());
                 wp.methodPane.setContent(jc.getMethodBox().getMethodTable());
                 if (dataManager.getSelectedJC()!=null)
@@ -289,6 +290,14 @@ public class HandleEvent {
         
         return false;
     };
+    
+    public static void setToInterface(boolean tf){
+        try {
+            DataManager.getSelectedJC().setInterface(tf);
+            DataManager.setSaved(false);
+        } catch (Exception e) {
+        }
+    }
     
     public static void changePackageName (String str){
         try {

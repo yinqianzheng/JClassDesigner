@@ -29,6 +29,8 @@ import jcd.data.DataManager;
 public class VariableBox extends VBox{
     private VTableView<JVariable> vTable;
     private VariableBox vb;
+    private TableColumn<JVariable, Boolean> staticColumn;
+    private TableColumn<JVariable, String> accessColumn;
     public VariableBox(){
         vTable = new VTableView<JVariable>();
         initTableView();
@@ -41,6 +43,24 @@ public class VariableBox extends VBox{
     public VTableView<JVariable> getVariableTable(){
         return vTable;
     }
+    
+    public void setVariableForInterface(){
+        ObservableList<JVariable> variables = vTable.getItems();
+        if (!variables.isEmpty()){
+            for (JVariable jv : variables){
+                jv.setStatic(true);
+                jv.setAccess("public");
+            }
+        }
+        staticColumn.setEditable(false);
+        accessColumn.setEditable(false);
+    }
+    
+    public void setVariableForClass(){
+        staticColumn.setEditable(true);
+        accessColumn.setEditable(true);
+    }
+    
     
     public void addVariable(){
         JVariable jv = new JVariable();
@@ -108,7 +128,7 @@ public class VariableBox extends VBox{
         
         
         // create access column
-        TableColumn<JVariable, String> accessColumn = new TableColumn<>("Access");
+        accessColumn = new TableColumn<>("Access");
         accessColumn.setMinWidth(50);
         accessColumn.setCellFactory(ComboBoxTableCell.forTableColumn("private","public", "protected"));
         accessColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<JVariable, String>, ObservableValue<String>>(){
@@ -136,7 +156,7 @@ public class VariableBox extends VBox{
         
         
         // create static column
-        TableColumn<JVariable, Boolean> staticColumn = new TableColumn<>("Static");
+        staticColumn = new TableColumn<>("Static");
         staticColumn.setMinWidth(50);
         staticColumn.setCellValueFactory(new PropertyValueFactory<>("isStatic"));   
         staticColumn.setCellFactory(new Callback<TableColumn<JVariable, Boolean>, TableCell<JVariable, Boolean>>() {

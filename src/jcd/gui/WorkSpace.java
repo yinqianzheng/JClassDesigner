@@ -76,6 +76,7 @@ public class WorkSpace extends Application{
     public static boolean isSelectMode = false;
     public static Window primaryStageWindow;
     public HashMap<String, Button> buttonMap = new HashMap<>();
+    public CheckBox interfaceCheckBox = new CheckBox();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -131,6 +132,12 @@ public class WorkSpace extends Application{
             } catch (Exception e) {
             }
         });
+        interfaceCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
+                HandleEvent.setToInterface(t1);
+            }
+        });
         
         packageNameInput.setPrefWidth(120);
         parentsList = DataManager.getParentList();
@@ -143,6 +150,13 @@ public class WorkSpace extends Application{
         cpp.getChildren().addAll(titles, classNameInput);
         cpp.setStyle("-fx-spacing: 15;");
         names.getChildren().add(cpp);
+        
+        cpp = new HBox();
+        titles = new Label("Set to interface");
+        titles.getStyleClass().add("heading_label");
+        cpp.getChildren().addAll(interfaceCheckBox, titles);
+        names.getChildren().add(cpp);
+        
         cpp = new HBox();
         titles = new Label("Package:");
         titles.getStyleClass().add("subheading_label");
@@ -250,7 +264,6 @@ public class WorkSpace extends Application{
         initbuttons(editToolbar, "file:./images/Select.png" , 35, 40, "select", HandleEvent.selectEvent, false);
         initbuttons(editToolbar, "file:./images/Resize.png" , 35, 40, "resize", HandleEvent.selectEvent, true);
         initbuttons(editToolbar, "file:./images/AddClass.png" , 35, 40, "add class", HandleEvent.addEvent, false);
-        initbuttons(editToolbar, "file:./images/AddInterface.png" , 35, 40, "add interface", HandleEvent.selectEvent, true);
         initbuttons(editToolbar, "file:./images/Remove.png" , 35, 40, "remove", HandleEvent.removeClass, false);
         initbuttons(editToolbar, "file:./images/undo.png" , 35, 40, "undo", HandleEvent.selectEvent, true);
         initbuttons(editToolbar, "file:./images/redo.png" , 35, 40, "redo", HandleEvent.exitEvent,true);

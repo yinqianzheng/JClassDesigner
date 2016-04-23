@@ -188,6 +188,7 @@ public class DataManager {
                 HandleEvent.getWorkPane().setMethodPane(selectedJC.getMethodBox().getMethodTable());
                 HandleEvent.getWorkPane().setClassNameInput(selectedJC.getClassName());   
                 HandleEvent.getWorkPane().setPackageNameInput(selectedJC.getPackageName());
+                HandleEvent.getWorkPane().interfaceCheckBox.setSelected(selectedJC.getInterface().get());
                 try {
                     HandleEvent.getWorkPane().parentsList.setValue(selectedJC.getJParent().getPackageName()+"."+
                     selectedJC.getJParent().getClassName());    

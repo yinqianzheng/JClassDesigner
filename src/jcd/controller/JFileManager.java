@@ -134,6 +134,7 @@ public class JFileManager {
         String packageName = temp.get("package").toString();
         packageName = packageName.substring(1, packageName.length()-1);
         boolean isAbstract = Boolean.parseBoolean(temp.get("abstract").toString());
+        boolean isInterface = Boolean.parseBoolean(temp.get("interface").toString());
         j = new JClass(x, y);
         j.setClassName(name);
         j.setPackageName(packageName);
@@ -160,7 +161,8 @@ public class JFileManager {
         else
             createMethod(tempmList, j);
         }  
-
+        if (isInterface)
+            j.setInterface(true);
         HandleEvent.addToScreen(j);
         System.out.println(j.toCode());
     }

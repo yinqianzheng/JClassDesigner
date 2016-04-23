@@ -28,7 +28,14 @@ public class MethodBox extends VBox{
     private MTableView<JMethod> mTable;
     private MethodBox mb;
     private SimpleBooleanProperty isContainAbstract;
+    private SimpleBooleanProperty isInterface = new SimpleBooleanProperty(false);
     private JClass jClass;
+    private TableColumn<JMethod, String> accessColumn;
+    private TableColumn<JMethod, Boolean> staticColumn;
+    private TableColumn<JMethod, Boolean> abstractColumn;
+    private TableColumn<JMethod, String> arg1Column;
+    private TableColumn<JMethod, String> arg2Column;
+    private TableColumn<JMethod, String> arg3Column;
     
     public MethodBox(JClass jc){
         jClass = jc;
@@ -47,6 +54,45 @@ public class MethodBox extends VBox{
     
     public MTableView<JMethod> getMethodTable(){
         return mTable;
+    }
+    
+    public void setMethodForInterface(){
+        ObservableList<JMethod> methods = mTable.getItems();
+        if (!methods.isEmpty()){
+            for (JMethod jm : methods){
+                jm.setAbstract(true);
+                jm.setAccess("public");
+                jm.setArg1("");
+                jm.setArg2("");
+                jm.setArg3("");
+                jm.setForInterface();
+            }
+        }
+        
+        accessColumn.setEditable(false);
+        staticColumn.setEditable(false);
+        abstractColumn.setEditable(false);
+        arg1Column.setEditable(false);
+        arg2Column.setEditable(false);
+        arg3Column.setEditable(false);
+        isInterface.set(true);
+    }
+    
+    public void setMethodForClass(){
+        ObservableList<JMethod> methods = mTable.getItems();
+        if (!methods.isEmpty()){
+            for (JMethod jm : methods){
+                jm.setForClass();
+            }
+        }
+        
+        accessColumn.setEditable(true);
+        staticColumn.setEditable(true);
+        abstractColumn.setEditable(true);
+        arg1Column.setEditable(true);
+        arg2Column.setEditable(true);
+        arg3Column.setEditable(true);
+        isInterface.set(false);       
     }
     
     public void addMethod(){
@@ -69,6 +115,7 @@ public class MethodBox extends VBox{
                 break;
             }
         }
+        jm.setAbstract(isInterface.get());
         mTable.getItems().add(jm);
         this.getChildren().add(jm.getLabel());
     }
@@ -136,7 +183,7 @@ public class MethodBox extends VBox{
         
         
         // create access column
-        TableColumn<JMethod, String> accessColumn = new TableColumn<>("Access");
+        accessColumn = new TableColumn<>("Access");
         accessColumn.setMinWidth(50);
         accessColumn.setCellFactory(ComboBoxTableCell.forTableColumn("private","public"));
         accessColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<JMethod, String>, ObservableValue<String>>(){
@@ -164,7 +211,7 @@ public class MethodBox extends VBox{
         
         
         // create static column
-        TableColumn<JMethod, Boolean> staticColumn = new TableColumn<>("Static");
+        staticColumn = new TableColumn<>("Static");
         staticColumn.setMinWidth(50);
         staticColumn.setCellValueFactory(new PropertyValueFactory<>("isStatic"));   
         staticColumn.setCellFactory(new Callback<TableColumn<JMethod, Boolean>, TableCell<JMethod, Boolean>>() {
@@ -182,7 +229,7 @@ public class MethodBox extends VBox{
         });
         
         // create abstract column
-        TableColumn<JMethod, Boolean> abstractColumn = new TableColumn<>("Abstract");
+        abstractColumn = new TableColumn<>("Abstract");
         abstractColumn.setMinWidth(50);
         abstractColumn.setCellValueFactory(new PropertyValueFactory<>("isAbstract"));   
         abstractColumn.setCellFactory(new Callback<TableColumn<JMethod, Boolean>, TableCell<JMethod, Boolean>>() {
@@ -200,7 +247,7 @@ public class MethodBox extends VBox{
         });
         
         // create arg1 column
-        TableColumn<JMethod, String> arg1Column = new TableColumn<>("Arg1");
+        arg1Column = new TableColumn<>("Arg1");
         arg1Column.setMinWidth(50);
         arg1Column.setCellValueFactory(new PropertyValueFactory<>("arg1"));
         arg1Column.setCellFactory(TextFieldTableCell.<JMethod>forTableColumn());
@@ -211,7 +258,7 @@ public class MethodBox extends VBox{
         });
         
         // create arg2 column
-        TableColumn<JMethod, String> arg2Column = new TableColumn<>("Arg2");
+        arg2Column = new TableColumn<>("Arg2");
         arg2Column.setMinWidth(50);
         arg2Column.setCellValueFactory(new PropertyValueFactory<>("arg2"));
         arg2Column.setCellFactory(TextFieldTableCell.<JMethod>forTableColumn());
@@ -222,7 +269,7 @@ public class MethodBox extends VBox{
         });
         
         // create arg3 column
-        TableColumn<JMethod, String> arg3Column = new TableColumn<>("Arg3");
+        arg3Column = new TableColumn<>("Arg3");
         arg3Column.setMinWidth(50);
         arg3Column.setCellValueFactory(new PropertyValueFactory<>("arg3"));
         arg3Column.setCellFactory(TextFieldTableCell.<JMethod>forTableColumn());
