@@ -84,7 +84,9 @@ public class JClass extends VBox{
                     variableBox.setVariableForClass();
                     methodBox.setMethodForClass();
                     name.getChildren().clear();
-                    name.getChildren().addAll(className, abstractLabel);
+                    name.getChildren().add(className);
+                    if (!methodBox.getChildren().isEmpty())
+                        name.getChildren().add(abstractLabel);
                 }
             }
         });

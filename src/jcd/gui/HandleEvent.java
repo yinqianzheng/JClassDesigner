@@ -190,7 +190,7 @@ public class HandleEvent {
         @Override
         public void handle(Event event) {
             wp.canvas.toFront();
-            wp.canvas.setCursor(Cursor.CROSSHAIR);
+            wp.root.setCursor(Cursor.CROSSHAIR);
             wp.canvas.setDisable(false);
             WorkSpace.isSelectMode = false;
         }

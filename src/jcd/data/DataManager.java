@@ -213,8 +213,9 @@ public class DataManager {
             if (HandleEvent.getWorkPane().isSelectMode==true){
                 double offsetX = click.getSceneX() - selectedJC.sceneX;
                 double offsetY = click.getSceneY() - selectedJC.sceneY;
-                double newTranslateX = selectedJC.translateX + offsetX;
-                double newTranslateY = selectedJC.translateY + offsetY;
+                
+                double newTranslateX = selectedJC.translateX + offsetX/HandleEvent.getWorkPane().getZoomValue();
+                double newTranslateY = selectedJC.translateY + offsetY/HandleEvent.getWorkPane().getZoomValue();
 
                 ((JClass)(click.getSource())).setTranslateX(newTranslateX);
                 ((JClass)(click.getSource())).setTranslateY(newTranslateY);

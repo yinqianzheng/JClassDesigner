@@ -9,9 +9,11 @@ import java.util.HashMap;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
@@ -53,12 +55,13 @@ public class WorkSpace extends Application{
     final HBox topToolbar = new HBox();
     final SplitPane splitPane = new SplitPane();
     final public Pane root = new Pane();
-    final ScrollPane workPane = new ScrollPane(root);
+    final private Group gp = new Group(root);
+    final ScrollPane workPane = new ScrollPane(gp);
     final VBox component = new VBox();
     final HBox fileToolbar = new HBox();
     final HBox editToolbar = new HBox();
     final HBox viewToolbar = new HBox();
-    final Canvas canvas= new Canvas(3000, 3000);
+    final Canvas canvas= new Canvas(3205, 2580);
     final ScrollPane variablePane = new ScrollPane();
     final ScrollPane methodPane = new ScrollPane();
     final Button addVariable = new Button();
@@ -71,6 +74,7 @@ public class WorkSpace extends Application{
     final private CheckBox grid = new CheckBox("Grid");
     final private CheckBox snap = new CheckBox("Snap");
     private SimpleBooleanProperty isGridSnappingActived = new SimpleBooleanProperty(false);
+    private SimpleDoubleProperty zoomValue = new SimpleDoubleProperty(1);
     final DropShadow highlight = new DropShadow(20, Color.YELLOW);
     public TextField classNameInput;
     public TextField packageNameInput;
@@ -94,8 +98,11 @@ public class WorkSpace extends Application{
         primaryStage.show();
         HandleEvent.getInstance(this);
         gridBackGroundSetActions();
+        initFunctionForZoom_In_Out();
     }
-    
+    public double getZoomValue(){
+        return zoomValue.get();
+    }
     private void gridBackGroundSetActions(){
         snap.setDisable(true);
         grid.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -104,12 +111,12 @@ public class WorkSpace extends Application{
                 if (t1){
                     root.getStyleClass().clear();
                     root.getStyleClass().add("root_Backgraound_gridLine");
-                    snap.setDisable(false);
+                    snap.setDisable(false);                    
                 }else{
                     root.getStyleClass().clear();
                     root.getStyleClass().add("root_Backgraound");
                     snap.setSelected(false);
-                    snap.setDisable(true);
+                    snap.setDisable(true);                   
                 }
             }
         });
@@ -121,7 +128,39 @@ public class WorkSpace extends Application{
             }
         }); 
     }
-        
+    
+    private void initFunctionForZoom_In_Out(){
+        buttonMap.get("zoom in").setOnAction(e->{
+            root.setScaleX(zoomValue.get()*1.2);
+            root.setScaleY(zoomValue.get()*1.2);
+            zoomValue.set(zoomValue.get()*1.2);
+        });
+        buttonMap.get("zoom out").setOnAction(e->{
+            root.setScaleX(zoomValue.get()/1.2);
+            root.setScaleY(zoomValue.get()/1.2);
+            zoomValue.set(zoomValue.get()/1.2);
+        });
+        buttonMap.get("original").setOnAction(e->{
+            root.setScaleX(1);
+            root.setScaleY(1);
+            zoomValue.set(1);
+        });
+        zoomValue.addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
+                if (zoomValue.get() < 0.28)
+                    buttonMap.get("zoom out").setDisable(true);
+                else if (zoomValue.get() > 3.5)
+                    buttonMap.get("zoom in").setDisable(true);
+                else{
+                    buttonMap.get("zoom in").setDisable(false);
+                    buttonMap.get("zoom out").setDisable(false);
+                }
+                    
+            }
+        });
+    }
+    
     public boolean isGridSnapActived(){
         return isGridSnappingActived.get();
     }
@@ -133,12 +172,9 @@ public class WorkSpace extends Application{
         canvas.setStyle("-fx-background-color: lightgoldenrodyellow;");
         canvas.setDisable(true);
         root.getChildren().add(canvas);
-        
-
-        component.setStyle("-fx-background-color: papayawhip;");
-        //root.setStyle("-fx-background-color: lightgoldenrodyellow;");
+        component.setStyle("-fx-background-color: papayawhip;");       
         root.getStyleClass().add("root_Backgraound");
-        canvas.setOnMouseClicked(HandleEvent.addClass);       
+        canvas.setOnMouseClicked(HandleEvent.addClass);             
         fileToolbar.getStyleClass().add("fileToolbar");
         editToolbar.getStyleClass().add("toolbar");
         viewToolbar.getStyleClass().add("toolbar");
@@ -300,8 +336,9 @@ public class WorkSpace extends Application{
         initbuttons(editToolbar, "file:./images/undo.png" , 35, 40, "undo", HandleEvent.selectEvent, true);
         initbuttons(editToolbar, "file:./images/redo.png" , 35, 40, "redo", HandleEvent.exitEvent,true);
         
-        initbuttons(viewToolbar, "file:./images/ZoomIn.png" , 35, 40, "zoom in", HandleEvent.selectEvent, true);
-        initbuttons(viewToolbar, "file:./images/ZoomOut.png" , 35, 40, "zoom out", HandleEvent.selectEvent, true);
+        initbuttons(viewToolbar, "file:./images/OriginalZoom.png" , 35, 40, "original", HandleEvent.selectEvent, false);
+        initbuttons(viewToolbar, "file:./images/ZoomIn.png" , 35, 40, "zoom in", HandleEvent.selectEvent, false);
+        initbuttons(viewToolbar, "file:./images/ZoomOut.png" , 35, 40, "zoom out", HandleEvent.selectEvent, false);
         VBox checkboxes = new VBox();
         checkboxes.getStyleClass().add("checkBoxes");
         checkboxes.getChildren().addAll(grid, snap);
@@ -367,6 +404,8 @@ public class WorkSpace extends Application{
         clearClassNameInput();
         clearPackageNameInput();
         DataManager.clear();
+        root.setScaleX(1);
+        root.setScaleY(1);
     }
     public static void main(String[] args) {
         launch(args);
