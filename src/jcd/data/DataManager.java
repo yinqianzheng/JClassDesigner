@@ -140,6 +140,7 @@ public class DataManager {
         j.setEffect(highlight);
         j.setOnMousePressed(pressed);
         j.setOnMouseDragged(dragged);
+        j.setOnMouseReleased(released);
         if (preSelectedJC!=null)
             preSelectedJC.setEffect(null);
     }
@@ -233,6 +234,40 @@ public class DataManager {
                 }
             }
             DataManager.setSaved(false);
+        }
+    };
+    
+    private static EventHandler released = new EventHandler<MouseEvent>() {
+        @Override
+        public void handle(MouseEvent release) {
+            if (HandleEvent.getWorkPane().isGridSnapActived()){
+                if (HandleEvent.getWorkPane().isSelectMode==true){
+                    double x = ((JClass)(release.getSource())).getLayoutX() + ((JClass)(release.getSource())).getTranslateX();
+                    double y = ((JClass)(release.getSource())).getLayoutY() + ((JClass)(release.getSource())).getTranslateY();
+                
+                    x = (int)(x/40)*40;
+                    y = (int)(y/40)*40;
+                    
+                    ((JClass)(release.getSource())).setTranslateX(x-((JClass)(release.getSource())).getLayoutX());
+                    ((JClass)(release.getSource())).setTranslateY(y-((JClass)(release.getSource())).getLayoutY());
+                    
+                    try {
+                        selectedJC.getLine().setStartX(((JClass)(release.getSource())).getLayoutX()+((JClass)(release.getSource())).getTranslateX());
+                        selectedJC.getLine().setStartY(((JClass)(release.getSource())).getLayoutY()+((JClass)(release.getSource())).getTranslateY());
+                    } catch (Exception e) {
+                    }
+                
+                    for (JClass jclass : jList.getItems()){
+                        if (jclass.getJParent()!=null){
+                            if (jclass.getJParent().equals(selectedJC)){
+                                jclass.getLine().setEndX(jclass.getJParent().getLayoutX()+jclass.getJParent().getTranslateX());
+                                jclass.getLine().setEndY(jclass.getJParent().getLayoutY()+jclass.getJParent().getTranslateY());
+                            }
+                        }
+                    }
+                }
+                DataManager.setSaved(false);
+            }
         }
     };
     

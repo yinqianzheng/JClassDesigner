@@ -8,6 +8,7 @@ package jcd.gui;
 import java.util.HashMap;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -67,8 +68,9 @@ public class WorkSpace extends Application{
     
     final TableView methodTable = new TableView();
     
-    final CheckBox grid = new CheckBox("Grid");
-    final CheckBox snap = new CheckBox("Snap");
+    final private CheckBox grid = new CheckBox("Grid");
+    final private CheckBox snap = new CheckBox("Snap");
+    private SimpleBooleanProperty isGridSnappingActived = new SimpleBooleanProperty(false);
     final DropShadow highlight = new DropShadow(20, Color.YELLOW);
     public TextField classNameInput;
     public TextField packageNameInput;
@@ -91,9 +93,38 @@ public class WorkSpace extends Application{
         primaryStage.setResizable(false);
         primaryStage.show();
         HandleEvent.getInstance(this);
-       
+        gridBackGroundSetActions();
     }
     
+    private void gridBackGroundSetActions(){
+        snap.setDisable(true);
+        grid.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
+                if (t1){
+                    root.getStyleClass().clear();
+                    root.getStyleClass().add("root_Backgraound_gridLine");
+                    snap.setDisable(false);
+                }else{
+                    root.getStyleClass().clear();
+                    root.getStyleClass().add("root_Backgraound");
+                    snap.setSelected(false);
+                    snap.setDisable(true);
+                }
+            }
+        });
+        
+        snap.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
+                isGridSnappingActived.set(t1);
+            }
+        }); 
+    }
+        
+    public boolean isGridSnapActived(){
+        return isGridSnappingActived.get();
+    }
         
     private void initWindow(){
         topToolbar.getChildren().addAll(fileToolbar, editToolbar, viewToolbar);
@@ -105,7 +136,8 @@ public class WorkSpace extends Application{
         
 
         component.setStyle("-fx-background-color: papayawhip;");
-        root.setStyle("-fx-background-color: lightgoldenrodyellow;");
+        //root.setStyle("-fx-background-color: lightgoldenrodyellow;");
+        root.getStyleClass().add("root_Backgraound");
         canvas.setOnMouseClicked(HandleEvent.addClass);       
         fileToolbar.getStyleClass().add("fileToolbar");
         editToolbar.getStyleClass().add("toolbar");

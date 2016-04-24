@@ -42,7 +42,7 @@ import jcd.gui.HandleEvent;
  */
 public class JFileManager {
     
-    public static boolean saveAs(Object ob, Window window) throws IOException {
+    public static boolean saveAs(Object ob, Window window) throws IOException, NullPointerException {
         
         FileChooser.ExtensionFilter extFilter = 
                 new FileChooser.ExtensionFilter("TEXT files (*.json)", "*.json");
