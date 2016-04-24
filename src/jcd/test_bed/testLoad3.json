@@ -7,6 +7,7 @@
 "name":"testLoad3",
 "package":"",
 "abstract":false,
+"interface":false,
 "x":438.0,
 "y":150.0
 }

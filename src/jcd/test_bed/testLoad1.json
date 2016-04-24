@@ -7,6 +7,7 @@
 "name":"NewClass3",
 "package":"",
 "abstract":false,
+"interface":false,
 "x":602.0,
 "y":345.0
 }
