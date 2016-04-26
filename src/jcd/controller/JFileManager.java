@@ -8,30 +8,18 @@ package jcd.controller;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.event.Event;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import javafx.stage.Window;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
-import javax.json.JsonWriter;
-import javax.json.JsonWriterFactory;
-import javax.json.stream.JsonGenerator;
 import jcd.components.JClass;
 import jcd.data.DataManager;
 import jcd.gui.HandleEvent;
@@ -249,10 +237,15 @@ public class JFileManager {
                         else
                             packageStr = packageStr + pcgstr.charAt(index);
                     }
-
                     
                     if (!jc.getPackageName().equals("")){
-                        newPath = newPath + "/" + jc.getPackageName();
+                        newPath = newPath + "/";
+                        for (int index = 0; index < jc.getPackageName().length(); index++){
+                            if (jc.getPackageName().charAt(index)=='.')
+                                newPath = newPath + "/";
+                            else
+                                newPath = newPath + jc.getPackageName().charAt(index);
+                        }
                         packageStr = packageStr + "." + jc.getPackageName();
                     }
                     packageStr = packageStr + ";";

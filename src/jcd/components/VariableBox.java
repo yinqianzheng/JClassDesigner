@@ -9,7 +9,6 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -17,10 +16,8 @@ import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
-import jcd.data.DataManager;
 
 /**
  *
@@ -125,6 +122,31 @@ public class VariableBox extends VBox{
         nameColumn.setMinWidth(50);
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         nameColumn.setCellFactory(TextFieldTableCell.<JVariable>forTableColumn());
+        nameColumn.setCellFactory(TextFieldTableCell.<JVariable>forTableColumn());
+//        nameColumn.setCellFactory(new Callback<TableColumn<JVariable, String>, TableCell<JVariable, String>>() {
+//            @Override
+//            public TableCell<JVariable, String> call(TableColumn<JVariable, String> p) {
+//                TextFieldTableCell<JVariable, String> myTextCell = new TextFieldTableCell<JVariable, String>(){
+//                    @Override
+//                    public void commitEdit(String str){
+//                        super.startEdit();
+//                        if (isEditing() && myTextField == null) {
+//        // most simple case, assuming that there is no graphic other than the field 
+//        // TBD: implement the general case: walk the tree and find the field
+//                        myTextField = (TextField) getGraphic();
+//                        myTextField.focusedProperty().addListener((e, old, nvalue) -> {
+//                    if (!nvalue) {
+//                    T edited = getConverter().fromString(myTextField.getText());
+//                    commitEdit(edited);
+//            }
+//
+//        });
+//    }       
+//                    } 
+//                };
+//                return myTextCell;
+//            }
+//        });
         nameColumn.setOnEditCommit(
             (TableColumn.CellEditEvent<JVariable, String> t) -> {
                 ((JVariable) t.getTableView().getItems().get(t.getTablePosition().getRow())
