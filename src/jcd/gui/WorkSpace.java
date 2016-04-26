@@ -73,7 +73,7 @@ public class WorkSpace extends Application{
     public TextField packageNameInput;
     public ComboBox parentsList;
     public static boolean isSelectMode = false;
-    public static boolean isResizeMode = false;
+    
     public static Window primaryStageWindow;
     public HashMap<String, Button> buttonMap = new HashMap<>();
     public CheckBox interfaceCheckBox = new CheckBox();

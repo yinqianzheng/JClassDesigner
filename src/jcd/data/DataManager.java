@@ -46,6 +46,7 @@ public class DataManager {
     private static double tHight;
     private static double vHight;
     private static double mHight;
+    public static SimpleBooleanProperty isResizeMode = new SimpleBooleanProperty(false);
 
     private DataManager() {
         // renew parent list
@@ -95,6 +96,8 @@ public class DataManager {
                     HandleEvent.getWorkPane().buttonMap.get("save").setDisable(isSaved.get());
             }
         });
+        
+        setListeners();
     }
     
     public static DataManager getInstance(HandleEvent e){
@@ -193,7 +196,7 @@ public class DataManager {
         @Override
         public void handle(MouseEvent click) {
             
-            if (WorkSpace.isSelectMode==true||WorkSpace.isResizeMode==true){
+            if (WorkSpace.isSelectMode==true||isResizeMode.get()==true){
                 if (selectedJC!=null)
                     preSelectedJC = selectedJC;
                 selectedJC = ((JClass)click.getSource());
@@ -258,7 +261,7 @@ public class DataManager {
                         }
                     }
                 }
-            }else if (HandleEvent.getWorkPane().isResizeMode==true){
+            }else if (isResizeMode.get()==true){
                 double ratioX = (click.getSceneX() - sceneX)/width;
                 double ratioY = (click.getSceneY() - sceneY)/hight;
                 
@@ -308,6 +311,25 @@ public class DataManager {
         }
     };
     
+    private void setListeners(){
+        isResizeMode.addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
+                if (t1){
+                    System.out.println(t1);
+                    for (JClass jc : jList.getItems()){
+                        jc.setOnMouseEntered(e->jc.setCursor(Cursor.SE_RESIZE));
+                    }}
+                else{
+                    System.out.println(t1);
+                    for (JClass jc : jList.getItems()){
+                        jc.setOnMouseEntered(e->jc.setCursor(Cursor.OPEN_HAND));
+                    }}
+            }
+        });
+    }
+
+        
     public static void setSaved(boolean b){
         isSaved.set(b);
     }

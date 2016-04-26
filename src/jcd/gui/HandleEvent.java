@@ -179,7 +179,7 @@ public class HandleEvent {
             wp.canvas.toBack();
             wp.root.setCursor(Cursor.HAND);
             WorkSpace.isSelectMode = true;
-            WorkSpace.isResizeMode = false;
+            dataManager.isResizeMode.set(false);
         }
     };
     
@@ -189,7 +189,7 @@ public class HandleEvent {
             wp.canvas.setDisable(true);
             wp.canvas.toBack();
             wp.root.setCursor(Cursor.HAND);
-            WorkSpace.isResizeMode = true;
+            dataManager.isResizeMode.set(true);
             WorkSpace.isSelectMode = false;
         }
     };
@@ -201,7 +201,7 @@ public class HandleEvent {
             wp.root.setCursor(Cursor.CROSSHAIR);
             wp.canvas.setDisable(false);
             WorkSpace.isSelectMode = false;
-            WorkSpace.isResizeMode = false;
+            dataManager.isResizeMode.set(false);
         }
     };
     
@@ -229,14 +229,15 @@ public class HandleEvent {
                         break;
                     }
                 }
-               
                 addToScreen(jc);
+                wp.canvas.toFront();
                 DataManager.setSaved(false);
             }
         }
     };
     
     public static void addToScreen(JClass jc){
+                jc.setCursor(Cursor.OPEN_HAND);
                 wp.root.getChildren().add(jc);
                 dataManager.addClassToList(jc);
                 dataManager.setSelectedJC(jc);
