@@ -46,7 +46,6 @@ public class JClass extends VBox{
         });
         this.setLayoutX(x);
         this.setLayoutY(y);
-        this.setMinWidth(100);
         this.getStyleClass().add("classWindow_style");
         name.getStyleClass().add("variable_method_Boxes_style");
         name.getChildren().addAll(className);
@@ -133,6 +132,10 @@ public class JClass extends VBox{
     
     public MethodBox getMethodBox(){
         return methodBox;
+    }
+    
+    public VBox getTitleBox(){
+        return name;
     }
     
     public Line getLine(){

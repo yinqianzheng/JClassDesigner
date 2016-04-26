@@ -73,6 +73,7 @@ public class WorkSpace extends Application{
     public TextField packageNameInput;
     public ComboBox parentsList;
     public static boolean isSelectMode = false;
+    public static boolean isResizeMode = false;
     public static Window primaryStageWindow;
     public HashMap<String, Button> buttonMap = new HashMap<>();
     public CheckBox interfaceCheckBox = new CheckBox();
@@ -325,7 +326,7 @@ public class WorkSpace extends Application{
         initbuttons(fileToolbar, "file:./images/Exit.png" , 25, 25, "exit", HandleEvent.exitEvent, false);
        
         initbuttons(editToolbar, "file:./images/Select.png" , 35, 40, "select", HandleEvent.selectEvent, false);
-        initbuttons(editToolbar, "file:./images/Resize.png" , 35, 40, "resize", HandleEvent.selectEvent, true);
+        initbuttons(editToolbar, "file:./images/Resize.png" , 35, 40, "resize", HandleEvent.resizeEvent, true);
         initbuttons(editToolbar, "file:./images/AddClass.png" , 35, 40, "add class", HandleEvent.addEvent, false);
         initbuttons(editToolbar, "file:./images/Remove.png" , 35, 40, "remove", HandleEvent.removeClass, false);
         initbuttons(editToolbar, "file:./images/undo.png" , 35, 40, "undo", HandleEvent.selectEvent, true);

@@ -11,6 +11,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
+import javafx.scene.Cursor;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableView;
 import javafx.scene.effect.DropShadow;
@@ -40,6 +41,11 @@ public class DataManager {
     private static double sceneY;
     private static double translateX;
     private static double translateY;
+    private static double width;
+    private static double hight;
+    private static double tHight;
+    private static double vHight;
+    private static double mHight;
 
     private DataManager() {
         // renew parent list
@@ -51,6 +57,7 @@ public class DataManager {
                 HandleEvent.getWorkPane().buttonMap.get("export photo").setDisable(jList.getItems().isEmpty());
                 HandleEvent.getWorkPane().buttonMap.get("save as").setDisable(jList.getItems().isEmpty());
                 HandleEvent.getWorkPane().buttonMap.get("save").setDisable(jList.getItems().isEmpty());
+                HandleEvent.getWorkPane().buttonMap.get("resize").setDisable(jList.getItems().isEmpty());
                 if (jList.getItems().isEmpty())
                     setSaved(true);
             }
@@ -186,7 +193,7 @@ public class DataManager {
         @Override
         public void handle(MouseEvent click) {
             
-            if (WorkSpace.isSelectMode==true){
+            if (WorkSpace.isSelectMode==true||WorkSpace.isResizeMode==true){
                 if (selectedJC!=null)
                     preSelectedJC = selectedJC;
                 selectedJC = ((JClass)click.getSource());
@@ -216,7 +223,11 @@ public class DataManager {
                 sceneY = click.getSceneY();
                 translateX = ((JClass)click.getSource()).getTranslateX();
                 translateY = ((JClass)click.getSource()).getTranslateY();
-          
+                width = ((JClass)click.getSource()).getWidth();
+                hight = ((JClass)click.getSource()).getHeight();
+                tHight = ((JClass)click.getSource()).getTitleBox().getHeight();
+                vHight = ((JClass)click.getSource()).getVariableBox().getHeight();
+                mHight = ((JClass)click.getSource()).getMethodBox().getHeight()+2;
             } catch (Exception e) {
             }  
         }
@@ -228,7 +239,6 @@ public class DataManager {
             if (HandleEvent.getWorkPane().isSelectMode==true){
                 double offsetX = click.getSceneX() - sceneX;
                 double offsetY = click.getSceneY() - sceneY;
-                
                 double newTranslateX = translateX + offsetX/HandleEvent.getWorkPane().getZoomValue();
                 double newTranslateY = translateY + offsetY/HandleEvent.getWorkPane().getZoomValue();
 
@@ -248,6 +258,17 @@ public class DataManager {
                         }
                     }
                 }
+            }else if (HandleEvent.getWorkPane().isResizeMode==true){
+                double ratioX = (click.getSceneX() - sceneX)/width;
+                double ratioY = (click.getSceneY() - sceneY)/hight;
+                
+                if (!(ratioX <= -1 || ratioY <= -1)){
+                    selectedJC.setPrefSize(width*(1+ratioX), (hight-tHight)*(1+ratioY));
+                    selectedJC.getVariableBox().setPrefHeight(vHight*(1+ratioY));
+                    selectedJC.getMethodBox().setPrefHeight(mHight*(1+ratioY));
+                }
+                
+                
             }
             DataManager.setSaved(false);
         }

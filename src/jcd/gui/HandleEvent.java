@@ -179,6 +179,18 @@ public class HandleEvent {
             wp.canvas.toBack();
             wp.root.setCursor(Cursor.HAND);
             WorkSpace.isSelectMode = true;
+            WorkSpace.isResizeMode = false;
+        }
+    };
+    
+    static EventHandler resizeEvent = new EventHandler() {
+        @Override
+        public void handle(Event event) {
+            wp.canvas.setDisable(true);
+            wp.canvas.toBack();
+            wp.root.setCursor(Cursor.HAND);
+            WorkSpace.isResizeMode = true;
+            WorkSpace.isSelectMode = false;
         }
     };
     
@@ -189,6 +201,7 @@ public class HandleEvent {
             wp.root.setCursor(Cursor.CROSSHAIR);
             wp.canvas.setDisable(false);
             WorkSpace.isSelectMode = false;
+            WorkSpace.isResizeMode = false;
         }
     };
     
