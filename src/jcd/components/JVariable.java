@@ -45,10 +45,10 @@ public class JVariable {
         this.type = new SimpleStringProperty("int");
         this.isStatic = new SimpleBooleanProperty(false);
         this.access = new SimpleStringProperty("public");
-        
         setActions();
         variableLabel.setText(toText());
     }
+    
     public JVariable(VariableBox vb, String access, String type, String name, boolean b){
         variableBox = vb;
         this.variableLabel = new Label();
@@ -56,11 +56,44 @@ public class JVariable {
         this.type = new SimpleStringProperty(type);
         this.isStatic = new SimpleBooleanProperty(b);
         this.access = new SimpleStringProperty(access);
-        
         setActions();
         variableLabel.setText(toText());
     }
     
+    // getter and setter   
+    public String getName(){
+        return this.name.get();
+        
+    }
+    
+    public String getType(){
+        return this.type.get();
+    }
+    
+    public SimpleStringProperty getAccess(){
+        return this.access;
+    }
+    
+    public SimpleBooleanProperty getIsStatic(){
+        return this.isStatic;
+    }
+    
+    public void setStatic(Boolean b){
+        this.isStatic.set(b);
+    }
+    
+    public void setName(String name){
+        this.name.set(name);
+    }
+    
+    public void setType(String type){
+        this.type.set(type);
+    }
+    
+    public void setAccess(String access){
+        this.access.set(access);
+    }
+      
     public Label getLabel(){
         return variableLabel;
     }
@@ -105,39 +138,6 @@ public class JVariable {
         });
     }
     
-    public String getName(){
-        return this.name.get();
-        
-    }
-    
-    public String getType(){
-        return this.type.get();
-    }
-    
-    public SimpleStringProperty getAccess(){
-        return this.access;
-    }
-    
-    public SimpleBooleanProperty getIsStatic(){
-        return this.isStatic;
-    }
-    
-    public void setStatic(Boolean b){
-        this.isStatic.set(b);
-    }
-    
-    public void setName(String name){
-        this.name.set(name);
-    }
-    
-    public void setType(String type){
-        this.type.set(type);
-    }
-    
-    public void setAccess(String access){
-        this.access.set(access);
-    }
-    
     
     // generate label's text
     public String toText(){
@@ -161,10 +161,10 @@ public class JVariable {
                 str = "#$"+ name.get() + " : " + type.get();
             else
                 str = "$" + name.get() + " : " + type.get();
-        }
-        
+        }  
         return str;
     }
+    
     
     // generate code for the variable
     public String toCode(){
@@ -181,6 +181,8 @@ public class JVariable {
         return code;
     }
     
+    
+    // generate json-format string
     @Override
     public String toString(){
         String str = "{\n\"name\":\""+name.get()+"\",\n"

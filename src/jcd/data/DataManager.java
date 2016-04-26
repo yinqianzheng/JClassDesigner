@@ -28,14 +28,18 @@ public class DataManager {
     private static DataManager dm;
     private static HandleEvent handler;
     private static WorkSpace workPane;
-    public static TableView<JClass> jList = new TableView<JClass>();
+    private static TableView<JClass> jList = new TableView<JClass>();
     private static JClass preSelectedJC;
     private static JClass selectedJC;
     final private static ComboBox<String> parentList = new ComboBox<String>();
     final private static DropShadow highlight = new DropShadow(20, Color.YELLOW);
-    public static SimpleBooleanProperty isSaved = new SimpleBooleanProperty(true);
-    public static SimpleBooleanProperty hasDirectory = new SimpleBooleanProperty(false);
+    private static SimpleBooleanProperty isSaved = new SimpleBooleanProperty(true);
+    private static SimpleBooleanProperty hasDirectory = new SimpleBooleanProperty(false);
     private static String directory = "";
+    private static double sceneX;
+    private static double sceneY;
+    private static double translateX;
+    private static double translateY;
 
     private DataManager() {
         // renew parent list
@@ -86,6 +90,26 @@ public class DataManager {
         });
     }
     
+    public static DataManager getInstance(HandleEvent e){
+        if(handler==null){
+            dm = new DataManager();
+            handler = e;
+        }
+        return dm;
+    }
+    
+    public static TableView<JClass> getCurrentList(){
+        return jList;
+    }
+    
+    public static SimpleBooleanProperty isSaved(){
+        return isSaved;
+    }
+    
+    public static SimpleBooleanProperty hasDirectory(){
+        return hasDirectory;
+    }
+    
     public void removeChildrenLines(){
         for (JClass jclass : jList.getItems()){
             if (jclass.getJParent()!=null){
@@ -110,13 +134,6 @@ public class DataManager {
         return parentList;
     }
     
-    public static DataManager getInstance(HandleEvent e){
-        if(handler==null){
-            dm = new DataManager();
-            handler = e;
-        }
-        return dm;
-    }
     
     public static TableView<JClass> getJClassList(){
         return jList;
@@ -195,10 +212,10 @@ public class DataManager {
                 }
             }
             try {
-                selectedJC.sceneX = click.getSceneX();
-                selectedJC.sceneY = click.getSceneY();
-                selectedJC.translateX = ((JClass)click.getSource()).getTranslateX();
-                selectedJC.translateY = ((JClass)click.getSource()).getTranslateY();
+                sceneX = click.getSceneX();
+                sceneY = click.getSceneY();
+                translateX = ((JClass)click.getSource()).getTranslateX();
+                translateY = ((JClass)click.getSource()).getTranslateY();
           
             } catch (Exception e) {
             }  
@@ -209,11 +226,11 @@ public class DataManager {
         @Override
         public void handle(MouseEvent click) {
             if (HandleEvent.getWorkPane().isSelectMode==true){
-                double offsetX = click.getSceneX() - selectedJC.sceneX;
-                double offsetY = click.getSceneY() - selectedJC.sceneY;
+                double offsetX = click.getSceneX() - sceneX;
+                double offsetY = click.getSceneY() - sceneY;
                 
-                double newTranslateX = selectedJC.translateX + offsetX/HandleEvent.getWorkPane().getZoomValue();
-                double newTranslateY = selectedJC.translateY + offsetY/HandleEvent.getWorkPane().getZoomValue();
+                double newTranslateX = translateX + offsetX/HandleEvent.getWorkPane().getZoomValue();
+                double newTranslateY = translateY + offsetY/HandleEvent.getWorkPane().getZoomValue();
 
                 ((JClass)(click.getSource())).setTranslateX(newTranslateX);
                 ((JClass)(click.getSource())).setTranslateY(newTranslateY);

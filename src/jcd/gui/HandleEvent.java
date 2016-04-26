@@ -57,7 +57,7 @@ public class HandleEvent {
     static EventHandler newEvent = new EventHandler() {
         @Override
         public void handle(Event event) {
-            if (!DataManager.isSaved.get())
+            if (!DataManager.isSaved().get())
                 try {
                     if (!promoteUserToSave())
                         return;
@@ -65,7 +65,7 @@ public class HandleEvent {
                 Logger.getLogger(HandleEvent.class.getName()).log(Level.SEVERE, null, ex);
             }
             wp.reload();
-            DataManager.hasDirectory.set(false);
+            DataManager.hasDirectory().set(false);
             Alert imformDialog = new  Alert(Alert.AlertType.INFORMATION);
             imformDialog.setTitle("New Work!");
             imformDialog.setHeaderText("New work space is ready for editting!");          
@@ -78,7 +78,7 @@ public class HandleEvent {
         @Override
         public void handle(Event event) {
             try {
-                if (!DataManager.isSaved.get())
+                if (!DataManager.isSaved().get())
                     if (!promoteUserToSave())
                         return;
                 wp.reload();
@@ -95,7 +95,7 @@ public class HandleEvent {
     static  EventHandler saveEvent = new EventHandler() {
         @Override
         public void handle(Event event) {
-            if (DataManager.hasDirectory.get())
+            if (DataManager.hasDirectory().get())
                 try {
                     JFileManager.saveData(DataManager.getInstance(obj), DataManager.getDirectory());
             } catch (IOException ex) {
@@ -160,7 +160,7 @@ public class HandleEvent {
     static EventHandler exitEvent = new EventHandler() {
         @Override
         public void handle(Event event) {
-            if (!DataManager.isSaved.get())
+            if (!DataManager.isSaved().get())
                 try {
                     if (!promoteUserToSave())
                         return;
@@ -353,7 +353,7 @@ public class HandleEvent {
             yesNoDialog.getButtonTypes().setAll(buttonTypeYes, buttonTypeNo, buttonTypeCancel);
             Optional<ButtonType> result = yesNoDialog.showAndWait();
             if (result.get() == buttonTypeYes) {
-                if (DataManager.hasDirectory.get())
+                if (DataManager.hasDirectory().get())
                     JFileManager.saveData(DataManager.getSelectedJC(), DataManager.getDirectory());
                 else
                     JFileManager.saveAs(DataManager.getSelectedJC(), wp.primaryStageWindow);

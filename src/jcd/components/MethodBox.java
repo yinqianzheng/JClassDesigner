@@ -25,10 +25,10 @@ import javafx.util.Callback;
  * @author YinqianZheng
  */
 public class MethodBox extends VBox{
-    private MTableView<JMethod> mTable;
-    private MethodBox mb;
+    private TableView<JMethod> mTable;
+    private MethodBox methodBox;
     private SimpleBooleanProperty isContainAbstract;
-    private SimpleBooleanProperty isInterface = new SimpleBooleanProperty(false);
+    private SimpleBooleanProperty isInterface;
     private JClass jClass;
     private TableColumn<JMethod, String> accessColumn;
     private TableColumn<JMethod, Boolean> staticColumn;
@@ -37,26 +37,80 @@ public class MethodBox extends VBox{
     private TableColumn<JMethod, String> arg2Column;
     private TableColumn<JMethod, String> arg3Column;
     
+    
     public MethodBox(JClass jc){
+        isInterface = new SimpleBooleanProperty(false);
         jClass = jc;
         isContainAbstract = new SimpleBooleanProperty(false);
-        mTable = new MTableView<JMethod>();
+        mTable = new TableView<JMethod>();
         initTableView();
         mTable.getItems().addListener(new ListChangeListener(){
             @Override
             public void onChanged(ListChangeListener.Change change) {
-                checkAbstractMethod();
+                containAbstractMethod();
             }
         } );
-        mb = this;
+        methodBox = this;
     }
     
-    
-    public MTableView<JMethod> getMethodTable(){
+    public TableView<JMethod> getMethodTable(){
         return mTable;
     }
     
-    public void setMethodForInterface(){
+    public void addMethod(){
+        JMethod jm = new JMethod(methodBox);
+        String methodName;
+        SimpleBooleanProperty validName = new SimpleBooleanProperty(true);
+        ObservableList<JMethod> methods = mTable.getItems();        
+        for (int i = 1; i < 100; i++){
+            methodName = "method" + String.valueOf(i);
+            validName.set(true);
+            for (JMethod j: methods){
+                if ((j.getName()).equals(methodName)){
+                    validName.set(false);
+                }           
+            }        
+            if (validName.get() == true){
+                jm.setName(methodName);
+                break;
+            }
+        }
+        jm.setAbstract(isInterface.get());
+        mTable.getItems().add(jm);
+        this.getChildren().add(jm.getLabel());
+    }
+    
+    public void addMethod(String methodAccess, String methodType, String methodName, boolean s,
+            boolean a, String arg1, String arg2, String arg3){
+        JMethod jm = new JMethod(methodBox, methodAccess, methodType, methodName, s, a, arg1, arg2, arg3);
+        mTable.getItems().add(jm);
+        this.getChildren().add(jm.getLabel());
+    }     
+    
+    public void removeMethod(){
+        ObservableList<JMethod> methodSelected = mTable.getSelectionModel().getSelectedItems();
+        this.getChildren().remove(methodSelected.get(0).getLabel());
+        mTable.getItems().removeAll(methodSelected); 
+    }
+    
+    
+    public SimpleBooleanProperty getIsContainAbstract(){
+        return isContainAbstract;
+    }
+    
+    public Boolean containAbstractMethod(){
+        ObservableList<JMethod> methods = mTable.getItems();
+        for (JMethod jm : methods){
+            if (jm.getIsAbstract().get() == true){
+                isContainAbstract.set(true);
+                return true;
+            }      
+        }
+        isContainAbstract.set(false);
+        return false;
+    }
+    
+        public void setMethodForInterface(){
         ObservableList<JMethod> methods = mTable.getItems();
         if (!methods.isEmpty()){
             for (JMethod jm : methods){
@@ -94,78 +148,6 @@ public class MethodBox extends VBox{
         arg3Column.setEditable(true);
         isInterface.set(false);       
     }
-    
-    public void addMethod(){
-        JMethod jm = new JMethod(mb);
-        String methodName;
-        SimpleBooleanProperty validName = new SimpleBooleanProperty(true);
-        ObservableList<JMethod> methods = mTable.getItems();        
- 
-        
-        for (int i = 1; i < 100; i++){
-            methodName = "method" + String.valueOf(i);
-            validName.set(true);
-            for (JMethod j: methods){
-                if ((j.getName()).equals(methodName)){
-                    validName.set(false);
-                }           
-            }        
-            if (validName.get() == true){
-                jm.setName(methodName);
-                break;
-            }
-        }
-        jm.setAbstract(isInterface.get());
-        mTable.getItems().add(jm);
-        this.getChildren().add(jm.getLabel());
-    }
-    
-    public void addMethod(String methodAccess, String methodType, String methodName, boolean s,
-            boolean a, String arg1, String arg2, String arg3){
-        JMethod jm = new JMethod(mb, methodAccess, methodType, methodName, s, a, arg1, arg2, arg3);
-        mTable.getItems().add(jm);
-        this.getChildren().add(jm.getLabel());
-    }
-    
-    public String toCode(){
-        ObservableList<JMethod> methods = mTable.getItems();
-        String methodCode = "";
-        for (JMethod j: methods){
-            methodCode = methodCode + "\n" + j.toCode();  
-        }  
-        return methodCode;
-    }      
-    
-    
-    public void addMethod(JMethod jm){
-        mTable.getItems().add(jm);
-        this.getChildren().add(jm.getLabel());
-    }
-    
-    public void removeMethod(){
-        ObservableList<JMethod> methodSelected = mTable.getSelectionModel().getSelectedItems();
-        this.getChildren().remove(methodSelected.get(0).getLabel());
-        mTable.getItems().removeAll(methodSelected); 
-    }
-    
-    
-    public SimpleBooleanProperty getIsContainAbstract(){
-        return isContainAbstract;
-    }
-    
-    public Boolean checkAbstractMethod(){
-        ObservableList<JMethod> methods = mTable.getItems();
-        for (JMethod jm : methods){
-            if (jm.getIsAbstract().get() == true){
-                isContainAbstract.set(true);
-                return true;
-            }      
-        }
-        isContainAbstract.set(false);
-        return false;
-    }
-    
-    
     
     public void initTableView(){
         mTable.setEditable(true);
@@ -283,6 +265,15 @@ public class MethodBox extends VBox{
         // add columns into table
         mTable.getColumns().addAll(nameColumn, returnColumn, staticColumn, abstractColumn, accessColumn, arg1Column, arg2Column, arg3Column);
     }
+        
+    public String toCode(){
+        ObservableList<JMethod> methods = mTable.getItems();
+        String methodCode = "";
+        for (JMethod j: methods){
+            methodCode = methodCode + "\n" + j.toCode();  
+        }  
+        return methodCode;
+    } 
     
     @Override
     public String toString(){
@@ -299,15 +290,5 @@ public class MethodBox extends VBox{
                str = str + "{\""+i.get()+"\":{}}\n"; 
         }               
         return str;
-    }
-    
-    public class MTableView<JVariable> extends TableView{
-        public MTableView(){
-        }
-        
-        
-        public MethodBox getParentBox(){
-            return mb;
-        }
     }
 }

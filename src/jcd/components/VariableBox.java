@@ -24,53 +24,34 @@ import javafx.util.Callback;
  * @author YinqianZheng
  */
 public class VariableBox extends VBox{
-    private VTableView<JVariable> vTable;
-    private VariableBox vb;
+    private TableView<JVariable> vTable;
+    private VariableBox variableBox;
     private JClass jclass;
     private TableColumn<JVariable, Boolean> staticColumn;
     private TableColumn<JVariable, String> accessColumn;
+    
+    
     public VariableBox(JClass jc){
-        vTable = new VTableView<JVariable>();
+        vTable = new TableView<JVariable>();
         initTableView();
-        vb = this;
+        variableBox = this;
         jclass = jc;
     }
-    
-    
-    
-    
-    public VTableView<JVariable> getVariableTable(){
+
+    public TableView<JVariable> getVariableTable(){
         return vTable;
-    }
-    
-    public void setVariableForInterface(){
-        ObservableList<JVariable> variables = vTable.getItems();
-        if (!variables.isEmpty()){
-            for (JVariable jv : variables){
-                jv.setStatic(true);
-                jv.setAccess("public");
-            }
-        }
-        staticColumn.setEditable(false);
-        accessColumn.setEditable(false);
-    }
-    
-    public void setVariableForClass(){
-        staticColumn.setEditable(true);
-        accessColumn.setEditable(true);
     }
     
     public JClass getJClass(){
         return jclass;
     }
     
+    // create a default variable
     public void addVariable(){
-        JVariable jv = new JVariable(vb);
+        JVariable jv = new JVariable(variableBox);
         String varName;
         SimpleBooleanProperty validName = new SimpleBooleanProperty(true);
-        ObservableList<JVariable> variables = vTable.getItems();        
- 
-        
+        ObservableList<JVariable> variables = vTable.getItems();
         for (int i = 1; i < 100; i++){
             varName = "var" + String.valueOf(i);
             validName.set(true);
@@ -87,33 +68,23 @@ public class VariableBox extends VBox{
         vTable.getItems().add(jv);
         this.getChildren().add(jv.getLabel());
     }
+ 
     
+    // create variable with values
     public void addVariable(String access, String type, String name, boolean b){
-        JVariable jv = new JVariable(vb, access, type, name, b);
+        JVariable jv = new JVariable(variableBox, access, type, name, b);
         vTable.getItems().add(jv);
         this.getChildren().add(jv.getLabel());
     }
-    
-    public String toCode(){
-        ObservableList<JVariable> variables = vTable.getItems();
-        String variableCode = "";
-        for (JVariable j: variables){
-            variableCode = variableCode + "\n" + j.toCode();       
-        }    
-        return variableCode;
-    }
-    
-    public void addVariable(JVariable jv){
-        vTable.getItems().add(jv);
-        this.getChildren().add(jv.getLabel());
-    }
-    
+        
     public void removeVariable(){
         ObservableList<JVariable> variableSelected = vTable.getSelectionModel().getSelectedItems();
         this.getChildren().remove(variableSelected.get(0).getLabel());
         vTable.getItems().removeAll(variableSelected); 
     }
     
+    
+    // create columns
     public void initTableView(){
         vTable.setEditable(true);
         
@@ -204,6 +175,34 @@ public class VariableBox extends VBox{
         vTable.getColumns().addAll(nameColumn, typeColumn, staticColumn, accessColumn);
     }
     
+        
+    public void setVariableForInterface(){
+        ObservableList<JVariable> variables = vTable.getItems();
+        if (!variables.isEmpty()){
+            for (JVariable jv : variables){
+                jv.setStatic(true);
+                jv.setAccess("public");
+            }
+        }
+        staticColumn.setEditable(false);
+        accessColumn.setEditable(false);
+    }
+    
+    public void setVariableForClass(){
+        staticColumn.setEditable(true);
+        accessColumn.setEditable(true);
+    }
+        
+    public String toCode(){
+        ObservableList<JVariable> variables = vTable.getItems();
+        String variableCode = "";
+        for (JVariable j: variables){
+            variableCode = variableCode + "\n" + j.toCode();       
+        }    
+        return variableCode;
+    }
+    
+    // generate json-format string
     @Override
     public String toString(){
         String str="";
@@ -217,18 +216,8 @@ public class VariableBox extends VBox{
                 i.set(i.get()+1);
             }
                str = str + "{\""+i.get()+"\":{}}\n"; 
-        }
-               
+        }         
         return str;
     }
     
-    public class VTableView<JVariable> extends TableView{
-        public VTableView(){
-        }
-        
-        
-        public VariableBox getParentBox(){
-            return vb;
-        }
-    }
 }

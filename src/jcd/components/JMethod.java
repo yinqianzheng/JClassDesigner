@@ -6,7 +6,6 @@
 package jcd.components;
 
 import java.util.HashMap;
-import java.util.Map;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -30,8 +29,8 @@ public class JMethod {
     private SimpleStringProperty arg2;
     private SimpleStringProperty arg3;
     private Label methodLabel;
-    private MethodBox mb;
-    private SimpleBooleanProperty isInterface = new SimpleBooleanProperty(false);
+    private MethodBox methodBox;
+    private SimpleBooleanProperty isInterface;
     private static HashMap<String,Object> returnMap;
     static{
         returnMap = new HashMap();
@@ -46,6 +45,7 @@ public class JMethod {
         returnMap.put("byte", 0);
     }
     
+    
     public static final Font ITALIC_FONT = Font.font(
                     "Serif",
                     FontPosture.ITALIC,
@@ -53,7 +53,8 @@ public class JMethod {
                 );
     
     public JMethod(MethodBox mbox){
-        this.mb = mbox;
+        isInterface = new SimpleBooleanProperty(false);
+        this.methodBox = mbox;
         this.methodLabel = new Label();
         this.name = new SimpleStringProperty("method1");
         this.type = new SimpleStringProperty("void");
@@ -63,13 +64,14 @@ public class JMethod {
         this.arg1 = new SimpleStringProperty("");
         this.arg2 = new SimpleStringProperty("");
         this.arg3 = new SimpleStringProperty("");
-        setActions();
+        addListeners();
         methodLabel.setText(toText());
     }
     
     public JMethod(MethodBox mbox,  String methodAccess, String methodType, String methodName, boolean s,
             boolean a, String arg1, String arg2, String arg3){  
-        this.mb = mbox;
+        isInterface = new SimpleBooleanProperty(false);
+        this.methodBox = mbox;
         this.methodLabel = new Label();
         this.name = new SimpleStringProperty(methodName);
         this.type = new SimpleStringProperty(methodType);
@@ -79,24 +81,13 @@ public class JMethod {
         this.arg1 = new SimpleStringProperty(arg1);
         this.arg2 = new SimpleStringProperty(arg2);
         this.arg3 = new SimpleStringProperty(arg3);
-        setActions();
+        addListeners();
         methodLabel.setText(toText());
         if (a==true)
             methodLabel.setFont(ITALIC_FONT);  
     }
     
-    public void setForInterface(){
-        isInterface.set(true);
-    }
-    
-    public void setForClass(){
-        isInterface.set(false);
-    }
-    
-    public Label getLabel(){
-        return methodLabel;
-    }
-    
+    // getter and setter
     public String getName(){
         return this.name.get();
         
@@ -162,7 +153,21 @@ public class JMethod {
         this.arg3.set(arg);
     }
     
-    private void setActions(){
+    public Label getLabel(){
+        return methodLabel;
+    }
+    
+    // indicate that this method is for interface
+    public void setForInterface(){
+        isInterface.set(true);
+    }
+    
+    // indicate that this method is not for interface 
+    public void setForClass(){
+        isInterface.set(false);
+    }
+   
+    private void addListeners(){
         name.addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
@@ -202,7 +207,7 @@ public class JMethod {
                     methodLabel.setFont(Font.getDefault());
                 }
                 DataManager.setSaved(false);
-                mb.checkAbstractMethod();
+                methodBox.containAbstractMethod();
             }
         });
         
@@ -253,6 +258,7 @@ public class JMethod {
         });
     }
     
+    // generate text for label
     private String toText(){
         String text = "";
         String args = "";
@@ -268,8 +274,6 @@ public class JMethod {
         }
         if (!arg3.get().equals(""))
             args = args + "arg3 : " + arg3.get();
-        
-        
         
         if (isStatic.get() == false){
             if (access.getValue().equals("public"))
@@ -289,9 +293,11 @@ public class JMethod {
         return text;
     }
     
-    
+    // generate java code
     public String toCode(){
         String isStaticMethod = "";
+        
+        // create code for arguments
         String args= "";
         if (!arg1.get().equals("")){
             args =  arg1.get() + " arg1";
@@ -328,6 +334,7 @@ public class JMethod {
         return code;
     }
     
+    // generate json-format string
     @Override
     public String toString(){
         String str =  "{\n\"name\":\""+name.get()+"\",\n"
@@ -339,8 +346,6 @@ public class JMethod {
                 + "\"arg2\":\""+arg2.get()+"\",\n"
                 + "\"arg3\":\""+arg3.get()+"\"\n"
                 + "}";
-        
-        
         return str;
     }
     

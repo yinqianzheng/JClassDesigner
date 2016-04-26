@@ -36,8 +36,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import jcd.components.MethodBox.MTableView;
-import jcd.components.VariableBox.VTableView;
 import jcd.data.DataManager;
 
 
@@ -65,9 +63,7 @@ public class WorkSpace extends Application{
     final Button deleteVariable = new Button();
     final Button addMethod = new Button();
     final Button deleteMethod = new Button();
-    
     final TableView methodTable = new TableView();
-    
     final private CheckBox grid = new CheckBox("Grid");
     final private CheckBox snap = new CheckBox("Snap");
     private SimpleBooleanProperty isGridSnappingActived = new SimpleBooleanProperty(false);
@@ -97,9 +93,11 @@ public class WorkSpace extends Application{
         gridBackGroundSetActions();
         initFunctionForZoom_In_Out();
     }
+    
     public double getZoomValue(){
         return zoomValue.get();
     }
+    
     private void gridBackGroundSetActions(){
         snap.setDisable(true);
         grid.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -365,11 +363,11 @@ public class WorkSpace extends Application{
             packageNameInput.setText(str);
     }
     
-    public void setVariablePane(VTableView vb){
+    public void setVariablePane(TableView vb){
         variablePane.setContent(vb);
     }
     
-    public void setMethodPane(MTableView mb){
+    public void setMethodPane(TableView mb){
         methodPane.setContent(mb);
     }
     

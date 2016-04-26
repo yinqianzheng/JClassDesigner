@@ -30,8 +30,8 @@ import jcd.gui.HandleEvent;
  */
 public class JFileManager {
     
+    
     public static boolean saveAs(Object ob, Window window) throws IOException, NullPointerException {
-        
         FileChooser.ExtensionFilter extFilter = 
                 new FileChooser.ExtensionFilter("TEXT files (*.json)", "*.json");
         FileChooser fileChooser = new FileChooser();
@@ -40,7 +40,7 @@ public class JFileManager {
         File file = fileChooser.showSaveDialog(window);
         
         if (saveData(ob.toString(), file.getPath())){
-            DataManager.hasDirectory.set(true);
+            DataManager.hasDirectory().set(true);
             DataManager.setDirectory(file.getAbsolutePath());
             return true;
         }else{ 
@@ -81,7 +81,7 @@ public class JFileManager {
     
     public static JsonObject loadFile(String path) throws IOException{
         JsonObject jsonList = createJsonObject(path);
-        DataManager.hasDirectory.set(true);
+        DataManager.hasDirectory().set(true);
         DataManager.setDirectory(path);
         return  jsonList;    
     }
@@ -94,6 +94,7 @@ public class JFileManager {
 	is.close();
 	return json;
         }
+    
     public static void createClasses(JsonObject jObj){
         JsonObject classes;
         for (int i = 0; i<100; i++){   
@@ -207,7 +208,7 @@ public class JFileManager {
             int i = path.indexOf("src", 0);
             
             if (i < 0){
-                for (JClass jc : DataManager.jList.getItems()){
+                for (JClass jc : DataManager.getCurrentList().getItems()){
                     String newPath = path;
                     if (!jc.getPackageName().equals(""))
                         newPath = newPath + "/" + jc.getPackageName();
@@ -226,7 +227,7 @@ public class JFileManager {
                     }
                 }
             }else{
-                for (JClass jc : DataManager.jList.getItems()){
+                for (JClass jc : DataManager.getCurrentList().getItems()){
                     String newPath = path;
                     String pcgstr = path.substring(i);
                     pcgstr = pcgstr.substring(4);

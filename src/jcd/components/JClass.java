@@ -25,12 +25,8 @@ public class JClass extends VBox{
     private SimpleBooleanProperty isInterface;
     private Label className = new Label("NewClass1");
     private String packageName = "";
-    public double sceneX;
-    public double sceneY;
-    public double translateX;
-    public double translateY;
-    VariableBox variableBox;
-    MethodBox methodBox;
+    private VariableBox variableBox;
+    private MethodBox methodBox;
     private JClass jParent;
     private Line linkToParent;
     
@@ -58,26 +54,39 @@ public class JClass extends VBox{
         listenerForInterface();
     }
 
-    private void listenerForInterface(){
-        isInterface.addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
-                if (t1){
-                    variableBox.setVariableForInterface();
-                    methodBox.setMethodForInterface();
-                    name.getChildren().clear();
-                    name.getChildren().addAll(className, interfaceLabel);
-                }else{
-                    variableBox.setVariableForClass();
-                    methodBox.setMethodForClass();
-                    name.getChildren().clear();
-                    name.getChildren().add(className);
-                    if (!methodBox.getChildren().isEmpty())
-                        name.getChildren().add(abstractLabel);
-                }
-            }
-        });
-    };
+            
+    public void setClassName(String str){
+        className.setText(str);
+    }
+    
+    public void setPackageName(String str){
+        packageName = str;
+    }
+    
+    public String getClassName(){
+        return className.getText();
+    }
+    
+    public String getPackageName(){
+        return packageName;
+    }
+    
+    private void setPosition(double x, double y){
+        this.setTranslateX(x);
+        this.setTranslateY(y);
+    }
+    
+    public void setAbstract(Boolean b){
+        if (b == true){
+            isAbstract.set(true);
+            name.getChildren().clear();
+            name.getChildren().addAll(className, abstractLabel);
+        }else{
+            isAbstract.set(false);
+            name.getChildren().clear();
+            name.getChildren().add(className);
+        }
+    }
     
     public void setInterface(boolean tf){
         isInterface.set(tf);
@@ -117,11 +126,7 @@ public class JClass extends VBox{
             linkToParent.setEndY(y);
         }
     }
-    
-    public Line getLine(){
-        return linkToParent;
-    }
-    
+
     public VariableBox getVariableBox(){
         return variableBox;
     }
@@ -130,67 +135,31 @@ public class JClass extends VBox{
         return methodBox;
     }
     
-    public void setAbstract(Boolean b){
-        if (b == true){
-            isAbstract.set(true);
-            name.getChildren().clear();
-            name.getChildren().addAll(className, abstractLabel);
-        }else{
-            isAbstract.set(false);
-            name.getChildren().clear();
-            name.getChildren().add(className);
-        }
+    public Line getLine(){
+        return linkToParent;
     }
-    
-    private void setPosition(double x, double y){
-        this.setTranslateX(x);
-        this.setTranslateY(y);
-    }
-    
-    
-    public void setClassName(String str){
-        className.setText(str);
-    }
-    
-    public void setPackageName(String str){
-        packageName = str;
-    }
-    
-    public String getClassName(){
-        return className.getText();
-    }
-    
-    public String getPackageName(){
-        return packageName;
-    }
-    
-    
-    public void changeSceneX(double x){
-        this.sceneX = x;
-    }
-    
-    public void changeSceneY(double y){
-        this.sceneY = y;
-    }
-    
-    public void changeTranslateX(double x){
-        this.translateX = x;
-    }
-    
-    public void changeTranslateY(double y){
-        this.translateY = y;
-    }
-    
-    public void clone(JClass j){
-        ObservableList<JVariable> jvList = this.getVariableBox().getVariableTable().getItems();
-        for (JVariable jv : jvList){
-            j.getVariableBox().addVariable(jv);
-        }
-        ObservableList<JMethod> jmList = this.getMethodBox().getMethodTable().getItems();
-        for (JMethod jm : jmList){
-            j.getMethodBox().addMethod(jm);
-        }
-    }
+
+
+    private void listenerForInterface(){
+        isInterface.addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
+                if (t1){
+                    variableBox.setVariableForInterface();
+                    methodBox.setMethodForInterface();
+                    name.getChildren().clear();
+                    name.getChildren().addAll(className, interfaceLabel);
+                }else{
+                    variableBox.setVariableForClass();
+                    methodBox.setMethodForClass();
+                    name.getChildren().clear();
+                    name.getChildren().add(className);
+                    if (!methodBox.getChildren().isEmpty())
+                        name.getChildren().add(abstractLabel);
+                }
+            }
+        });
+    };
     
     public String toCode(){
         String code = "";
@@ -212,12 +181,13 @@ public class JClass extends VBox{
         return code;
     }
     
+    
+    // generate json-format string
     @Override
     public String toString(){
         String str = "";
         str = "{\n"
                 +"\"class\":[\n"
-                
                 +"{\n"
                 +"\"0\":{\n"  
                 +"\"name\":\""+ className.getText()+"\",\n" 
@@ -235,7 +205,6 @@ public class JClass extends VBox{
                 + "]"
                 +"}\n"
                 +"},\n"
-                
                 +"{\n"
                 +"\"2\":{\n"
                 +"\"methods\":["
@@ -244,8 +213,7 @@ public class JClass extends VBox{
                 +"}\n"
                 +"}\n"
                 +"]\n"
-                +"}\n";
-                  
+                +"}\n";          
         return str;
     }
     
