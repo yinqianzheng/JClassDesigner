@@ -5,6 +5,13 @@
  */
 package jcd.data;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringBufferInputStream;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
@@ -17,7 +24,11 @@ import javafx.scene.control.TableView;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
 import jcd.components.JClass;
+import jcd.controller.JFileManager;
 import jcd.gui.HandleEvent;
 import jcd.gui.WorkSpace;
 
@@ -30,6 +41,7 @@ public class DataManager {
     private static HandleEvent handler;
     private static WorkSpace workPane;
     private static TableView<JClass> jList = new TableView<JClass>();
+    private static LinkedList<String> historyList = new LinkedList<String>();
     private static JClass preSelectedJC;
     private static JClass selectedJC;
     final private static ComboBox<String> parentList = new ComboBox<String>();
@@ -47,56 +59,9 @@ public class DataManager {
     private static double vHight;
     private static double mHight;
     public static SimpleBooleanProperty isResizeMode = new SimpleBooleanProperty(false);
+    public static SimpleIntegerProperty currentCursor = new SimpleIntegerProperty(0);
 
     private DataManager() {
-        // renew parent list
-        jList.getItems().addListener(new ListChangeListener<JClass>() {
-            @Override
-            public void onChanged(ListChangeListener.Change<? extends JClass> change) {
-                renewParentList();
-                HandleEvent.getWorkPane().buttonMap.get("export code").setDisable(jList.getItems().isEmpty());
-                HandleEvent.getWorkPane().buttonMap.get("export photo").setDisable(jList.getItems().isEmpty());
-                HandleEvent.getWorkPane().buttonMap.get("save as").setDisable(jList.getItems().isEmpty());
-                HandleEvent.getWorkPane().buttonMap.get("save").setDisable(jList.getItems().isEmpty());
-                HandleEvent.getWorkPane().buttonMap.get("resize").setDisable(jList.getItems().isEmpty());
-                if (jList.getItems().isEmpty())
-                    setSaved(true);
-            }
-        });
-        
-        // update jParent
-        parentList.valueProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                try {
-                    if (t1.equals("none")){
-                    selectedJC.setJParent(null);
-                    HandleEvent.getWorkPane().root.getChildren().remove(selectedJC.getLine());
-                }else {
-                    for (JClass jclass : jList.getItems()){
-                        if ((jclass.getPackageName()+"."+ jclass.getClassName()).equals(t1)){
-                            selectedJC.setJParent(jclass);
-                            try {
-                                HandleEvent.getWorkPane().root.getChildren().add(selectedJC.setLinkToJParent());
-                            } catch (Exception e) {
-                            }
-                            break;
-                        }
-                    }
-                }
-                } catch (Exception e) {
-                }
-                
-            }
-        });
-        
-        isSaved.addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
-                    HandleEvent.getWorkPane().buttonMap.get("save").setDisable(isSaved.get());
-            }
-        });
-        
         setListeners();
     }
     
@@ -312,6 +277,54 @@ public class DataManager {
     };
     
     private void setListeners(){
+        // renew parent list
+        jList.getItems().addListener(new ListChangeListener<JClass>() {
+            @Override
+            public void onChanged(ListChangeListener.Change<? extends JClass> change) {
+                renewParentList();
+                HandleEvent.getWorkPane().buttonMap.get("export code").setDisable(jList.getItems().isEmpty());
+                HandleEvent.getWorkPane().buttonMap.get("export photo").setDisable(jList.getItems().isEmpty());
+                HandleEvent.getWorkPane().buttonMap.get("save as").setDisable(jList.getItems().isEmpty());
+                HandleEvent.getWorkPane().buttonMap.get("save").setDisable(jList.getItems().isEmpty());
+                HandleEvent.getWorkPane().buttonMap.get("resize").setDisable(jList.getItems().isEmpty());
+                if (jList.getItems().isEmpty())
+                    setSaved(true);
+            }
+        });
+        
+        // update jParent
+        parentList.valueProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
+                try {
+                    if (t1.equals("none")){
+                    selectedJC.setJParent(null);
+                    HandleEvent.getWorkPane().root.getChildren().remove(selectedJC.getLine());
+                }else {
+                    for (JClass jclass : jList.getItems()){
+                        if ((jclass.getPackageName()+"."+ jclass.getClassName()).equals(t1)){
+                            selectedJC.setJParent(jclass);
+                            try {
+                                HandleEvent.getWorkPane().root.getChildren().add(selectedJC.setLinkToJParent());
+                            } catch (Exception e) {
+                            }
+                            break;
+                        }
+                    }
+                }
+                } catch (Exception e) {
+                }
+                
+            }
+        });
+        
+        isSaved.addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
+                    HandleEvent.getWorkPane().buttonMap.get("save").setDisable(isSaved.get());
+            }
+        });
+        
         isResizeMode.addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
@@ -327,6 +340,36 @@ public class DataManager {
                     }}
             }
         });
+        
+        currentCursor.addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
+                System.out.println("nani");
+                if (currentCursor.get()<= 0)
+                    HandleEvent.getWorkPane().buttonMap.get("undo").setDisable(true);
+                else
+                    HandleEvent.getWorkPane().buttonMap.get("undo").setDisable(false);
+                    
+                if (currentCursor.get()>= historyList.size()-1)
+                    HandleEvent.getWorkPane().buttonMap.get("redo").setDisable(true);
+                else
+                    HandleEvent.getWorkPane().buttonMap.get("redo").setDisable(false);
+                
+                try {
+                        if (!historyList.isEmpty())
+                            HandleEvent.getWorkPane().reload();
+                            createJsonObjectByString(historyList.get(currentCursor.get()));
+                    } catch (IOException ex) {
+                        Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                
+            }
+        });
+        historyList.add("{}");
+    }
+    
+    public static LinkedList<String> getHistoryList(){
+        return historyList;
     }
 
         
@@ -340,10 +383,21 @@ public class DataManager {
         preSelectedJC = null;
     }
     
-    @Override
-    public String toString(){
-        String str = "";
-               
+    public static void createJsonObjectByString(String str) throws IOException {
+	InputStream is = new StringBufferInputStream(str);
+	JsonReader jsonReader = Json.createReader(is);
+	JsonObject json = jsonReader.readObject();
+	jsonReader.close();
+	is.close();
+        JFileManager.createClasses(json);
+    }
+    
+    public static void addToHistoryList(){
+        if (currentCursor.get() != historyList.size()-1)
+            historyList.subList(currentCursor.get()+1, historyList.size()).clear();
+        
+        
+        String str = "";      
         if (jList.getItems().isEmpty()){
             str ="{}";
         }else{
@@ -355,6 +409,30 @@ public class DataManager {
                 i.set(i.get()+1);
             }
                str = str + "{\""+i.get()+"\":{}}]}\n"; 
+        }          
+        historyList.add(str);
+        currentCursor.set(DataManager.currentCursor.get()+1);
+        
+    }
+    
+    @Override
+    public String toString(){
+        String str = "";
+               
+        if (historyList.isEmpty()){
+            str ="{}";
+        }else{
+            str ="{\n"
+                +"\"history\":[\n";
+            SimpleIntegerProperty i = new SimpleIntegerProperty(0);
+            for (Iterator<String> it = historyList.iterator(); it.hasNext();) {
+                String str_jList = it.next();
+                str = str+ "{\""+i.get()+"\":" + str_jList + "},\n";
+                i.set(i.get()+1);
+            }
+               str = str + "{\""+i.get()+"\":{}}]\n"
+    //                   + "\"cursor\":" + index
+                       + "}\n"; 
         }          
         return str;
     }

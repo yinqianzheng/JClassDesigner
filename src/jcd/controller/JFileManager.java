@@ -93,20 +93,24 @@ public class JFileManager {
 	jsonReader.close();
 	is.close();
 	return json;
-        }
+    }
     
-    public static void createClasses(JsonObject jObj){
+    public static void createClasses(JsonObject jObj) {
         JsonObject classes;
-        for (int i = 0; i<100; i++){   
-            classes = ((JsonObject)((JsonObject)((JsonArray)jObj.get("classes")).get(i)).get(String.valueOf(i)));
-            if (classes==null)
-                break;
-            if (classes.get("class")==null)
-                break;
-            else
-                createClass(classes);
+        for (int i = 0; i<100; i++){ 
+            try {
+                classes = ((JsonObject)((JsonObject)((JsonArray)jObj.get("classes")).get(i)).get(String.valueOf(i)));
+                if (classes==null)
+                    break;
+                if (classes.get("class")==null)
+                    break;
+                else
+                    createClass(classes);
+            } catch (Exception e) {
+            }     
         }
     }
+    
     public static void createClass(JsonObject jObj){
         JClass j;
         JsonObject temp = ((JsonObject)((JsonObject)((JsonArray)jObj.get("class")).get(0)).get("0"));

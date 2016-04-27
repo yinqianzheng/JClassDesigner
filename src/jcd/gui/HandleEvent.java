@@ -231,6 +231,7 @@ public class HandleEvent {
                 }
                 addToScreen(jc);
                 wp.canvas.toFront();
+                DataManager.addToHistoryList();
                 DataManager.setSaved(false);
             }
         }
@@ -277,6 +278,25 @@ public class HandleEvent {
             }
         }
     };
+    
+    
+    static EventHandler undoEvent = new EventHandler() {
+        @Override
+        public void handle(Event event) {
+            DataManager.currentCursor.set(DataManager.currentCursor.get()-1);
+                        System.out.println(DataManager.currentCursor.get());
+
+        }
+    }; 
+    
+    static EventHandler redoEvent = new EventHandler() {
+        @Override
+        public void handle(Event event) {
+            DataManager.currentCursor.set(DataManager.currentCursor.get()+1);
+                        System.out.println(DataManager.currentCursor.get());
+
+        }
+    }; 
     
     public static Boolean changeClassName (String str){
         wp.classNameInput.setStyle(null);
