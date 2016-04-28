@@ -60,6 +60,7 @@ public class DataManager {
     private static double mHight;
     public static SimpleBooleanProperty isResizeMode = new SimpleBooleanProperty(false);
     public static SimpleIntegerProperty currentCursor = new SimpleIntegerProperty(0);
+    private static boolean isMoved = false;
 
     private DataManager() {
         setListeners();
@@ -160,7 +161,7 @@ public class DataManager {
     private static EventHandler pressed = new EventHandler<MouseEvent>() {
         @Override
         public void handle(MouseEvent click) {
-            
+            isMoved = false;
             if (WorkSpace.isSelectMode==true||isResizeMode.get()==true){
                 if (selectedJC!=null)
                     preSelectedJC = selectedJC;
@@ -234,11 +235,9 @@ public class DataManager {
                     selectedJC.setPrefSize(width*(1+ratioX), (hight-tHight)*(1+ratioY));
                     selectedJC.getVariableBox().setPrefHeight(vHight*(1+ratioY));
                     selectedJC.getMethodBox().setPrefHeight(mHight*(1+ratioY));
-                }
-                
-                
+                }  
             }
-            DataManager.setSaved(false);
+            isMoved = true;
         }
     };
     
@@ -271,8 +270,11 @@ public class DataManager {
                         }
                     }
                 }
-                DataManager.setSaved(false);
             }
+            // addToHistoryList();
+            if (isMoved)
+                setSaved(false);
+            // add size to json-format String
         }
     };
     
@@ -358,6 +360,7 @@ public class DataManager {
                 try {
                         if (!historyList.isEmpty())
                             HandleEvent.getWorkPane().reload();
+                            jList.getItems().clear();
                             createJsonObjectByString(historyList.get(currentCursor.get()));
                     } catch (IOException ex) {
                         Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
@@ -375,6 +378,10 @@ public class DataManager {
         
     public static void setSaved(boolean b){
         isSaved.set(b);
+        if (b==false){
+            addToHistoryList();
+            System.out.println("addtohistorylist");
+        }
     }
     
     public static void clear(){
@@ -411,8 +418,7 @@ public class DataManager {
                str = str + "{\""+i.get()+"\":{}}]}\n"; 
         }          
         historyList.add(str);
-        currentCursor.set(DataManager.currentCursor.get()+1);
-        
+        currentCursor.set(DataManager.currentCursor.get()+1);  
     }
     
     @Override

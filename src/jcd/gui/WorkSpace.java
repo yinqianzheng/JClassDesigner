@@ -329,12 +329,12 @@ public class WorkSpace extends Application{
         initbuttons(editToolbar, "file:./images/Resize.png" , 35, 40, "resize", HandleEvent.resizeEvent, true);
         initbuttons(editToolbar, "file:./images/AddClass.png" , 35, 40, "add class", HandleEvent.addEvent, false);
         initbuttons(editToolbar, "file:./images/Remove.png" , 35, 40, "remove", HandleEvent.removeClass, false);
-        initbuttons(editToolbar, "file:./images/undo.png" , 35, 40, "undo", HandleEvent.undoEvent, false);
-        initbuttons(editToolbar, "file:./images/redo.png" , 35, 40, "redo", HandleEvent.redoEvent,false);
+        initbuttons(editToolbar, "file:./images/undo.png" , 35, 40, "undo", HandleEvent.undoEvent, true);
+        initbuttons(editToolbar, "file:./images/redo.png" , 35, 40, "redo", HandleEvent.redoEvent,true);
         
-        initbuttons(viewToolbar, "file:./images/OriginalZoom.png" , 35, 40, "original", HandleEvent.selectEvent, false);
-        initbuttons(viewToolbar, "file:./images/ZoomIn.png" , 35, 40, "zoom in", HandleEvent.selectEvent, false);
-        initbuttons(viewToolbar, "file:./images/ZoomOut.png" , 35, 40, "zoom out", HandleEvent.selectEvent, false);
+        initbuttons(viewToolbar, "file:./images/OriginalZoom.png" , 35, 40, "original", HandleEvent.originalZoomEvent, false);
+        initbuttons(viewToolbar, "file:./images/ZoomIn.png" , 35, 40, "zoom in", HandleEvent.zoomInEvent, false);
+        initbuttons(viewToolbar, "file:./images/ZoomOut.png" , 35, 40, "zoom out", HandleEvent.zoomOutEvent, false);
         VBox checkboxes = new VBox();
         checkboxes.getStyleClass().add("checkBoxes");
         checkboxes.getChildren().addAll(grid, snap);

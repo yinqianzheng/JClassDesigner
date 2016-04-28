@@ -45,8 +45,8 @@ public class JVariable {
         this.type = new SimpleStringProperty("int");
         this.isStatic = new SimpleBooleanProperty(false);
         this.access = new SimpleStringProperty("public");
-        setActions();
         variableLabel.setText(toText());
+        setActions();
     }
     
     public JVariable(VariableBox vb, String access, String type, String name, boolean b){
@@ -56,13 +56,18 @@ public class JVariable {
         this.type = new SimpleStringProperty(type);
         this.isStatic = new SimpleBooleanProperty(b);
         this.access = new SimpleStringProperty(access);
-        setActions();
         variableLabel.setText(toText());
+        setActions();
     }
     
     // getter and setter   
     public String getName(){
         return this.name.get();
+        
+    }
+    
+    public SimpleStringProperty getNameProperty(){
+        return this.name;
         
     }
     
@@ -102,14 +107,18 @@ public class JVariable {
         return variableBox;
     }
     private void setActions(){
-        name.addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                // update label (name)
-                variableLabel.setText(toText());
-                DataManager.setSaved(false);
-            }
-        });
+//        name.addListener(new ChangeListener<String>() {
+//            @Override
+//            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
+//                // update label (name)
+//                variableLabel.setText(toText());
+//                if (!t.equals(t1)){
+//                    System.out.println(t);
+//                    System.out.println(t1);
+//                    DataManager.setSaved(false);
+//                }
+//            }
+//        });
         
         type.addListener(new ChangeListener<String>() {
             @Override

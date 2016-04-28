@@ -7,6 +7,7 @@ package jcd.components;
 
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableCell;
@@ -18,6 +19,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
+import jcd.data.DataManager;
 
 /**
  *
@@ -66,6 +68,18 @@ public class VariableBox extends VBox{
             }
         }
         vTable.getItems().add(jv);
+        jv.getNameProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
+                // update label (name)
+                jv.getLabel().setText(jv.toText());
+                if (!t.equals(t1)){
+                    System.out.println(t);
+                    System.out.println(t1);
+                    DataManager.setSaved(false);
+                }
+            }
+        });
         this.getChildren().add(jv.getLabel());
     }
  

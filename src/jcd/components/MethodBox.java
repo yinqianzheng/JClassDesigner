@@ -7,6 +7,7 @@ package jcd.components;
 
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -19,6 +20,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
+import jcd.data.DataManager;
 
 /**
  *
@@ -77,6 +79,14 @@ public class MethodBox extends VBox{
         }
         jm.setAbstract(isInterface.get());
         mTable.getItems().add(jm);
+        jm.getNameProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
+                // update label (name)
+                jm.getLabel().setText(jm.toText());
+                DataManager.setSaved(false);
+            }
+        });;
         this.getChildren().add(jm.getLabel());
     }
     

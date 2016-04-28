@@ -64,8 +64,8 @@ public class JMethod {
         this.arg1 = new SimpleStringProperty("");
         this.arg2 = new SimpleStringProperty("");
         this.arg3 = new SimpleStringProperty("");
-        addListeners();
         methodLabel.setText(toText());
+        addListeners();
     }
     
     public JMethod(MethodBox mbox,  String methodAccess, String methodType, String methodName, boolean s,
@@ -81,15 +81,20 @@ public class JMethod {
         this.arg1 = new SimpleStringProperty(arg1);
         this.arg2 = new SimpleStringProperty(arg2);
         this.arg3 = new SimpleStringProperty(arg3);
-        addListeners();
         methodLabel.setText(toText());
         if (a==true)
             methodLabel.setFont(ITALIC_FONT);  
+        addListeners();
     }
     
     // getter and setter
     public String getName(){
         return this.name.get();
+        
+    }
+    
+    public SimpleStringProperty getNameProperty(){
+        return this.name;
         
     }
     
@@ -168,14 +173,6 @@ public class JMethod {
     }
    
     private void addListeners(){
-        name.addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                // update label (name)
-                methodLabel.setText(toText());
-                DataManager.setSaved(false);
-            }
-        });
         
         type.addListener(new ChangeListener<String>() {
             @Override
@@ -259,7 +256,7 @@ public class JMethod {
     }
     
     // generate text for label
-    private String toText(){
+    public String toText(){
         String text = "";
         String args = "";
         if (!arg1.get().equals("")){

@@ -231,7 +231,7 @@ public class HandleEvent {
                 }
                 addToScreen(jc);
                 wp.canvas.toFront();
-                DataManager.addToHistoryList();
+                //DataManager.addToHistoryList();
                 DataManager.setSaved(false);
             }
         }
@@ -284,8 +284,6 @@ public class HandleEvent {
         @Override
         public void handle(Event event) {
             DataManager.currentCursor.set(DataManager.currentCursor.get()-1);
-                        System.out.println(DataManager.currentCursor.get());
-
         }
     }; 
     
@@ -293,10 +291,31 @@ public class HandleEvent {
         @Override
         public void handle(Event event) {
             DataManager.currentCursor.set(DataManager.currentCursor.get()+1);
-                        System.out.println(DataManager.currentCursor.get());
-
         }
     }; 
+    
+    static EventHandler originalZoomEvent = new EventHandler() {
+        @Override
+        public void handle(Event event) {
+           // initFunctionForZoom_In_Out()
+        }
+    }; 
+    
+    static EventHandler zoomInEvent = new EventHandler() {
+        @Override
+        public void handle(Event event) {
+             // initFunctionForZoom_In_Out()
+        }
+    }; 
+    
+    static EventHandler zoomOutEvent = new EventHandler() {
+        @Override
+        public void handle(Event event) {
+             // initFunctionForZoom_In_Out()
+        }
+    }; 
+    
+    
     
     public static Boolean changeClassName (String str){
         wp.classNameInput.setStyle(null);
@@ -310,7 +329,7 @@ public class HandleEvent {
                     }           
             }    
             DataManager.getSelectedJC().setClassName(str);
-            DataManager.setSaved(false);
+            //DataManager.setSaved(false);
         } catch (Exception e) {
         }
         wp.classNameInput.setStyle(null);
