@@ -158,14 +158,15 @@ public class DataManager {
     }
     
     
+    
     private static EventHandler pressed = new EventHandler<MouseEvent>() {
         @Override
-        public void handle(MouseEvent click) {
+        public void handle(MouseEvent pressed) {
             isMoved = false;
             if (WorkSpace.isSelectMode==true||isResizeMode.get()==true){
                 if (selectedJC!=null)
                     preSelectedJC = selectedJC;
-                selectedJC = ((JClass)click.getSource());
+                selectedJC = ((JClass)pressed.getSource());
                 jList.getItems().remove(selectedJC);
                 jList.getItems().add(selectedJC);
                 selectedJC.setEffect(highlight);   
@@ -187,16 +188,20 @@ public class DataManager {
                 } catch (Exception e) {
                 }
             }
+            if (selectedJC.getJParent()!=null){
+                selectedJC.getLine().getEndPoint().setTranslateX(selectedJC.getJParent().getLayoutX()+selectedJC.getJParent().getTranslateX()-selectedJC.getLine().getEndPoint().getCenterX());
+                selectedJC.getLine().getEndPoint().setTranslateY(selectedJC.getJParent().getLayoutY()+selectedJC.getJParent().getTranslateY()-selectedJC.getLine().getEndPoint().getCenterY());
+            }
             try {
-                sceneX = click.getSceneX();
-                sceneY = click.getSceneY();
-                translateX = ((JClass)click.getSource()).getTranslateX();
-                translateY = ((JClass)click.getSource()).getTranslateY();
-                width = ((JClass)click.getSource()).getWidth();
-                hight = ((JClass)click.getSource()).getHeight();
-                tHight = ((JClass)click.getSource()).getTitleBox().getHeight();
-                vHight = ((JClass)click.getSource()).getVariableBox().getHeight();
-                mHight = ((JClass)click.getSource()).getMethodBox().getHeight()+2;
+                sceneX = pressed.getSceneX();
+                sceneY = pressed.getSceneY();
+                translateX = ((JClass)pressed.getSource()).getTranslateX();
+                translateY = ((JClass)pressed.getSource()).getTranslateY();
+                width = ((JClass)pressed.getSource()).getWidth();
+                hight = ((JClass)pressed.getSource()).getHeight();
+                tHight = ((JClass)pressed.getSource()).getTitleBox().getHeight();
+                vHight = ((JClass)pressed.getSource()).getVariableBox().getHeight();
+                mHight = ((JClass)pressed.getSource()).getMethodBox().getHeight()+2;
             } catch (Exception e) {
             }  
         }
@@ -214,16 +219,23 @@ public class DataManager {
                 ((JClass)(click.getSource())).setTranslateX(newTranslateX);
                 ((JClass)(click.getSource())).setTranslateY(newTranslateY);
                 try {
-                    selectedJC.getLine().setStartX(((JClass)(click.getSource())).getLayoutX()+newTranslateX);
-                    selectedJC.getLine().setStartY(((JClass)(click.getSource())).getLayoutY()+newTranslateY);
+                    selectedJC.getLine().getStartPoint().setTranslateX(selectedJC.getLayoutX()+selectedJC.getTranslateX()-selectedJC.getLine().getStartPoint().getCenterX());
+                    selectedJC.getLine().getStartPoint().setTranslateY(selectedJC.getLayoutY()+selectedJC.getTranslateY()-selectedJC.getLine().getStartPoint().getCenterY());
+      
+                    selectedJC.getLine().getStartPoint().setX(selectedJC.getLine().getStartPoint().getCenterX()+selectedJC.getLine().getStartPoint().getTranslateX());
+                    selectedJC.getLine().getStartPoint().setY(selectedJC.getLine().getStartPoint().getCenterY()+selectedJC.getLine().getStartPoint().getTranslateY());
+                   
                 } catch (Exception e) {
                 }
                 
                 for (JClass jclass : jList.getItems()){
                     if (jclass.getJParent()!=null){
                         if (jclass.getJParent().equals(selectedJC)){
-                            jclass.getLine().setEndX(jclass.getJParent().getLayoutX()+jclass.getJParent().getTranslateX());
-                            jclass.getLine().setEndY(jclass.getJParent().getLayoutY()+jclass.getJParent().getTranslateY());
+                            jclass.getLine().getEndPoint().setTranslateX(selectedJC.getLayoutX()+selectedJC.getTranslateX()-jclass.getLine().getEndPoint().getCenterX());
+                            jclass.getLine().getEndPoint().setX(selectedJC.getLayoutX()+selectedJC.getTranslateX());
+                            jclass.getLine().getEndPoint().setTranslateY(selectedJC.getLayoutY()+selectedJC.getTranslateY()-jclass.getLine().getEndPoint().getCenterY());
+                            jclass.getLine().getEndPoint().setY(selectedJC.getLayoutY()+selectedJC.getTranslateY());
+
                         }
                     }
                 }
@@ -244,6 +256,8 @@ public class DataManager {
     private static EventHandler released = new EventHandler<MouseEvent>() {
         @Override
         public void handle(MouseEvent release) {
+            System.out.println(selectedJC.getLayoutX()+selectedJC.getTranslateX());
+                System.out.println(selectedJC.getLayoutY()+selectedJC.getTranslateY());
             if (HandleEvent.getWorkPane().isGridSnapActived()){
                 if (HandleEvent.getWorkPane().isSelectMode==true){
                     double x = ((JClass)(release.getSource())).getLayoutX() + ((JClass)(release.getSource())).getTranslateX();
@@ -273,7 +287,7 @@ public class DataManager {
             }
             // addToHistoryList();
             if (isMoved)
-                setSaved(false);
+                setUnSaved();
             // add size to json-format String
         }
     };
@@ -298,25 +312,26 @@ public class DataManager {
         parentList.valueProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                try {
+                try {                   
                     if (t1.equals("none")){
                     selectedJC.setJParent(null);
                     HandleEvent.getWorkPane().root.getChildren().remove(selectedJC.getLine());
-                }else {
-                    for (JClass jclass : jList.getItems()){
-                        if ((jclass.getPackageName()+"."+ jclass.getClassName()).equals(t1)){
-                            selectedJC.setJParent(jclass);
-                            try {
-                                HandleEvent.getWorkPane().root.getChildren().add(selectedJC.setLinkToJParent());
-                            } catch (Exception e) {
+                    selectedJC.removeJLineGroup();
+                    selectedJC.removeJLineGroup();
+                    }else {
+                        for (JClass jclass : jList.getItems()){
+                            if ((jclass.getPackageName()+"."+ jclass.getClassName()).equals(t1)){
+                                selectedJC.setJParent(jclass);
+                                try {
+                                    HandleEvent.getWorkPane().root.getChildren().add(selectedJC.setLinkToJParent());
+                                } catch (Exception e) {
+                                }
+                                break;
                             }
-                            break;
                         }
                     }
-                }
                 } catch (Exception e) {
-                }
-                
+                } 
             }
         });
         
@@ -368,8 +383,30 @@ public class DataManager {
                 
             }
         });
+        //HandleEvent.getWorkPane().root.setOnMouseClicked(clicked);
         historyList.add("{}");
     }
+    
+    private static EventHandler lineBePressed = new EventHandler<MouseEvent>() {
+        @Override
+        public void handle(MouseEvent clicked) {
+                if (selectedJC!=null)
+                    preSelectedJC = selectedJC;
+                selectedJC = null;
+                if (preSelectedJC!=null)
+                    preSelectedJC.setEffect(null);
+                
+                HandleEvent.getWorkPane().getAddVariableButton().setDisable(true);
+                HandleEvent.getWorkPane().getDeleteVariableButton().setDisable(true);
+                HandleEvent.getWorkPane().getAddMethodButton().setDisable(true);
+                HandleEvent.getWorkPane().getDeleteMethodButton().setDisable(true);
+                HandleEvent.getWorkPane().setVariablePane(null);
+                HandleEvent.getWorkPane().setMethodPane(null);
+                HandleEvent.getWorkPane().setClassNameInput(null);   
+                HandleEvent.getWorkPane().setPackageNameInput(null);
+                HandleEvent.getWorkPane().interfaceCheckBox.setSelected(false);
+        }
+    };
     
     public static LinkedList<String> getHistoryList(){
         return historyList;
@@ -379,9 +416,13 @@ public class DataManager {
     public static void setSaved(boolean b){
         isSaved.set(b);
         if (b==false){
-            addToHistoryList();
             System.out.println("addtohistorylist");
         }
+    }
+    
+    public static void setUnSaved(){
+        isSaved.set(false);
+        //addToHistoryList();
     }
     
     public static void clear(){

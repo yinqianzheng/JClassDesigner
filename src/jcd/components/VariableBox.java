@@ -68,18 +68,7 @@ public class VariableBox extends VBox{
             }
         }
         vTable.getItems().add(jv);
-        jv.getNameProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                // update label (name)
-                jv.getLabel().setText(jv.toText());
-                if (!t.equals(t1)){
-                    System.out.println(t);
-                    System.out.println(t1);
-                    DataManager.setSaved(false);
-                }
-            }
-        });
+        addListenersToVariable(jv);
         this.getChildren().add(jv.getLabel());
     }
  
@@ -189,7 +178,46 @@ public class VariableBox extends VBox{
         vTable.getColumns().addAll(nameColumn, typeColumn, staticColumn, accessColumn);
     }
     
+    private void addListenersToVariable(JVariable jv){
+        jv.getNameProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
+                // update label (name)
+                jv.getLabel().setText(jv.toText());
+                if (!t.equals(t1)){
+                    System.out.println(t);
+                    System.out.println(t1);
+                    DataManager.setSaved(false);
+                }
+            }
+        });
         
+//        jv.getTypeProperty().addListener(new ChangeListener<String>() {
+//            @Override
+//            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
+//                // update label (type)
+//                variableLabel.setText(toText());
+//                DataManager.setSaved(false);
+//            }
+//        });
+//        
+//        isStatic.addListener(new ChangeListener<Boolean>() {
+//            @Override
+//            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
+//                variableLabel.setText(toText());
+//                DataManager.setSaved(false);
+//            }
+//        });
+//        
+//        access.addListener(new ChangeListener<String>() {
+//            @Override
+//            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
+//                // update label (acess)
+//                variableLabel.setText(toText());
+//                DataManager.setSaved(false);
+//            }
+//        });
+    }
     public void setVariableForInterface(){
         ObservableList<JVariable> variables = vTable.getItems();
         if (!variables.isEmpty()){

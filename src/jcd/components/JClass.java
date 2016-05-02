@@ -28,7 +28,7 @@ public class JClass extends VBox{
     private VariableBox variableBox;
     private MethodBox methodBox;
     private JClass jParent;
-    private Line linkToParent;
+    private JLineGroup linkToParent;
     
     
     public JClass(double x, double y){
@@ -103,13 +103,21 @@ public class JClass extends VBox{
         return jParent;
     }
     
-    public Line setLinkToJParent(){
+    public void removeJLineGroup(){
+        linkToParent = null;
+    }
+    public JLineGroup setLinkToJParent(){
         if (jParent!=null){
             if (linkToParent != null){
-                linkToParent.setEndX(jParent.getLayoutX()+jParent.getTranslateX());
-                linkToParent.setEndY(jParent.getLayoutY()+jParent.getTranslateY());
+                linkToParent.getEndPoint().setTranslateX(0);
+                linkToParent.getEndPoint().setTranslateY(0);
+//                linkToParent.getEndPoint().setCenterX(jParent.getLayoutX()+jParent.getTranslateX());
+//                linkToParent.getEndPoint().setCenterY(jParent.getLayoutY()+jParent.getTranslateY());
+                linkToParent.getEndPoint().setX(jParent.getLayoutX()+jParent.getTranslateX());
+                linkToParent.getEndPoint().setY(jParent.getLayoutY()+jParent.getTranslateY());
+//              
             }else{
-                linkToParent = new Line(this.getLayoutX()+this.getTranslateX(),
+                linkToParent = JLineGroupFactory.createJLineGroupforInheritance(this.getLayoutX()+this.getTranslateX(),
                         this.getLayoutY()+this.getTranslateY(),
                         jParent.getLayoutX()+jParent.getTranslateX(),
                         jParent.getLayoutY()+jParent.getTranslateY());
@@ -119,12 +127,12 @@ public class JClass extends VBox{
         return linkToParent;
     }
     
-    public void setEndPoint(double x, double y){
-        if (linkToParent!=null){
-            linkToParent.setEndX(x);
-            linkToParent.setEndY(y);
-        }
-    }
+//    public void setEndPoint(double x, double y){
+//        if (linkToParent!=null){
+////            linkToParent.setEndX(x);
+////            linkToParent.setEndY(y);
+//        }
+//    }
 
     public VariableBox getVariableBox(){
         return variableBox;
@@ -138,7 +146,7 @@ public class JClass extends VBox{
         return name;
     }
     
-    public Line getLine(){
+    public JLineGroup getLine(){
         return linkToParent;
     }
 

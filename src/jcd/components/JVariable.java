@@ -95,6 +95,10 @@ public class JVariable {
         this.type.set(type);
     }
     
+    public SimpleStringProperty getTypeProperty(){
+        return this.type;
+    }
+    
     public void setAccess(String access){
         this.access.set(access);
     }

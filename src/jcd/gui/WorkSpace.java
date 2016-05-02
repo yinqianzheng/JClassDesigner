@@ -13,6 +13,7 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
+import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -50,13 +51,14 @@ public class WorkSpace extends Application{
     final HBox topToolbar = new HBox();
     final SplitPane splitPane = new SplitPane();
     final public Pane root = new Pane();
-    final private Group gp = new Group(root);
+    final Canvas canvas= new Canvas(3205, 2580);
+    StackPane stackPane = new StackPane(root, canvas);
+    final private Group gp = new Group(stackPane);
     final ScrollPane workPane = new ScrollPane(gp);
     final VBox component = new VBox();
     final HBox fileToolbar = new HBox();
     final HBox editToolbar = new HBox();
     final HBox viewToolbar = new HBox();
-    final Canvas canvas= new Canvas(3205, 2580);
     final ScrollPane variablePane = new ScrollPane();
     final ScrollPane methodPane = new ScrollPane();
     final Button addVariable = new Button();
@@ -127,18 +129,18 @@ public class WorkSpace extends Application{
     
     private void initFunctionForZoom_In_Out(){
         buttonMap.get("zoom in").setOnAction(e->{
-            root.setScaleX(zoomValue.get()*1.2);
-            root.setScaleY(zoomValue.get()*1.2);
+            stackPane.setScaleX(zoomValue.get()*1.2);
+            stackPane.setScaleY(zoomValue.get()*1.2);
             zoomValue.set(zoomValue.get()*1.2);
         });
         buttonMap.get("zoom out").setOnAction(e->{
-            root.setScaleX(zoomValue.get()/1.2);
-            root.setScaleY(zoomValue.get()/1.2);
+            stackPane.setScaleX(zoomValue.get()/1.2);
+            stackPane.setScaleY(zoomValue.get()/1.2);
             zoomValue.set(zoomValue.get()/1.2);
         });
         buttonMap.get("original").setOnAction(e->{
-            root.setScaleX(1);
-            root.setScaleY(1);
+            stackPane.setScaleX(1);
+            stackPane.setScaleY(1);
             zoomValue.set(1);
         });
         zoomValue.addListener(new ChangeListener<Number>() {
@@ -165,9 +167,12 @@ public class WorkSpace extends Application{
         topToolbar.getChildren().addAll(fileToolbar, editToolbar, viewToolbar);
         topToolbar.getStyleClass().add("topToolbar_bg");
         window.setTop(topToolbar);
-        canvas.setStyle("-fx-background-color: lightgoldenrodyellow;");
+        //canvas.setStyle("-fx-background-color: lightgoldenrodyellow;");
         canvas.setDisable(true);
-        root.getChildren().add(canvas);
+        canvas.setMouseTransparent(false);
+        canvas.setCursor(Cursor.CROSSHAIR);
+        root.setCursor(Cursor.HAND);
+        //root.getChildren().add(canvas);
         component.setStyle("-fx-background-color: papayawhip;");       
         root.getStyleClass().add("root_Backgraound");
         canvas.setOnMouseClicked(HandleEvent.addClass);             
@@ -390,7 +395,7 @@ public class WorkSpace extends Application{
 
     public void reload(){
         root.getChildren().clear();
-        root.getChildren().add(canvas);
+        //root.getChildren().add(canvas);
         variablePane.setContent(null);
         methodPane.setContent(null);
         addVariable.setDisable(true);

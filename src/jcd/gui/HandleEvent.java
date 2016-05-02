@@ -65,6 +65,7 @@ public class HandleEvent {
                 Logger.getLogger(HandleEvent.class.getName()).log(Level.SEVERE, null, ex);
             }
             wp.reload();
+            wp.reload();
             DataManager.hasDirectory().set(false);
             Alert imformDialog = new  Alert(Alert.AlertType.INFORMATION);
             imformDialog.setTitle("New Work!");
@@ -188,7 +189,7 @@ public class HandleEvent {
         public void handle(Event event) {
             wp.canvas.setDisable(true);
             wp.canvas.toBack();
-            wp.root.setCursor(Cursor.HAND);
+            //wp.root.setCursor(Cursor.HAND);
             dataManager.isResizeMode.set(true);
             WorkSpace.isSelectMode = false;
         }
@@ -198,7 +199,7 @@ public class HandleEvent {
         @Override
         public void handle(Event event) {
             wp.canvas.toFront();
-            wp.root.setCursor(Cursor.CROSSHAIR);
+            //wp.root.setCursor(Cursor.CROSSHAIR);
             wp.canvas.setDisable(false);
             WorkSpace.isSelectMode = false;
             dataManager.isResizeMode.set(false);
@@ -210,6 +211,8 @@ public class HandleEvent {
     static EventHandler addClass = new EventHandler<MouseEvent>() {
         @Override
         public void handle(MouseEvent click) {
+                            System.out.println(click.getX()+ "  "+ click.getY());
+
             if (click.getClickCount() == 2){     
                 JClass jc = new JClass(click.getX(), click.getY());
                 String name;
@@ -229,10 +232,11 @@ public class HandleEvent {
                         break;
                     }
                 }
+                jc.setMouseTransparent(false);
                 addToScreen(jc);
                 wp.canvas.toFront();
                 //DataManager.addToHistoryList();
-                DataManager.setSaved(false);
+                DataManager.setUnSaved();
             }
         }
     };
@@ -275,6 +279,7 @@ public class HandleEvent {
                    wp.parentsList.setValue(null);
                 } catch (Exception e) {
                 }
+                DataManager.setUnSaved();
             }
         }
     };
@@ -329,7 +334,7 @@ public class HandleEvent {
                     }           
             }    
             DataManager.getSelectedJC().setClassName(str);
-            //DataManager.setSaved(false);
+            DataManager.setSaved(false);
         } catch (Exception e) {
         }
         wp.classNameInput.setStyle(null);
