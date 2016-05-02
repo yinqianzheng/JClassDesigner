@@ -117,7 +117,7 @@ public class JClass extends VBox{
                 linkToParent.getEndPoint().setY(jParent.getLayoutY()+jParent.getTranslateY());
 //              
             }else{
-                linkToParent = JLineGroupFactory.createJLineGroupforInheritance(this.getLayoutX()+this.getTranslateX(),
+                linkToParent = JLineGroupFactory.createJLineGroupforInheritance(this, this.jParent, this.getLayoutX()+this.getTranslateX(),
                         this.getLayoutY()+this.getTranslateY(),
                         jParent.getLayoutX()+jParent.getTranslateX(),
                         jParent.getLayoutY()+jParent.getTranslateY());

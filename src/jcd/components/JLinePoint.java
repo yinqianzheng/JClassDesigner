@@ -77,6 +77,9 @@ public class JLinePoint extends Circle{
         this.y.set(y);
     }
     
+    public JLineGroup getJLineGroup(){
+        return jLineGroup;
+    }
     
     private void setActions(){
         x.addListener(new ChangeListener<Number>() {
@@ -90,7 +93,7 @@ public class JLinePoint extends Circle{
                 if (diamond!=null)
                     diamond.setLayoutX(x.get()-7);
                 if (triangle!=null)
-                    triangle.setLayoutX(x.get()-7);
+                    triangle.setLayoutX(x.get()-4.5);
             }
         });
         y.addListener(new ChangeListener<Number>() {
@@ -104,7 +107,7 @@ public class JLinePoint extends Circle{
                 if (diamond!=null)
                     diamond.setLayoutY(y.get()-7);
                 if (triangle!=null)
-                    triangle.setLayoutY(y.get()-7);
+                    triangle.setLayoutY(y.get()-6);
             }
         });
         jLinePoint.setOnMouseEntered(e->{
@@ -114,25 +117,27 @@ public class JLinePoint extends Circle{
             });
         jLinePoint.setOnMouseExited(e->{
             jLinePoint.setEffect(null);
-            jLinePoint.setFill(Color.TRANSPARENT);
+            jLinePoint.setFill(Color.BLACK);
             jLinePoint.setStroke(Color.TRANSPARENT);
                 });
     }
     
     public void addAggregationConnector(Polygon plg){
         diamond = plg;
-        plg.setLayoutX(x.get()-4.5);
-        plg.setLayoutY(y.get()-6);
+        plg.setLayoutX(x.get()-7);
+        plg.setLayoutY(y.get()-7);
         jLineGroup.getChildren().add(plg);
         plg.toFront();
+        jLinePoint.toFront();
     }
     
     public void addInheritanceConnector(Polygon tri){
         triangle = tri;
-        triangle.setLayoutX(x.get()-7);
-        triangle.setLayoutY(y.get()-7);
+        triangle.setLayoutX(x.get()-4.5);
+        triangle.setLayoutY(y.get()-6);
         jLineGroup.getChildren().add(triangle);
         triangle.toFront();
+        jLinePoint.toFront();
     }
     
     private EventHandler<MouseEvent> press = new EventHandler<MouseEvent>() {

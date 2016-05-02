@@ -17,6 +17,7 @@ public class JLineGroup extends Group{
     private JLine jLine;
     private JLinePoint startPoint, endPoint;
     private Polygon triangle, diamond;
+    private JClass child, parent;
     
     public JLineGroup(double sx, double sy, double ex, double ey){
         jLine = new JLine(this, sx, sy, ex, ey);
@@ -40,6 +41,23 @@ public class JLineGroup extends Group{
         endPoint.setY(y);
 
     }
+    
+    public void setChildClass(JClass ch){
+        child = ch;
+    }
+    
+    public void setParentClass(JClass parent){
+        this.parent = parent;
+    }
+    
+    public JClass getChildClass(){
+        return child;
+    }
+    
+    public JClass getParentClass(){
+        return this.parent;
+    }
+    
     
     
     public void setStartX(double x){
@@ -69,6 +87,10 @@ public class JLineGroup extends Group{
         endPoint.addInheritanceConnector(triangle);
     }
     
+    public Polygon getTriangle(){
+        return triangle;
+    }
+    
     public void createConnectorForAggregation(){
         diamond = new Polygon();
         diamond.getPoints().addAll(new Double[]{
@@ -79,6 +101,10 @@ public class JLineGroup extends Group{
         diamond.setFill(Color.WHITE);
         diamond.setStroke(Color.BLACK);
         startPoint.addAggregationConnector(diamond);
+    }
+    
+    public Polygon getDiamond(){
+        return diamond;
     }
     
     public void createConnectorForUses(){
