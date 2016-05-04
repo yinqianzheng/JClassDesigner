@@ -5,6 +5,7 @@
  */
 package jcd.components;
 
+import java.util.LinkedList;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -29,10 +30,14 @@ public class JClass extends VBox{
     private VariableBox variableBox;
     private MethodBox methodBox;
     private JClass jParent;
+    private LinkedList<String> parentList;
+    private LinkedList<JLineGroup> jLineGroupsList;
     private JLineGroup linkToParent;
     
     
     public JClass(double x, double y){
+        parentList = new LinkedList<>();
+        jLineGroupsList = new LinkedList<>();
         isAbstract = new SimpleBooleanProperty(false);
         isInterface = new SimpleBooleanProperty(false);
         variableBox = new VariableBox(this);
@@ -53,7 +58,45 @@ public class JClass extends VBox{
         this.getChildren().addAll(name, variableBox, methodBox);
         listenerForInterface();
     }
-
+    
+    public boolean addParent(String str){
+        boolean isParent = true;
+        
+        if (!parentList.isEmpty())
+            for (String parent: parentList){
+                if (parent.equals(str))
+                    isParent = false; 
+            }
+        
+        if (isParent == true)
+            parentList.add(str);
+        for (String s: parentList){
+            System.out.println(s);
+        }
+        System.out.println(parentList.indexOf(".NewClass1"));
+        return isParent;
+    }
+    
+    public JLineGroup linkToInterface(JClass parentInterface){
+        JLineGroup linkToInterface = JLineGroupFactory.createJLineGroupforInheritance(this, parentInterface, this.getLayoutX()+this.getTranslateX(),
+            this.getLayoutY()+this.getTranslateY(),
+            parentInterface.getLayoutX()+parentInterface.getTranslateX(),
+            parentInterface.getLayoutY()+parentInterface.getTranslateY());
+        jLineGroupsList.add(linkToInterface);
+        return linkToInterface;
+    }
+    
+    public void clearJLineGroupList(){
+        jLineGroupsList.clear();
+    }
+    
+    public LinkedList<JLineGroup> getJLineGroupList(){
+        return jLineGroupsList;
+    }
+    
+    public LinkedList<String> getInterfaceParentList(){
+        return parentList;
+    }
             
     public void setClassName(String str){
         className.setText(str);
@@ -77,6 +120,7 @@ public class JClass extends VBox{
     }
     
     public void setAbstract(Boolean b){
+        if (!isInterface.get()){
         if (b == true){
             isAbstract.set(true);
             name.getChildren().clear();
@@ -85,6 +129,7 @@ public class JClass extends VBox{
             isAbstract.set(false);
             name.getChildren().clear();
             name.getChildren().add(className);
+        }
         }
     }
     

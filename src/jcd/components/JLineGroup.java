@@ -7,6 +7,7 @@ package jcd.components;
 
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.Polygon;
 
 /**
@@ -17,6 +18,7 @@ public class JLineGroup extends Group{
     private JLine jLine;
     private JLinePoint startPoint, endPoint;
     private Polygon triangle, diamond;
+    private CubicCurve arrow;
     private JClass child, parent;
     
     public JLineGroup(double sx, double sy, double ex, double ey){
@@ -72,16 +74,16 @@ public class JLineGroup extends Group{
         triangle = new Polygon();
         triangle.getPoints().addAll(new Double[]{
         0.0, 0.0,
-        0.0, 16.0,
-        12.0, 8.0});
+        0.0, 24.0,
+        20.0, 12.0});
         triangle.setFill(Color.WHITE);
         triangle.setStroke(Color.BLACK);
         endPoint.addInheritanceConnector(triangle);
     }
     
-    public Polygon getTriangle(){
-        return triangle;
-    }
+//    public Polygon getTriangle(){
+//        return triangle;
+//    }
     
     public void createConnectorForAggregation(){
         diamond = new Polygon();
@@ -100,7 +102,11 @@ public class JLineGroup extends Group{
     }
     
     public void createConnectorForUses(){
-        
+        arrow = new CubicCurve( 125, 150, 125, 225, 325, 225, 325, 300);
+        arrow.setStroke(Color.BLACK);
+        arrow.setStrokeWidth(2);
+        arrow.setFill( null);
+        endPoint.addUsesConnector(arrow);
     }
     
     private void initRelations(JLinePoint sp, JLine jl, JLinePoint ep){

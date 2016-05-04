@@ -203,6 +203,18 @@ public class HandleEvent {
             wp.canvas.setDisable(false);
             WorkSpace.isSelectMode = false;
             dataManager.isResizeMode.set(false);
+            dataManager.isInterface.set(false);
+        }
+    };
+    
+    static EventHandler addInterface = new EventHandler() {
+        @Override
+        public void handle(Event event) {
+            wp.canvas.toFront();
+            wp.canvas.setDisable(false);
+            WorkSpace.isSelectMode = false;
+            dataManager.isResizeMode.set(false);
+            dataManager.isInterface.set(true);
         }
     };
     
@@ -233,6 +245,8 @@ public class HandleEvent {
                     }
                 }
                 jc.setMouseTransparent(false);
+                if (dataManager.isInterface.get())
+                    jc.setInterface(true);
                 addToScreen(jc);
                 wp.canvas.toFront();
                 //DataManager.addToHistoryList();
@@ -249,7 +263,7 @@ public class HandleEvent {
                 wp.clearPackageNameInput();
                 wp.setClassNameInput(jc.getClassName());
                 wp.setPackageNameInput(jc.getPackageName());
-                wp.interfaceCheckBox.setSelected(jc.getInterface().get());
+//                wp.interfaceCheckBox.setSelected(jc.getInterface().get());
                 wp.variablePane.setContent(jc.getVariableBox().getVariableTable());
                 wp.methodPane.setContent(jc.getMethodBox().getMethodTable());
                 if (dataManager.getSelectedJC()!=null)

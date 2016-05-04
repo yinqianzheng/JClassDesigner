@@ -28,6 +28,7 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import jcd.components.JClass;
+import jcd.components.JLineGroup;
 import jcd.controller.JFileManager;
 import jcd.gui.HandleEvent;
 import jcd.gui.WorkSpace;
@@ -60,6 +61,7 @@ public class DataManager {
     private static double mHight;
     public static SimpleBooleanProperty isResizeMode = new SimpleBooleanProperty(false);
     public static SimpleIntegerProperty currentCursor = new SimpleIntegerProperty(0);
+    public static SimpleBooleanProperty isInterface = new SimpleBooleanProperty(false);
     private static boolean isMoved = false;
 
     private DataManager() {
@@ -181,7 +183,7 @@ public class DataManager {
                 HandleEvent.getWorkPane().setMethodPane(selectedJC.getMethodBox().getMethodTable());
                 HandleEvent.getWorkPane().setClassNameInput(selectedJC.getClassName());   
                 HandleEvent.getWorkPane().setPackageNameInput(selectedJC.getPackageName());
-                HandleEvent.getWorkPane().interfaceCheckBox.setSelected(selectedJC.getInterface().get());
+//                HandleEvent.getWorkPane().interfaceCheckBox.setSelected(selectedJC.getInterface().get());
                 try {
                     HandleEvent.getWorkPane().parentsList.setValue(selectedJC.getJParent().getPackageName()+"."+
                     selectedJC.getJParent().getClassName());    
@@ -190,20 +192,44 @@ public class DataManager {
             }
             
             if (selectedJC.getJParent()!=null){
-//                System.out.println(selectedJC.getLine().getStartPoint().getX());
-//                System.out.println(selectedJC.getLine().getEndPoint().getX());
-//                selectedJC.getLine().getEndPoint().setTranslateX(selectedJC.getLine().getEndX()-selectedJC.getLine().getEndPoint().getCenterX());
-//                selectedJC.getLine().getEndPoint().setTranslateY(selectedJC.getLine().getEndY()-selectedJC.getLine().getEndPoint().getCenterY());
+                selectedJC.getLine().getEndPoint().setTranslateY(selectedJC.getLine().getEndY()-selectedJC.getLine().getEndPoint().getCenterY());
                 selectedJC.getLine().getStartPoint().markTranslateValue();
-                selectedJC.getLine().getEndPoint().markTranslateValue();
             }
-            for (JClass jclass : jList.getItems()){
-                if (jclass.getJParent()!=null){
-                    if (jclass.getJParent().equals(selectedJC)){
-                        jclass.getLine().getEndPoint().markTranslateValue();
+            
+            if (selectedJC.getJLineGroupList()!=null){
+                for (JLineGroup jlg: selectedJC.getJLineGroupList()){
+                    jlg.getStartPoint().markTranslateValue();
+                }
+            }
+
+            if (!selectedJC.getInterface().get()){
+                for (JClass jclass : jList.getItems()){
+                    if (jclass.getJParent()!=null){
+                        if (jclass.getJParent().equals(selectedJC)){
+                            jclass.getLine().getEndPoint().markTranslateValue();
+                        }
+                    }
+                }
+            }else{
+                for (JClass jclass : jList.getItems()){
+                    if (jclass.getInterfaceParentList()!=null){
+                        int index = jclass.getInterfaceParentList().indexOf(selectedJC.getPackageName()+"."+selectedJC.getClassName());
+                        if (index!=-1){
+                            jclass.getJLineGroupList().get(index).getEndPoint().markTranslateValue();
+                        }
                     }
                 }
             }
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
             try {
                 sceneX = pressed.getSceneX();
                 sceneY = pressed.getSceneY();
@@ -232,16 +258,32 @@ public class DataManager {
                 ((JClass)(click.getSource())).setTranslateY(newTranslateY);
                 
                 try {
+                    for (JLineGroup jlg : selectedJC.getJLineGroupList()){
+                        jlg.getStartPoint().addOffset(offsetX, offsetY);
+                    }
                     selectedJC.getLine().getStartPoint().addOffset(offsetX, offsetY);
                 } catch (Exception e) {
                 }
                 
-                for (JClass jclass : jList.getItems()){
-                    if (jclass.getJParent()!=null){
-                        if (jclass.getJParent().equals(selectedJC)){
-                            jclass.getLine().getEndPoint().addOffset(offsetX, offsetY);
+                if (!selectedJC.getInterface().get()){
+                    for (JClass jclass : jList.getItems()){
+                         System.out.println("class");
+                        if (jclass.getJParent()!=null){
+                            if (jclass.getJParent().equals(selectedJC)){
+                                jclass.getLine().getEndPoint().addOffset(offsetX, offsetY);
+                            }
                         }
                     }
+                }else{
+                    for (JClass jclass : jList.getItems()){
+                        if (jclass.getInterfaceParentList()!=null){
+                            int index = jclass.getInterfaceParentList().indexOf(selectedJC.getPackageName()+"."+selectedJC.getClassName());
+                            if (index!=-1){
+                                jclass.getJLineGroupList().get(index).getEndPoint().addOffset(offsetX, offsetY);
+                            }
+                        }
+                    }
+                    
                 }
                 
                 
@@ -331,13 +373,17 @@ public class DataManager {
                         }
                         for (JClass jclass : jList.getItems()){
                             if ((jclass.getPackageName()+"."+ jclass.getClassName()).equals(t1)){
-                                selectedJC.setJParent(jclass);
-                                try {
-                                    System.out.println(t1);
-                                    HandleEvent.getWorkPane().root.getChildren().add(selectedJC.setLinkToJParent(preParent));
-                                } catch (Exception e) {
-                                }
+                                if (jclass.getInterface().get()){
+                                    if (selectedJC.addParent(t1))
+                                        HandleEvent.getWorkPane().root.getChildren().add(selectedJC.linkToInterface(jclass));
+                                }else{
+                                    selectedJC.setJParent(jclass);
+                                    try {
+                                        HandleEvent.getWorkPane().root.getChildren().add(selectedJC.setLinkToJParent(preParent));
+                                    } catch (Exception e) {
+                                    }
                                 break;
+                                }
                             }
                         }
                     }
@@ -415,7 +461,7 @@ public class DataManager {
                 HandleEvent.getWorkPane().setMethodPane(null);
                 HandleEvent.getWorkPane().setClassNameInput(null);   
                 HandleEvent.getWorkPane().setPackageNameInput(null);
-                HandleEvent.getWorkPane().interfaceCheckBox.setSelected(false);
+//                HandleEvent.getWorkPane().interfaceCheckBox.setSelected(false);
         }
     };
     
@@ -427,12 +473,12 @@ public class DataManager {
     public static void setSaved(boolean b){
         isSaved.set(b);
         if (b==false){
-            //System.out.println("addtohistorylist");
         }
     }
     
     public static void setUnSaved(){
         isSaved.set(false);
+        System.out.println("addtohistorylist");
         //addToHistoryList();
     }
     

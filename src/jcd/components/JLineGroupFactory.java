@@ -48,6 +48,20 @@ public class JLineGroupFactory {
         return jlg;
     }
     
+    public static JLineGroup createJLineGroupforUses(JClass a, JClass b, double sx, double sy, double ex, double ey){
+        JLineGroup jlg = new JLineGroup(sx, sy, ex, ey);
+        jlg.setChildClass(a);
+        jlg.setParentClass(b);
+        jlg.createConnectorForUses();
+//        jlg.getStartPoint().setOnMousePressed(press);
+//        jlg.getStartPoint().setOnMouseDragged(drag);
+        jlg.getStartPoint().setOnMouseReleased(startPointRelease);
+//        jlg.getEndPoint().setOnMousePressed(press);
+//        jlg.getEndPoint().setOnMouseDragged(drag);
+        jlg.getEndPoint().setOnMouseReleased(endPointRelease);
+        return jlg;
+    }
+    
     public static JLineGroup createJLineGroupforAggregationAndUses(double sx, double sy, double ex, double ey){
         JLineGroup jlg = new JLineGroup(sx, sy, ex, ey);
         jlg.createConnectorForInheritance();
@@ -75,24 +89,30 @@ public class JLineGroupFactory {
             double pointX =(((JLinePoint)(release.getSource())).getCenterX()+((JLinePoint)(release.getSource())).getTranslateX());
             double pointY =(((JLinePoint)(release.getSource())).getCenterY()+((JLinePoint)(release.getSource())).getTranslateY());
             
-            if (pointX < x)
+            if (pointX < x){
                 ((JLinePoint)(release.getSource())).setTranslateX(
                         x - ((JLinePoint)(release.getSource())).getCenterX()
                             );
-            else if (pointX > x+width)
+                ((JLinePoint)(release.getSource())).setRotateForConnector(0);
+            }
+            else if (pointX > x+width){
                 ((JLinePoint)(release.getSource())).setTranslateX(
                         x + width - ((JLinePoint)(release.getSource())).getCenterX()
                             );               
-            
-            
-            if (pointY < y)
+                ((JLinePoint)(release.getSource())).setRotateForConnector(180);
+            }
+            if (pointY < y){
                 ((JLinePoint)(release.getSource())).setTranslateY(
                     y - ((JLinePoint)(release.getSource())).getCenterY()
                         );
-            else if (pointY > y+hight)
+                ((JLinePoint)(release.getSource())).setRotateForConnector(90);
+            }
+            else if (pointY > y+hight){
                 ((JLinePoint)(release.getSource())).setTranslateY(
                     y + hight - ((JLinePoint)(release.getSource())).getCenterY()
                         );
+                ((JLinePoint)(release.getSource())).setRotateForConnector(270);
+            }
             
             
             ((JLinePoint)(release.getSource())).setX(((JLinePoint)(release.getSource())).getCenterX()

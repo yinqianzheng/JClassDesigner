@@ -13,6 +13,7 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.Polygon;
 
 /**
@@ -26,6 +27,8 @@ public class JLinePoint extends Circle{
     private JLine parentLine, subLine1, subLine2;
     private double sceneX, sceneY, translateX, translateY;
     private Polygon diamond, triangle;
+    private CubicCurve arrow;
+    private SimpleDoubleProperty rotateValue;
     final private  DropShadow highlight = new DropShadow(20, Color.YELLOW);
     
     public JLinePoint(JLineGroup jlg, double x, double y){
@@ -101,7 +104,9 @@ public class JLinePoint extends Circle{
                 if (diamond!=null)
                     diamond.setLayoutX(x.get()-7);
                 if (triangle!=null)
-                    triangle.setLayoutX(x.get()-4.5);
+                    triangle.setLayoutX(x.get()-10);
+                if (arrow!=null)
+                    arrow.setLayoutX(x.get()-7);
             }
         });
         y.addListener(new ChangeListener<Number>() {
@@ -115,7 +120,9 @@ public class JLinePoint extends Circle{
                 if (diamond!=null)
                     diamond.setLayoutY(y.get()-7);
                 if (triangle!=null)
-                    triangle.setLayoutY(y.get()-6);
+                    triangle.setLayoutY(y.get()-12);
+                if (arrow!=null)
+                    arrow.setLayoutY(y.get()-6);
             }
         });
         jLinePoint.setOnMouseEntered(e->{
@@ -128,6 +135,27 @@ public class JLinePoint extends Circle{
             jLinePoint.setFill(Color.TRANSPARENT);
             jLinePoint.setStroke(Color.TRANSPARENT);
                 });
+    }
+    
+    public void setRotateForConnector(double value){
+        if (rotateValue == null){
+            rotateValue = new SimpleDoubleProperty(0);
+            rotateValue.addListener(new ChangeListener<Number>() {
+                @Override
+                public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
+                    if (diamond!=null)
+                        diamond.setRotate(rotateValue.get());
+                    if (triangle!=null)
+                        triangle.setRotate(rotateValue.get());
+                    if (arrow!=null)
+                        arrow.setRotate(rotateValue.get());
+                }
+            });
+            rotateValue.set(value);
+        }else{
+            rotateValue.set(value);
+        }
+        
     }
     
     public void markTranslateValue(){
@@ -151,10 +179,19 @@ public class JLinePoint extends Circle{
         jLinePoint.toFront();
     }
     
+    public void addUsesConnector(CubicCurve ar){
+        arrow = ar;
+        arrow.setLayoutX(x.get()-7);
+        arrow.setLayoutY(y.get()-7);
+        jLineGroup.getChildren().add(arrow);
+        arrow.toFront();
+        jLinePoint.toFront();
+    }
+    
     public void addInheritanceConnector(Polygon tri){
         triangle = tri;
-        triangle.setLayoutX(x.get()-4.5);
-        triangle.setLayoutY(y.get()-6);
+        triangle.setLayoutX(x.get()-10);
+        triangle.setLayoutY(y.get()-12);
         jLineGroup.getChildren().add(triangle);
         triangle.toFront();
         jLinePoint.toFront();
