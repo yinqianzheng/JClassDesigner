@@ -31,7 +31,7 @@ public class JLinePoint extends Circle{
     public JLinePoint(JLineGroup jlg, double x, double y){
         jLineGroup = jlg;
         this.jLinePoint = this;
-        this.setRadius(7);
+        this.setRadius(8);
         this.setStroke(Color.TRANSPARENT);
         this.setFill(Color.TRANSPARENT);
         this.setCenterX(x);
@@ -77,6 +77,14 @@ public class JLinePoint extends Circle{
         this.y.set(y);
     }
     
+    public double getX(){
+        return this.x.get();
+    }
+    
+    public double getY(){
+        return this.y.get();
+    }
+    
     public JLineGroup getJLineGroup(){
         return jLineGroup;
     }
@@ -117,9 +125,21 @@ public class JLinePoint extends Circle{
             });
         jLinePoint.setOnMouseExited(e->{
             jLinePoint.setEffect(null);
-            jLinePoint.setFill(Color.BLACK);
+            jLinePoint.setFill(Color.TRANSPARENT);
             jLinePoint.setStroke(Color.TRANSPARENT);
                 });
+    }
+    
+    public void markTranslateValue(){
+        translateX = this.getTranslateX();
+        translateY = this.getTranslateY();
+    }
+    
+    public void addOffset(double x, double y){
+        this.setTranslateX(translateX + x);
+        this.setTranslateY(translateY + y);
+        this.x.set(this.getCenterX()+this.getTranslateX());
+        this.y.set(this.getCenterY()+this.getTranslateY());
     }
     
     public void addAggregationConnector(Polygon plg){
@@ -187,6 +207,7 @@ public class JLinePoint extends Circle{
                 jLineGroup.getChildren().add(parentLine);
                 subLine1.getStartPoint().toFront();
                 subLine2.getEndPoint().toFront();
+                parentLine.toBack();
             }
         }
     };

@@ -28,6 +28,7 @@ public class JLine extends Line{
         this.line = this;
         jLineGroup = jlg;
         this.setStrokeWidth(2);
+        this.setStroke(Color.GRAY);
         jLineGroup.getChildren().add(this);
         this.setOnMouseEntered(e->this.setEffect(highlight));
         this.setOnMouseExited(e->this.setEffect(null));
@@ -41,6 +42,7 @@ public class JLine extends Line{
         this.line = this;
         jLineGroup = jlg;
         this.setStrokeWidth(2);
+        this.setStroke(Color.GRAY);
         jLineGroup.getChildren().add(this);
         this.setOnMouseEntered(e->this.setEffect(highlight));
         this.setOnMouseExited(e->this.setEffect(null));

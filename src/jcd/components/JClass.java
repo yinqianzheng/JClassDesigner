@@ -12,6 +12,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
+import jcd.gui.HandleEvent;
 
 /**
  *
@@ -106,16 +107,20 @@ public class JClass extends VBox{
     public void removeJLineGroup(){
         linkToParent = null;
     }
-    public JLineGroup setLinkToJParent(){
+    public JLineGroup setLinkToJParent(String str){
+        System.out.println(str);
+        System.out.println(this.getPackageName()+"."+ this.getClassName());
         if (jParent!=null){
             if (linkToParent != null){
-                linkToParent.getEndPoint().setTranslateX(0);
-                linkToParent.getEndPoint().setTranslateY(0);
-//                linkToParent.getEndPoint().setCenterX(jParent.getLayoutX()+jParent.getTranslateX());
-//                linkToParent.getEndPoint().setCenterY(jParent.getLayoutY()+jParent.getTranslateY());
-                linkToParent.getEndPoint().setX(jParent.getLayoutX()+jParent.getTranslateX());
-                linkToParent.getEndPoint().setY(jParent.getLayoutY()+jParent.getTranslateY());
-//              
+                if (!(jParent.getPackageName()+"."+ jParent.getClassName()).equals(str)||str.equals("none")){
+                    HandleEvent.getWorkPane().root.getChildren().remove(linkToParent);
+                    linkToParent = JLineGroupFactory.createJLineGroupforInheritance(this, this.jParent, this.getLayoutX()+this.getTranslateX(),
+                        this.getLayoutY()+this.getTranslateY(),
+                        jParent.getLayoutX()+jParent.getTranslateX(),
+                        jParent.getLayoutY()+jParent.getTranslateY());
+                    return linkToParent;
+                }
+              
             }else{
                 linkToParent = JLineGroupFactory.createJLineGroupforInheritance(this, this.jParent, this.getLayoutX()+this.getTranslateX(),
                         this.getLayoutY()+this.getTranslateY(),
@@ -127,12 +132,6 @@ public class JClass extends VBox{
         return linkToParent;
     }
     
-//    public void setEndPoint(double x, double y){
-//        if (linkToParent!=null){
-////            linkToParent.setEndX(x);
-////            linkToParent.setEndY(y);
-//        }
-//    }
 
     public VariableBox getVariableBox(){
         return variableBox;

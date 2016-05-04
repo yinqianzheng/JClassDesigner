@@ -36,12 +36,6 @@ public class JLineGroup extends Group{
         return endPoint;
     }
     
-    public void setEndPoint(double x, double y){
-        endPoint.setX(x);
-        endPoint.setY(y);
-
-    }
-    
     public void setChildClass(JClass ch){
         child = ch;
     }
@@ -58,30 +52,28 @@ public class JLineGroup extends Group{
         return this.parent;
     }
     
-    
-    
-    public void setStartX(double x){
-        startPoint.setX(x);
+    public double getStartX(){
+        return startPoint.getX();
     }
     
-    public void setStartY(double y){
-        startPoint.setY(y);
+    public double getStartY(){
+        return startPoint.getY();
     }
     
-    public void setEndX(double x){
-        endPoint.setX(x);
+    public double getEndX(){
+        return endPoint.getX();
     }
     
-    public void setEndY(double y){
-        endPoint.setY(y);
+    public double getEndY(){
+        return endPoint.getY();
     }
     
     public void createConnectorForInheritance(){
         triangle = new Polygon();
         triangle.getPoints().addAll(new Double[]{
         0.0, 0.0,
-        0.0, 12.0,
-        9.0, 6.0});
+        0.0, 16.0,
+        12.0, 8.0});
         triangle.setFill(Color.WHITE);
         triangle.setStroke(Color.BLACK);
         endPoint.addInheritanceConnector(triangle);
@@ -116,12 +108,8 @@ public class JLineGroup extends Group{
         jl.SetStartPoint(sp);
         jl.setEndPoint(ep);
         ep.setSubLine1(jl);
-        sp.setOnMousePressed(null);
-        sp.setOnMouseDragged(null);
         sp.setOnMouseReleased(null);
         sp.setOnMouseClicked(null);
-        ep.setOnMousePressed(null);
-        ep.setOnMouseDragged(null);
         ep.setOnMouseReleased(null);
         ep.setOnMouseClicked(null);
     }
