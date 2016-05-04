@@ -109,7 +109,6 @@ public class JLine extends Line{
         @Override
         public void handle(MouseEvent released) {
             JLinePoint lp = new JLinePoint(jLineGroup, a.getEndX(), a.getEndY());
-            lp.setParentLine(line);
             line.getStartPoint().setSubLine2(a);
             line.getEndPoint().setSubLine1(b);
             lp.setSubLine1(a);

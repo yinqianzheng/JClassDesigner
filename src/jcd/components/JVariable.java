@@ -12,6 +12,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Label;
 import jcd.data.DataManager;
+import jcd.gui.HandleEvent;
 
 /**
  *
@@ -129,6 +130,26 @@ public class JVariable {
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                 // update label (type)
                 variableLabel.setText(toText());
+                if (!variableBox.getJClass().getAggregationClassList().contains(t1)){
+                for (JClass jc: DataManager.getJClassList().getItems()){
+                    if (jc.getClassName().equals(t1)){
+                        JLineGroup jlg = JLineGroupFactory.createJLineGroupforAggregation(
+                                variableBox.getJClass(),
+                                jc,
+                                variableBox.getJClass().getLayoutX()+variableBox.getJClass().getTranslateX(),
+                                variableBox.getJClass().getLayoutY()+variableBox.getJClass().getTranslateY(),
+                                jc.getLayoutX()+jc.getTranslateX(),
+                                jc.getLayoutY()+jc.getTranslateY()
+                            );
+                        HandleEvent.getWorkPane().root.getChildren().add(jlg);
+                        variableBox.getJClass().getAggregationClassList().add(t1);
+                        variableBox.getJClass().getAggregationJLineGroupsList().add(jlg);
+                        System.out.println(variableBox.getJClass().getClassName()+"\n "+variableBox.getJClass().getAggregationJLineGroupsList());
+
+                        break;
+                    }
+                }
+                }
                 DataManager.setSaved(false);
             }
         });

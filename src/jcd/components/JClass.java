@@ -32,12 +32,20 @@ public class JClass extends VBox{
     private JClass jParent;
     private LinkedList<String> parentList;
     private LinkedList<JLineGroup> jLineGroupsList;
+    private LinkedList<String> usesClassList;
+    private LinkedList<JLineGroup> usesJLineGroupsList;
+    private LinkedList<String> aggregationClassList;
+    private LinkedList<JLineGroup> aggregationJLineGroupsList;
     private JLineGroup linkToParent;
     
     
     public JClass(double x, double y){
         parentList = new LinkedList<>();
         jLineGroupsList = new LinkedList<>();
+        usesClassList = new LinkedList<>();
+        usesJLineGroupsList = new LinkedList<>();
+        aggregationClassList = new LinkedList<>();
+        aggregationJLineGroupsList = new LinkedList<>();
         isAbstract = new SimpleBooleanProperty(false);
         isInterface = new SimpleBooleanProperty(false);
         variableBox = new VariableBox(this);
@@ -57,6 +65,22 @@ public class JClass extends VBox{
         name.getChildren().addAll(className);
         this.getChildren().addAll(name, variableBox, methodBox);
         listenerForInterface();
+    }
+    
+    public LinkedList<String> getUsesClassList(){
+        return usesClassList;
+    }
+    
+    public LinkedList<JLineGroup> getUsesJLineGroupsList(){
+        return usesJLineGroupsList;
+    }
+    
+    public LinkedList<String> getAggregationClassList(){
+        return aggregationClassList;
+    }
+    
+    public LinkedList<JLineGroup> getAggregationJLineGroupsList(){
+        return aggregationJLineGroupsList;
     }
     
     public boolean addParent(String str){

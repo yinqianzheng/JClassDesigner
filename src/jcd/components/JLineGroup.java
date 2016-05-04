@@ -15,6 +15,7 @@ import javafx.scene.shape.Polygon;
  * @author YinqianZheng
  */
 public class JLineGroup extends Group{
+    private String childClass, parentClass;
     private JLine jLine;
     private JLinePoint startPoint, endPoint;
     private Polygon triangle, diamond;
@@ -29,6 +30,13 @@ public class JLineGroup extends Group{
         initRelations(startPoint, jLine, endPoint);
     }
     
+//    public String getChildClass(){
+//        return childClass;
+//    }
+//    
+//    public String getParentClass(){
+//        return parentClass;
+//    }
     
     public JLinePoint getStartPoint(){
         return startPoint;
@@ -74,8 +82,8 @@ public class JLineGroup extends Group{
         triangle = new Polygon();
         triangle.getPoints().addAll(new Double[]{
         0.0, 0.0,
-        0.0, 24.0,
-        20.0, 12.0});
+        0.0, 20.0,
+        18.0, 10.0});
         triangle.setFill(Color.WHITE);
         triangle.setStroke(Color.BLACK);
         endPoint.addInheritanceConnector(triangle);
@@ -88,10 +96,10 @@ public class JLineGroup extends Group{
     public void createConnectorForAggregation(){
         diamond = new Polygon();
         diamond.getPoints().addAll(new Double[]{
-        0.0, 7.0,
-        7.0, 0.0,
-        14.0, 7.0,
-        7.0, 14.0});
+        0.0, 10.0,
+        10.0, 0.0,
+        20.0, 10.0,
+        10.0, 20.0});
         diamond.setFill(Color.WHITE);
         diamond.setStroke(Color.BLACK);
         startPoint.addAggregationConnector(diamond);
@@ -102,7 +110,7 @@ public class JLineGroup extends Group{
     }
     
     public void createConnectorForUses(){
-        arrow = new CubicCurve( 125, 150, 125, 225, 325, 225, 325, 300);
+        arrow = new CubicCurve( 0, 0, 10, 7, 10, 7, 0, 14);
         arrow.setStroke(Color.BLACK);
         arrow.setStrokeWidth(2);
         arrow.setFill( null);

@@ -24,7 +24,7 @@ public class JLinePoint extends Circle{
     private JLinePoint jLinePoint;
     private JLineGroup jLineGroup;
     private SimpleDoubleProperty x, y;
-    private JLine parentLine, subLine1, subLine2;
+    private JLine subLine1, subLine2;
     private double sceneX, sceneY, translateX, translateY;
     private Polygon diamond, triangle;
     private CubicCurve arrow;
@@ -48,9 +48,6 @@ public class JLinePoint extends Circle{
         setActions();
     }
     
-    public JLine getParentLine(){
-        return parentLine;
-    }
     
     public JLine getSubLine1(){
         return subLine1;
@@ -60,9 +57,6 @@ public class JLinePoint extends Circle{
         return subLine2;
     }
     
-    public void setParentLine(JLine jl){
-        parentLine = jl;
-    }
     
     public void setSubLine1(JLine sub1){
         subLine1 = sub1;
@@ -102,11 +96,11 @@ public class JLinePoint extends Circle{
                 if (subLine2!=null)
                     subLine2.setStartX(x.get());
                 if (diamond!=null)
-                    diamond.setLayoutX(x.get()-7);
+                    diamond.setLayoutX(x.get()-10);
                 if (triangle!=null)
-                    triangle.setLayoutX(x.get()-10);
+                    triangle.setLayoutX(x.get()-9);
                 if (arrow!=null)
-                    arrow.setLayoutX(x.get()-7);
+                    arrow.setLayoutX(x.get());
             }
         });
         y.addListener(new ChangeListener<Number>() {
@@ -118,11 +112,11 @@ public class JLinePoint extends Circle{
                 if (subLine2!=null)
                     subLine2.setStartY(y.get());
                 if (diamond!=null)
-                    diamond.setLayoutY(y.get()-7);
+                    diamond.setLayoutY(y.get()-10);
                 if (triangle!=null)
-                    triangle.setLayoutY(y.get()-12);
+                    triangle.setLayoutY(y.get()-10);
                 if (arrow!=null)
-                    arrow.setLayoutY(y.get()-6);
+                    arrow.setLayoutY(y.get());
             }
         });
         jLinePoint.setOnMouseEntered(e->{
@@ -170,10 +164,17 @@ public class JLinePoint extends Circle{
         this.y.set(this.getCenterY()+this.getTranslateY());
     }
     
+    public void addOffsetForMouseReleased(double x, double y){
+        this.setTranslateX(this.getTranslateX() + x);
+        this.setTranslateY(this.getTranslateY() + y);
+        this.x.set(this.getCenterX()+this.getTranslateX());
+        this.y.set(this.getCenterY()+this.getTranslateY());
+    }
+    
     public void addAggregationConnector(Polygon plg){
         diamond = plg;
-        plg.setLayoutX(x.get()-7);
-        plg.setLayoutY(y.get()-7);
+        plg.setLayoutX(x.get()-10);
+        plg.setLayoutY(y.get()-10);
         jLineGroup.getChildren().add(plg);
         plg.toFront();
         jLinePoint.toFront();
@@ -181,8 +182,8 @@ public class JLinePoint extends Circle{
     
     public void addUsesConnector(CubicCurve ar){
         arrow = ar;
-        arrow.setLayoutX(x.get()-7);
-        arrow.setLayoutY(y.get()-7);
+        arrow.setLayoutX(x.get());
+        arrow.setLayoutY(y.get());
         jLineGroup.getChildren().add(arrow);
         arrow.toFront();
         jLinePoint.toFront();
@@ -190,8 +191,8 @@ public class JLinePoint extends Circle{
     
     public void addInheritanceConnector(Polygon tri){
         triangle = tri;
-        triangle.setLayoutX(x.get()-10);
-        triangle.setLayoutY(y.get()-12);
+        triangle.setLayoutX(x.get()-9);
+        triangle.setLayoutY(y.get()-10);
         jLineGroup.getChildren().add(triangle);
         triangle.toFront();
         jLinePoint.toFront();
@@ -232,19 +233,19 @@ public class JLinePoint extends Circle{
         @Override
         public void handle(MouseEvent click) {
             if (click.getClickCount()==2){
-                parentLine.SetStartPoint(subLine1.getStartPoint());
-                parentLine.setEndPoint(subLine2.getEndPoint());
-                parentLine.setStartX(subLine1.getStartX());
-                parentLine.setStartY(subLine1.getStartY());
-                parentLine.setEndX(subLine2.getEndX());
-                parentLine.setEndY(subLine2.getEndY());
-                subLine1.getStartPoint().setSubLine2(parentLine);
-                subLine2.getEndPoint().setSubLine1(parentLine);
+                JLine newLine = new JLine(jLineGroup);
+                newLine.SetStartPoint(subLine1.getStartPoint());
+                newLine.setEndPoint(subLine2.getEndPoint());
+                newLine.setStartX(subLine1.getStartX());
+                newLine.setStartY(subLine1.getStartY());
+                newLine.setEndX(subLine2.getEndX());
+                newLine.setEndY(subLine2.getEndY());
+                subLine1.getStartPoint().setSubLine2(newLine);
+                subLine2.getEndPoint().setSubLine1(newLine);
                 jLineGroup.getChildren().removeAll(subLine1, subLine2, jLinePoint);
-                jLineGroup.getChildren().add(parentLine);
                 subLine1.getStartPoint().toFront();
                 subLine2.getEndPoint().toFront();
-                parentLine.toBack();
+                newLine.toBack();
             }
         }
     };

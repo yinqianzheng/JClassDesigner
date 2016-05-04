@@ -16,7 +16,6 @@ import javafx.scene.paint.Color;
  */
 public class JLineGroupFactory {
    
-    private static JClass child, parent;
     final private static DropShadow highlight = new DropShadow(20, Color.YELLOW);
 
     
@@ -62,9 +61,11 @@ public class JLineGroupFactory {
         return jlg;
     }
     
-    public static JLineGroup createJLineGroupforAggregationAndUses(double sx, double sy, double ex, double ey){
+    public static JLineGroup createJLineGroupforAggregationAndUses(JClass a, JClass b, double sx, double sy, double ex, double ey){
         JLineGroup jlg = new JLineGroup(sx, sy, ex, ey);
-        jlg.createConnectorForInheritance();
+        jlg.setChildClass(a);
+        jlg.setParentClass(b);
+        jlg.createConnectorForAggregation();
         jlg.createConnectorForUses();
 //        jlg.getStartPoint().setOnMousePressed(press);
 //        jlg.getStartPoint().setOnMouseDragged(drag);

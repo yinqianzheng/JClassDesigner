@@ -59,6 +59,10 @@ public class MethodBox extends VBox{
         return mTable;
     }
     
+    public JClass getJClass(){
+        return jClass;
+    }
+    
     public void addMethod(){
         JMethod jm = new JMethod(methodBox);
         String methodName;

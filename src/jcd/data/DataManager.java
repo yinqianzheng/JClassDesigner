@@ -22,6 +22,7 @@ import javafx.scene.Cursor;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableView;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javax.json.Json;
@@ -201,6 +202,19 @@ public class DataManager {
                     jlg.getStartPoint().markTranslateValue();
                 }
             }
+            
+            if (selectedJC.getUsesJLineGroupsList()!=null){
+                for (JLineGroup jlg: selectedJC.getUsesJLineGroupsList()){
+                    jlg.getStartPoint().markTranslateValue();
+                }
+            }
+            
+            if (selectedJC.getAggregationJLineGroupsList()!=null){
+                for (JLineGroup jlg: selectedJC.getAggregationJLineGroupsList()){
+                    jlg.getStartPoint().markTranslateValue();
+                }
+            }
+            
 
             if (!selectedJC.getInterface().get()){
                 for (JClass jclass : jList.getItems()){
@@ -221,7 +235,19 @@ public class DataManager {
                 }
             }
             
+            for (JClass jclass : jList.getItems()){
+                    int index = jclass.getAggregationClassList().indexOf(selectedJC.getClassName());
+                    if (index!=-1){
+                        jclass.getAggregationJLineGroupsList().get(index).getEndPoint().markTranslateValue();
+                    }
+            }
             
+            for (JClass jclass : jList.getItems()){
+                    int index = jclass.getUsesClassList().indexOf(selectedJC.getClassName());
+                    if (index!=-1){
+                        jclass.getUsesJLineGroupsList().get(index).getEndPoint().markTranslateValue();
+                    }
+            }
             
             
             
@@ -261,6 +287,12 @@ public class DataManager {
                     for (JLineGroup jlg : selectedJC.getJLineGroupList()){
                         jlg.getStartPoint().addOffset(offsetX, offsetY);
                     }
+                    for (JLineGroup jlg: selectedJC.getAggregationJLineGroupsList()){
+                        jlg.getStartPoint().addOffset(offsetX, offsetY);
+                    }
+                    for (JLineGroup jlg: selectedJC.getUsesJLineGroupsList()){
+                        jlg.getStartPoint().addOffset(offsetX, offsetY);
+                    }
                     selectedJC.getLine().getStartPoint().addOffset(offsetX, offsetY);
                 } catch (Exception e) {
                 }
@@ -286,6 +318,21 @@ public class DataManager {
                     
                 }
                 
+                for (JClass jclass : jList.getItems()){
+                    int index = jclass.getAggregationClassList().indexOf(selectedJC.getClassName());
+                    if (index!=-1){
+                        jclass.getAggregationJLineGroupsList().get(index).getEndPoint().addOffset(offsetX, offsetY);
+                    }
+                }
+                
+                for (JClass jclass : jList.getItems()){
+                    int index = jclass.getUsesClassList().indexOf(selectedJC.getClassName());
+                    if (index!=-1){
+                        jclass.getUsesJLineGroupsList().get(index).getEndPoint().addOffset(offsetX, offsetY);
+                    }
+                }
+                
+                
                 
             }else if (isResizeMode.get()==true){
                 double ratioX = (click.getSceneX() - sceneX)/width;
@@ -310,27 +357,72 @@ public class DataManager {
                 if (HandleEvent.getWorkPane().isSelectMode==true){
                     double x = ((JClass)(release.getSource())).getLayoutX() + ((JClass)(release.getSource())).getTranslateX();
                     double y = ((JClass)(release.getSource())).getLayoutY() + ((JClass)(release.getSource())).getTranslateY();
-                
+                    
+                    double pointOffsetX =((int)(x/40)*40) - x;
+                    double pointOffsetY =((int)(y/40)*40) - y;
+                    System.out.println(pointOffsetX+" "+pointOffsetY);
                     x = (int)(x/40)*40;
                     y = (int)(y/40)*40;
+                    
+                    
                     
                     ((JClass)(release.getSource())).setTranslateX(x-((JClass)(release.getSource())).getLayoutX());
                     ((JClass)(release.getSource())).setTranslateY(y-((JClass)(release.getSource())).getLayoutY());
                     
-//                    try {
-//                        selectedJC.getLine().setStartX(((JClass)(release.getSource())).getLayoutX()+((JClass)(release.getSource())).getTranslateX());
-//                        selectedJC.getLine().setStartY(((JClass)(release.getSource())).getLayoutY()+((JClass)(release.getSource())).getTranslateY());
-//                    } catch (Exception e) {
-//                    }
+                    try {
+                        if (selectedJC.getLine()!=null)
+                            selectedJC.getLine().getStartPoint().addOffsetForMouseReleased(pointOffsetX, pointOffsetY);
+                        if (!selectedJC.getAggregationJLineGroupsList().isEmpty())
+                            for (JLineGroup jlg: selectedJC.getAggregationJLineGroupsList()){
+                                jlg.getStartPoint().addOffsetForMouseReleased(pointOffsetX, pointOffsetY);
+                            }
+                        if (!selectedJC.getJLineGroupList().isEmpty())
+                            for (JLineGroup jlg : selectedJC.getJLineGroupList()){
+                                jlg.getStartPoint().addOffsetForMouseReleased(pointOffsetX, pointOffsetY);
+                            }
+                        if (!selectedJC.getUsesJLineGroupsList().isEmpty())
+                            for (JLineGroup jlg: selectedJC.getUsesJLineGroupsList()){
+                                jlg.getStartPoint().addOffsetForMouseReleased(pointOffsetX, pointOffsetY);
+                            }
+                    } catch (Exception e) {
+                        System.err.println(e);
+                    }
 //                
-//                    for (JClass jclass : jList.getItems()){
-//                        if (jclass.getJParent()!=null){
-//                            if (jclass.getJParent().equals(selectedJC)){
-//                                jclass.getLine().setEndX(jclass.getJParent().getLayoutX()+jclass.getJParent().getTranslateX());
-//                                jclass.getLine().setEndY(jclass.getJParent().getLayoutY()+jclass.getJParent().getTranslateY());
-//                            }
-//                        }
-//                    }
+                if (!selectedJC.getInterface().get()){
+                    for (JClass jclass : jList.getItems()){
+                         System.out.println("class");
+                        if (jclass.getJParent()!=null){
+                            if (jclass.getJParent().equals(selectedJC)){
+                                jclass.getLine().getEndPoint().addOffsetForMouseReleased(pointOffsetX, pointOffsetY);
+                            }
+                        }
+                    }
+                }else{
+                    for (JClass jclass : jList.getItems()){
+                        if (jclass.getInterfaceParentList()!=null){
+                            int index = jclass.getInterfaceParentList().indexOf(selectedJC.getPackageName()+"."+selectedJC.getClassName());
+                            if (index!=-1){
+                                jclass.getJLineGroupList().get(index).getEndPoint().addOffsetForMouseReleased(pointOffsetX, pointOffsetY);
+                            }
+                        }
+                    }
+                    
+                }
+                
+                for (JClass jclass : jList.getItems()){
+                    int index = jclass.getAggregationClassList().indexOf(selectedJC.getClassName());
+                    if (index!=-1){
+                        jclass.getAggregationJLineGroupsList().get(index).getEndPoint().addOffsetForMouseReleased(pointOffsetX, pointOffsetY);
+                    }
+                }
+                
+                for (JClass jclass : jList.getItems()){
+                    int index = jclass.getUsesClassList().indexOf(selectedJC.getClassName());
+                    if (index!=-1){
+                        jclass.getUsesJLineGroupsList().get(index).getEndPoint().addOffsetForMouseReleased(pointOffsetX, pointOffsetY);
+                    }
+                }
+////                  
                 }
             }
             // addToHistoryList();
@@ -355,7 +447,6 @@ public class DataManager {
                     setSaved(true);
             }
         });
-        
         // update jParent
         parentList.valueProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -391,6 +482,9 @@ public class DataManager {
                 } 
             }
         });
+        
+        parentList.setEditable(true);
+
         
         isSaved.addListener(new ChangeListener<Boolean>() {
             @Override

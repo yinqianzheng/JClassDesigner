@@ -14,6 +14,7 @@ import javafx.scene.control.Label;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import jcd.data.DataManager;
+import jcd.gui.HandleEvent;
 
 /**
  *
@@ -179,6 +180,24 @@ public class JMethod {
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                 // update label (type)
                 methodLabel.setText(toText());
+                for (JClass jc: DataManager.getJClassList().getItems()){
+                    if (!methodBox.getJClass().getUsesClassList().contains(t1)){
+                    if (jc.getClassName().equals(t1)){
+                        JLineGroup jlg = JLineGroupFactory.createJLineGroupforUses(
+                                methodBox.getJClass(),
+                                jc,
+                                methodBox.getJClass().getLayoutX()+methodBox.getJClass().getTranslateX(),
+                                methodBox.getJClass().getLayoutY()+methodBox.getJClass().getTranslateY(),
+                                jc.getLayoutX()+jc.getTranslateX(),
+                                jc.getLayoutY()+jc.getTranslateY()
+                            );
+                        HandleEvent.getWorkPane().root.getChildren().add(jlg);
+                        methodBox.getJClass().getUsesClassList().add(t1);
+                        methodBox.getJClass().getUsesJLineGroupsList().add(jlg);
+                        break;
+                    }
+                    }
+                }
                 DataManager.setSaved(false);
             }
         });
@@ -224,6 +243,24 @@ public class JMethod {
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                 // update label (acess)
                 methodLabel.setText(toText());
+                for (JClass jc: DataManager.getJClassList().getItems()){
+                    if (!methodBox.getJClass().getUsesClassList().contains(t1)){
+                    if (jc.getClassName().equals(t1)){
+                        JLineGroup jlg = JLineGroupFactory.createJLineGroupforUses(
+                                methodBox.getJClass(),
+                                jc,
+                                methodBox.getJClass().getLayoutX()+methodBox.getJClass().getTranslateX(),
+                                methodBox.getJClass().getLayoutY()+methodBox.getJClass().getTranslateY(),
+                                jc.getLayoutX()+jc.getTranslateX(),
+                                jc.getLayoutY()+jc.getTranslateY()
+                            );
+                        HandleEvent.getWorkPane().root.getChildren().add(jlg);
+                        methodBox.getJClass().getUsesClassList().add(t1);
+                        methodBox.getJClass().getUsesJLineGroupsList().add(jlg);
+                        break;
+                    }
+                    }
+                }
                 DataManager.setSaved(false);
             }
         });
@@ -233,6 +270,24 @@ public class JMethod {
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                 // update label (acess)
                 methodLabel.setText(toText());
+                for (JClass jc: DataManager.getJClassList().getItems()){
+                    if (!methodBox.getJClass().getUsesClassList().contains(t1)){
+                    if (jc.getClassName().equals(t1)){
+                        JLineGroup jlg = JLineGroupFactory.createJLineGroupforUses(
+                                methodBox.getJClass(),
+                                jc,
+                                methodBox.getJClass().getLayoutX()+methodBox.getJClass().getTranslateX(),
+                                methodBox.getJClass().getLayoutY()+methodBox.getJClass().getTranslateY(),
+                                jc.getLayoutX()+jc.getTranslateX(),
+                                jc.getLayoutY()+jc.getTranslateY()
+                            );
+                        HandleEvent.getWorkPane().root.getChildren().add(jlg);
+                        methodBox.getJClass().getUsesClassList().add(t1);
+                        methodBox.getJClass().getUsesJLineGroupsList().add(jlg);
+                        break;
+                    }
+                    }
+                }
                 DataManager.setSaved(false);
             }
         });
@@ -242,6 +297,24 @@ public class JMethod {
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                 // update label (acess)
                 methodLabel.setText(toText());
+                for (JClass jc: DataManager.getJClassList().getItems()){
+                    if (!methodBox.getJClass().getUsesClassList().contains(t1)){
+                    if (jc.getClassName().equals(t1)){
+                        JLineGroup jlg = JLineGroupFactory.createJLineGroupforUses(
+                                methodBox.getJClass(),
+                                jc,
+                                methodBox.getJClass().getLayoutX()+methodBox.getJClass().getTranslateX(),
+                                methodBox.getJClass().getLayoutY()+methodBox.getJClass().getTranslateY(),
+                                jc.getLayoutX()+jc.getTranslateX(),
+                                jc.getLayoutY()+jc.getTranslateY()
+                            );
+                        HandleEvent.getWorkPane().root.getChildren().add(jlg);
+                        methodBox.getJClass().getUsesClassList().add(t1);
+                        methodBox.getJClass().getUsesJLineGroupsList().add(jlg);
+                        break;
+                    }
+                    }
+                }
                 DataManager.setSaved(false);
             }
         });
