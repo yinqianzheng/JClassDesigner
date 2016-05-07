@@ -181,7 +181,7 @@ public class JMethod {
                 // update label (type)
                 methodLabel.setText(toText());
                 for (JClass jc: DataManager.getJClassList().getItems()){
-                    if (!methodBox.getJClass().getUsesClassList().contains(t1)){
+                    if (!methodBox.getJClass().getUsesJLineGroupsList().containsKey(t1)){
                     if (jc.getClassName().equals(t1)){
                         JLineGroup jlg = JLineGroupFactory.createJLineGroupforUses(
                                 methodBox.getJClass(),
@@ -192,8 +192,7 @@ public class JMethod {
                                 jc.getLayoutY()+jc.getTranslateY()
                             );
                         HandleEvent.getWorkPane().root.getChildren().add(jlg);
-                        methodBox.getJClass().getUsesClassList().add(t1);
-                        methodBox.getJClass().getUsesJLineGroupsList().add(jlg);
+                        methodBox.getJClass().getUsesJLineGroupsList().put(t1, jlg);
                         break;
                     }
                     }
@@ -244,7 +243,7 @@ public class JMethod {
                 // update label (acess)
                 methodLabel.setText(toText());
                 for (JClass jc: DataManager.getJClassList().getItems()){
-                    if (!methodBox.getJClass().getUsesClassList().contains(t1)){
+                    if (!methodBox.getJClass().getUsesJLineGroupsList().containsKey(t1)){
                     if (jc.getClassName().equals(t1)){
                         JLineGroup jlg = JLineGroupFactory.createJLineGroupforUses(
                                 methodBox.getJClass(),
@@ -255,8 +254,7 @@ public class JMethod {
                                 jc.getLayoutY()+jc.getTranslateY()
                             );
                         HandleEvent.getWorkPane().root.getChildren().add(jlg);
-                        methodBox.getJClass().getUsesClassList().add(t1);
-                        methodBox.getJClass().getUsesJLineGroupsList().add(jlg);
+                        methodBox.getJClass().getUsesJLineGroupsList().put(t1, jlg);
                         break;
                     }
                     }
@@ -271,7 +269,7 @@ public class JMethod {
                 // update label (acess)
                 methodLabel.setText(toText());
                 for (JClass jc: DataManager.getJClassList().getItems()){
-                    if (!methodBox.getJClass().getUsesClassList().contains(t1)){
+                    if (!methodBox.getJClass().getUsesJLineGroupsList().containsKey(t1)){
                     if (jc.getClassName().equals(t1)){
                         JLineGroup jlg = JLineGroupFactory.createJLineGroupforUses(
                                 methodBox.getJClass(),
@@ -282,8 +280,7 @@ public class JMethod {
                                 jc.getLayoutY()+jc.getTranslateY()
                             );
                         HandleEvent.getWorkPane().root.getChildren().add(jlg);
-                        methodBox.getJClass().getUsesClassList().add(t1);
-                        methodBox.getJClass().getUsesJLineGroupsList().add(jlg);
+                        methodBox.getJClass().getUsesJLineGroupsList().put(t1, jlg);
                         break;
                     }
                     }
@@ -298,7 +295,7 @@ public class JMethod {
                 // update label (acess)
                 methodLabel.setText(toText());
                 for (JClass jc: DataManager.getJClassList().getItems()){
-                    if (!methodBox.getJClass().getUsesClassList().contains(t1)){
+                    if (!methodBox.getJClass().getUsesJLineGroupsList().containsKey(t1)){
                     if (jc.getClassName().equals(t1)){
                         JLineGroup jlg = JLineGroupFactory.createJLineGroupforUses(
                                 methodBox.getJClass(),
@@ -309,8 +306,7 @@ public class JMethod {
                                 jc.getLayoutY()+jc.getTranslateY()
                             );
                         HandleEvent.getWorkPane().root.getChildren().add(jlg);
-                        methodBox.getJClass().getUsesClassList().add(t1);
-                        methodBox.getJClass().getUsesJLineGroupsList().add(jlg);
+                        methodBox.getJClass().getUsesJLineGroupsList().put(t1, jlg);
                         break;
                     }
                     }

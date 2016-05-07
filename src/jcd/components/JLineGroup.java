@@ -15,11 +15,10 @@ import javafx.scene.shape.Polygon;
  * @author YinqianZheng
  */
 public class JLineGroup extends Group{
-    private String childClass, parentClass;
+   // private String childClass, parentClass;
     private JLine jLine;
     private JLinePoint startPoint, endPoint;
-    private Polygon triangle, diamond;
-    private CubicCurve arrow;
+    private Polygon triangle, diamond, arrow;
     private JClass child, parent;
     
     public JLineGroup(double sx, double sy, double ex, double ey){
@@ -83,7 +82,8 @@ public class JLineGroup extends Group{
         triangle.getPoints().addAll(new Double[]{
         0.0, 0.0,
         0.0, 20.0,
-        18.0, 10.0});
+        14.0, 10.0});
+        triangle.setStrokeWidth(1.5);
         triangle.setFill(Color.WHITE);
         triangle.setStroke(Color.BLACK);
         endPoint.addInheritanceConnector(triangle);
@@ -100,6 +100,7 @@ public class JLineGroup extends Group{
         10.0, 0.0,
         20.0, 10.0,
         10.0, 20.0});
+        diamond.setStrokeWidth(1.5);
         diamond.setFill(Color.WHITE);
         diamond.setStroke(Color.BLACK);
         startPoint.addAggregationConnector(diamond);
@@ -110,7 +111,12 @@ public class JLineGroup extends Group{
     }
     
     public void createConnectorForUses(){
-        arrow = new CubicCurve( 0, 0, 10, 7, 10, 7, 0, 14);
+        arrow = new Polygon();
+        arrow.getPoints().addAll(new Double[]{
+        -10.0, -10.0,
+        0.0, 0.0,
+        -10.0, 10.0,
+        0.0, 0.0});
         arrow.setStroke(Color.BLACK);
         arrow.setStrokeWidth(2);
         arrow.setFill( null);
@@ -126,5 +132,17 @@ public class JLineGroup extends Group{
         sp.setOnMouseClicked(null);
         ep.setOnMouseReleased(null);
         ep.setOnMouseClicked(null);
+    }
+    
+    // generate json-format string
+    @Override
+    public String toString(){
+        String str =  "{\n\"childClass\":\""+child.getPackageName()+"."+child.getClassName()+"\",\n"
+                + "\"parentClass\":\""+parent.getPackageName()+"."+parent.getClassName()+"\",\n"
+                + "\"startPoit\":"+startPoint.toString()+",\n"
+                + "\"endPoint\":"+endPoint.toString()+",\n"
+                + "\"points\":[{}]\n"
+                + "}";
+        return str;
     }
 }

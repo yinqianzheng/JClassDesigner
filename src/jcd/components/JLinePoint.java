@@ -15,6 +15,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.Polygon;
+import jcd.gui.HandleEvent;
 
 /**
  *
@@ -26,8 +27,7 @@ public class JLinePoint extends Circle{
     private SimpleDoubleProperty x, y;
     private JLine subLine1, subLine2;
     private double sceneX, sceneY, translateX, translateY;
-    private Polygon diamond, triangle;
-    private CubicCurve arrow;
+    private Polygon diamond, triangle, arrow;
     private SimpleDoubleProperty rotateValue;
     final private  DropShadow highlight = new DropShadow(20, Color.YELLOW);
     
@@ -41,6 +41,7 @@ public class JLinePoint extends Circle{
         this.setCenterY(y);
         this.x = new SimpleDoubleProperty(x);
         this.y = new SimpleDoubleProperty(y);
+        this.rotateValue = new SimpleDoubleProperty(0);
         this.setOnMousePressed(press);
         this.setOnMouseDragged(drag);
         this.setOnMouseReleased(release);
@@ -98,7 +99,7 @@ public class JLinePoint extends Circle{
                 if (diamond!=null)
                     diamond.setLayoutX(x.get()-10);
                 if (triangle!=null)
-                    triangle.setLayoutX(x.get()-9);
+                    triangle.setLayoutX(x.get()-7);
                 if (arrow!=null)
                     arrow.setLayoutX(x.get());
             }
@@ -133,7 +134,6 @@ public class JLinePoint extends Circle{
     
     public void setRotateForConnector(double value){
         if (rotateValue == null){
-            rotateValue = new SimpleDoubleProperty(0);
             rotateValue.addListener(new ChangeListener<Number>() {
                 @Override
                 public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
@@ -142,7 +142,7 @@ public class JLinePoint extends Circle{
                     if (triangle!=null)
                         triangle.setRotate(rotateValue.get());
                     if (arrow!=null)
-                        arrow.setRotate(rotateValue.get());
+                        arrow.setRotate(rotateValue.get()); 
                 }
             });
             rotateValue.set(value);
@@ -180,7 +180,7 @@ public class JLinePoint extends Circle{
         jLinePoint.toFront();
     }
     
-    public void addUsesConnector(CubicCurve ar){
+    public void addUsesConnector(Polygon ar){
         arrow = ar;
         arrow.setLayoutX(x.get());
         arrow.setLayoutY(y.get());
@@ -191,7 +191,7 @@ public class JLinePoint extends Circle{
     
     public void addInheritanceConnector(Polygon tri){
         triangle = tri;
-        triangle.setLayoutX(x.get()-9);
+        triangle.setLayoutX(x.get()-7);
         triangle.setLayoutY(y.get()-10);
         jLineGroup.getChildren().add(triangle);
         triangle.toFront();
@@ -214,8 +214,8 @@ public class JLinePoint extends Circle{
         public void handle(MouseEvent drag) {
             double offsetX = drag.getSceneX() - sceneX;
             double offsetY = drag.getSceneY() - sceneY;
-            jLinePoint.setTranslateX(translateX + offsetX);
-            jLinePoint.setTranslateY(translateY + offsetY);
+            jLinePoint.setTranslateX(translateX + offsetX/HandleEvent.getWorkPane().getZoomValue());
+            jLinePoint.setTranslateY(translateY + offsetY/HandleEvent.getWorkPane().getZoomValue());
             x.set(jLinePoint.getCenterX()+jLinePoint.getTranslateX());
             y.set(jLinePoint.getCenterY()+jLinePoint.getTranslateY());
             
@@ -249,5 +249,15 @@ public class JLinePoint extends Circle{
             }
         }
     };
+    
+    // generate json-format string
+    @Override
+    public String toString(){
+        String str = "{\n\"x\":"+x.get()+",\n"
+                + "\"y\":"+y.get()+",\n"
+                + "\"rotateValue\":"+rotateValue.get()+"\n"
+                + "}";
+        return str;
+    }
     
 }

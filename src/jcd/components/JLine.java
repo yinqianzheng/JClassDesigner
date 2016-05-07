@@ -10,6 +10,7 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import jcd.gui.HandleEvent;
 
 /**
  *
@@ -98,10 +99,10 @@ public class JLine extends Line{
     private EventHandler lineBeDragged = new EventHandler<MouseEvent>() {
         @Override
         public void handle(MouseEvent dragged) {
-            a.setEndX(endX + dragged.getSceneX() - sceneX);
-            a.setEndY(endY + dragged.getSceneY() - sceneY);
-            b.setStartX(startX + dragged.getSceneX() - sceneX);
-            b.setStartY(startY + dragged.getSceneY() - sceneY);
+            a.setEndX(endX + (dragged.getSceneX() - sceneX)/HandleEvent.getWorkPane().getZoomValue());
+            a.setEndY(endY + (dragged.getSceneY() - sceneY)/HandleEvent.getWorkPane().getZoomValue());
+            b.setStartX(startX + (dragged.getSceneX() - sceneX)/HandleEvent.getWorkPane().getZoomValue());
+            b.setStartY(startY + (dragged.getSceneY() - sceneY)/HandleEvent.getWorkPane().getZoomValue());
         }
     };
     

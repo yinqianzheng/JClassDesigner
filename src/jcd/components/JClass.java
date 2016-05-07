@@ -5,6 +5,8 @@
  */
 package jcd.components;
 
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
@@ -31,21 +33,17 @@ public class JClass extends VBox{
     private MethodBox methodBox;
     private JClass jParent;
     private LinkedList<String> parentList;
-    private LinkedList<JLineGroup> jLineGroupsList;
-    private LinkedList<String> usesClassList;
-    private LinkedList<JLineGroup> usesJLineGroupsList;
-    private LinkedList<String> aggregationClassList;
-    private LinkedList<JLineGroup> aggregationJLineGroupsList;
+    private HashMap<String, JLineGroup> jLineGroupsList;
+    private HashMap<String, JLineGroup> usesJLineGroupsList;
+    private HashMap<String, JLineGroup> aggregationJLineGroupsList;
     private JLineGroup linkToParent;
     
     
     public JClass(double x, double y){
         parentList = new LinkedList<>();
-        jLineGroupsList = new LinkedList<>();
-        usesClassList = new LinkedList<>();
-        usesJLineGroupsList = new LinkedList<>();
-        aggregationClassList = new LinkedList<>();
-        aggregationJLineGroupsList = new LinkedList<>();
+        jLineGroupsList = new HashMap<String, JLineGroup>();
+        usesJLineGroupsList = new HashMap<String, JLineGroup>();
+        aggregationJLineGroupsList = new HashMap<String, JLineGroup>();
         isAbstract = new SimpleBooleanProperty(false);
         isInterface = new SimpleBooleanProperty(false);
         variableBox = new VariableBox(this);
@@ -67,19 +65,11 @@ public class JClass extends VBox{
         listenerForInterface();
     }
     
-    public LinkedList<String> getUsesClassList(){
-        return usesClassList;
-    }
-    
-    public LinkedList<JLineGroup> getUsesJLineGroupsList(){
+    public HashMap<String, JLineGroup> getUsesJLineGroupsList(){
         return usesJLineGroupsList;
     }
     
-    public LinkedList<String> getAggregationClassList(){
-        return aggregationClassList;
-    }
-    
-    public LinkedList<JLineGroup> getAggregationJLineGroupsList(){
+    public HashMap<String, JLineGroup> getAggregationJLineGroupsList(){
         return aggregationJLineGroupsList;
     }
     
@@ -106,7 +96,7 @@ public class JClass extends VBox{
             this.getLayoutY()+this.getTranslateY(),
             parentInterface.getLayoutX()+parentInterface.getTranslateX(),
             parentInterface.getLayoutY()+parentInterface.getTranslateY());
-        jLineGroupsList.add(linkToInterface);
+        jLineGroupsList.put(parentInterface.getPackageName()+"."+parentInterface.getClassName(), linkToInterface);
         return linkToInterface;
     }
     
@@ -114,7 +104,7 @@ public class JClass extends VBox{
         jLineGroupsList.clear();
     }
     
-    public LinkedList<JLineGroup> getJLineGroupList(){
+    public HashMap<String, JLineGroup> getJLineGroupList(){
         return jLineGroupsList;
     }
     
@@ -217,6 +207,10 @@ public class JClass extends VBox{
     public JLineGroup getLine(){
         return linkToParent;
     }
+    
+    public void setLine(JLineGroup jlg){
+        linkToParent = jlg;
+    }
 
 
     private void listenerForInterface(){
@@ -243,7 +237,16 @@ public class JClass extends VBox{
     public String toCode(){
         String code = "";
         String isAbstractClass = "";
-
+        String parents = "";
+        if (jParent!=null)
+            parents = " extends "+jParent.getClassName();
+        if (!parentList.isEmpty()){
+            parents = parents + " implements ";
+            for (String str:parentList){
+                parents = parents + str +", ";
+            }
+            parents = parents.substring(0, parents.length()-2);
+        }
         if (isAbstract.get()==true)
             isAbstractClass = "abstract ";
         
@@ -253,7 +256,7 @@ public class JClass extends VBox{
         else
             title = "interface ";
         
-        code = "public " + title +className.getText()+
+        code = "public " + title +className.getText()+ parents +
                 "{\n";
         code = code + variableBox.toCode() +"\n"+ methodBox.toCode() +"\n}\n\n";
         
@@ -290,10 +293,26 @@ public class JClass extends VBox{
                 +this.getMethodBox().toString()
                 + "]"
                 +"}\n"
+                +"},\n"
+                +"{\n"
+                +"\"3\":{\n"
+                +"\"lines\":["
+                + getLines()
+                + "]"
                 +"}\n"
+                +"}\n"   
                 +"]\n"
                 +"}\n";          
         return str;
+    }
+    
+    private String getLines(){
+        String lines = "";
+        if (linkToParent==null)
+            lines = "{\"extends\":{}}";
+        else
+            lines = "{\"extends\":"+linkToParent.toString()+ "}";
+        return lines;
     }
     
 }

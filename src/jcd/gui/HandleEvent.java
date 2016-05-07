@@ -7,6 +7,7 @@ package jcd.gui;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,6 +26,7 @@ import javafx.stage.FileChooser;
 import javax.imageio.ImageIO;
 import javax.json.JsonObject;
 import jcd.components.JClass;
+import jcd.components.JLineGroup;
 import jcd.controller.JFileManager;
 import jcd.data.DataManager;
 
@@ -278,6 +280,7 @@ public class HandleEvent {
         public void handle(Event event) {
             if (dataManager.getSelectedJC()!=null){
                 wp.root.getChildren().removeAll(dataManager.getSelectedJC(), dataManager.getSelectedJC().getLine());
+                removeAllLines(dataManager.getSelectedJC());
                 dataManager.removeChildrenLines();
                 dataManager.removeClass(dataManager.getSelectedJC());
                 dataManager.setSelectedJC(null);
@@ -438,5 +441,22 @@ public class HandleEvent {
                 
     }
     
+    
+    private static void removeAllLines(JClass jc){
+        if (!jc.getAggregationJLineGroupsList().isEmpty())
+            for (Map.Entry<String, JLineGroup> entry: jc.getAggregationJLineGroupsList().entrySet()){
+                wp.root.getChildren().remove(entry.getValue());
+            };
+        
+        if (!jc.getUsesJLineGroupsList().isEmpty())
+            for (Map.Entry<String, JLineGroup> entry: jc.getUsesJLineGroupsList().entrySet()){
+                wp.root.getChildren().remove(entry.getValue());
+            };
+        
+        if (!jc.getJLineGroupList().isEmpty())
+            for (Map.Entry<String, JLineGroup> entry: jc.getJLineGroupList().entrySet()){
+                wp.root.getChildren().remove(entry.getValue());
+            };
+    }
     
 }

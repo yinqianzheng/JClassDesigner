@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.StringBufferInputStream;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -197,22 +198,28 @@ public class DataManager {
                 selectedJC.getLine().getStartPoint().markTranslateValue();
             }
             
-            if (selectedJC.getJLineGroupList()!=null){
-                for (JLineGroup jlg: selectedJC.getJLineGroupList()){
-                    jlg.getStartPoint().markTranslateValue();
+            if (!selectedJC.getJLineGroupList().isEmpty()){
+                for (Map.Entry<String, JLineGroup> entry: selectedJC.getJLineGroupList().entrySet()){
+                    entry.getValue().getStartPoint().markTranslateValue();
+                }
+//                for (JLineGroup jlg: selectedJC.getJLineGroupList()){
+//                    jlg.getStartPoint().markTranslateValue();
+//                }
+            }
+            
+            if (!selectedJC.getUsesJLineGroupsList().isEmpty()){
+                for (Map.Entry<String, JLineGroup> entry: selectedJC.getUsesJLineGroupsList().entrySet()){
+                    entry.getValue().getStartPoint().markTranslateValue();
                 }
             }
             
-            if (selectedJC.getUsesJLineGroupsList()!=null){
-                for (JLineGroup jlg: selectedJC.getUsesJLineGroupsList()){
-                    jlg.getStartPoint().markTranslateValue();
+            if (!selectedJC.getAggregationJLineGroupsList().isEmpty()){
+                for (Map.Entry<String, JLineGroup> entry: selectedJC.getAggregationJLineGroupsList().entrySet()){
+                    entry.getValue().getStartPoint().markTranslateValue();
                 }
-            }
-            
-            if (selectedJC.getAggregationJLineGroupsList()!=null){
-                for (JLineGroup jlg: selectedJC.getAggregationJLineGroupsList()){
-                    jlg.getStartPoint().markTranslateValue();
-                }
+//                for (JLineGroup jlg: selectedJC.getAggregationJLineGroupsList()){
+//                    jlg.getStartPoint().markTranslateValue();
+//                }
             }
             
 
@@ -226,26 +233,26 @@ public class DataManager {
                 }
             }else{
                 for (JClass jclass : jList.getItems()){
-                    if (jclass.getInterfaceParentList()!=null){
-                        int index = jclass.getInterfaceParentList().indexOf(selectedJC.getPackageName()+"."+selectedJC.getClassName());
-                        if (index!=-1){
-                            jclass.getJLineGroupList().get(index).getEndPoint().markTranslateValue();
+                    if (!jclass.getJLineGroupList().isEmpty()){
+                        //int index = jclass.getInterfaceParentList().indexOf(selectedJC.getPackageName()+"."+selectedJC.getClassName());
+                        if (jclass.getJLineGroupList().containsKey(selectedJC.getPackageName()+"."+selectedJC.getClassName())){
+                            jclass.getJLineGroupList().get(selectedJC.getPackageName()+"."+selectedJC.getClassName()).getEndPoint().markTranslateValue();
                         }
                     }
                 }
             }
             
             for (JClass jclass : jList.getItems()){
-                    int index = jclass.getAggregationClassList().indexOf(selectedJC.getClassName());
-                    if (index!=-1){
-                        jclass.getAggregationJLineGroupsList().get(index).getEndPoint().markTranslateValue();
+                    //int index = jclass.getAggregationClassList().indexOf(selectedJC.getClassName());
+                    if (jclass.getAggregationJLineGroupsList().containsKey(selectedJC.getClassName())){
+                        jclass.getAggregationJLineGroupsList().get(selectedJC.getClassName()).getEndPoint().markTranslateValue();
                     }
             }
             
             for (JClass jclass : jList.getItems()){
-                    int index = jclass.getUsesClassList().indexOf(selectedJC.getClassName());
-                    if (index!=-1){
-                        jclass.getUsesJLineGroupsList().get(index).getEndPoint().markTranslateValue();
+                    //int index = jclass.getUsesClassList().indexOf(selectedJC.getClassName());
+                    if (jclass.getUsesJLineGroupsList().containsKey(selectedJC.getClassName())){
+                        jclass.getUsesJLineGroupsList().get(selectedJC.getClassName()).getEndPoint().markTranslateValue();
                     }
             }
             
@@ -284,16 +291,19 @@ public class DataManager {
                 ((JClass)(click.getSource())).setTranslateY(newTranslateY);
                 
                 try {
-                    for (JLineGroup jlg : selectedJC.getJLineGroupList()){
-                        jlg.getStartPoint().addOffset(offsetX, offsetY);
+                    for (Map.Entry<String, JLineGroup> entry: selectedJC.getJLineGroupList().entrySet()){
+                        entry.getValue().getStartPoint().addOffset(offsetX/HandleEvent.getWorkPane().getZoomValue(), offsetY/HandleEvent.getWorkPane().getZoomValue());
                     }
-                    for (JLineGroup jlg: selectedJC.getAggregationJLineGroupsList()){
-                        jlg.getStartPoint().addOffset(offsetX, offsetY);
+                    for (Map.Entry<String, JLineGroup> entry: selectedJC.getAggregationJLineGroupsList().entrySet()){
+                        entry.getValue().getStartPoint().addOffset(offsetX/HandleEvent.getWorkPane().getZoomValue(), offsetY/HandleEvent.getWorkPane().getZoomValue());
                     }
-                    for (JLineGroup jlg: selectedJC.getUsesJLineGroupsList()){
-                        jlg.getStartPoint().addOffset(offsetX, offsetY);
+//                    for (JLineGroup jlg: selectedJC.getAggregationJLineGroupsList()){
+//                        jlg.getStartPoint().addOffset(offsetX/HandleEvent.getWorkPane().getZoomValue(), offsetY/HandleEvent.getWorkPane().getZoomValue());
+//                    }
+                    for (Map.Entry<String, JLineGroup> entry: selectedJC.getUsesJLineGroupsList().entrySet()){
+                        entry.getValue().getStartPoint().addOffset(offsetX/HandleEvent.getWorkPane().getZoomValue(), offsetY/HandleEvent.getWorkPane().getZoomValue());
                     }
-                    selectedJC.getLine().getStartPoint().addOffset(offsetX, offsetY);
+                    selectedJC.getLine().getStartPoint().addOffset(offsetX/HandleEvent.getWorkPane().getZoomValue(), offsetY/HandleEvent.getWorkPane().getZoomValue());
                 } catch (Exception e) {
                 }
                 
@@ -302,16 +312,16 @@ public class DataManager {
                          System.out.println("class");
                         if (jclass.getJParent()!=null){
                             if (jclass.getJParent().equals(selectedJC)){
-                                jclass.getLine().getEndPoint().addOffset(offsetX, offsetY);
+                                jclass.getLine().getEndPoint().addOffset(offsetX/HandleEvent.getWorkPane().getZoomValue(), offsetY/HandleEvent.getWorkPane().getZoomValue());
                             }
                         }
                     }
                 }else{
                     for (JClass jclass : jList.getItems()){
-                        if (jclass.getInterfaceParentList()!=null){
-                            int index = jclass.getInterfaceParentList().indexOf(selectedJC.getPackageName()+"."+selectedJC.getClassName());
-                            if (index!=-1){
-                                jclass.getJLineGroupList().get(index).getEndPoint().addOffset(offsetX, offsetY);
+                        if (!jclass.getJLineGroupList().isEmpty()){
+                            //int index = jclass.getInterfaceParentList().indexOf(selectedJC.getPackageName()+"."+selectedJC.getClassName());
+                            if (jclass.getJLineGroupList().containsKey(selectedJC.getPackageName()+"."+selectedJC.getClassName())){
+                                jclass.getJLineGroupList().get(selectedJC.getPackageName()+"."+selectedJC.getClassName()).getEndPoint().addOffset(offsetX/HandleEvent.getWorkPane().getZoomValue(), offsetY/HandleEvent.getWorkPane().getZoomValue());
                             }
                         }
                     }
@@ -319,16 +329,16 @@ public class DataManager {
                 }
                 
                 for (JClass jclass : jList.getItems()){
-                    int index = jclass.getAggregationClassList().indexOf(selectedJC.getClassName());
-                    if (index!=-1){
-                        jclass.getAggregationJLineGroupsList().get(index).getEndPoint().addOffset(offsetX, offsetY);
+//                    int index = jclass.getAggregationClassList().indexOf(selectedJC.getClassName());
+                    if (jclass.getAggregationJLineGroupsList().containsKey(selectedJC.getClassName())){
+                        jclass.getAggregationJLineGroupsList().get(selectedJC.getClassName()).getEndPoint().addOffset(offsetX/HandleEvent.getWorkPane().getZoomValue(), offsetY/HandleEvent.getWorkPane().getZoomValue());
                     }
                 }
                 
                 for (JClass jclass : jList.getItems()){
-                    int index = jclass.getUsesClassList().indexOf(selectedJC.getClassName());
-                    if (index!=-1){
-                        jclass.getUsesJLineGroupsList().get(index).getEndPoint().addOffset(offsetX, offsetY);
+                    //int index = jclass.getUsesClassList().indexOf(selectedJC.getClassName());
+                    if (jclass.getUsesJLineGroupsList().containsKey(selectedJC.getClassName())){
+                        jclass.getUsesJLineGroupsList().get(selectedJC.getClassName()).getEndPoint().addOffset(offsetX/HandleEvent.getWorkPane().getZoomValue(), offsetY/HandleEvent.getWorkPane().getZoomValue());
                     }
                 }
                 
@@ -373,16 +383,22 @@ public class DataManager {
                         if (selectedJC.getLine()!=null)
                             selectedJC.getLine().getStartPoint().addOffsetForMouseReleased(pointOffsetX, pointOffsetY);
                         if (!selectedJC.getAggregationJLineGroupsList().isEmpty())
-                            for (JLineGroup jlg: selectedJC.getAggregationJLineGroupsList()){
-                                jlg.getStartPoint().addOffsetForMouseReleased(pointOffsetX, pointOffsetY);
+                            for (Map.Entry<String, JLineGroup> entry: selectedJC.getAggregationJLineGroupsList().entrySet()){
+                                entry.getValue().getStartPoint().addOffsetForMouseReleased(pointOffsetX, pointOffsetY);
                             }
+//                            for (JLineGroup jlg: selectedJC.getAggregationJLineGroupsList()){
+//                                jlg.getStartPoint().addOffsetForMouseReleased(pointOffsetX, pointOffsetY);
+//                            }
                         if (!selectedJC.getJLineGroupList().isEmpty())
-                            for (JLineGroup jlg : selectedJC.getJLineGroupList()){
-                                jlg.getStartPoint().addOffsetForMouseReleased(pointOffsetX, pointOffsetY);
+                            for (Map.Entry<String, JLineGroup> entry: selectedJC.getJLineGroupList().entrySet()){
+                                entry.getValue().getStartPoint().addOffsetForMouseReleased(pointOffsetX, pointOffsetY);
                             }
+//                            for (JLineGroup jlg : selectedJC.getJLineGroupList()){
+//                                jlg.getStartPoint().addOffsetForMouseReleased(pointOffsetX, pointOffsetY);
+//                            }
                         if (!selectedJC.getUsesJLineGroupsList().isEmpty())
-                            for (JLineGroup jlg: selectedJC.getUsesJLineGroupsList()){
-                                jlg.getStartPoint().addOffsetForMouseReleased(pointOffsetX, pointOffsetY);
+                            for (Map.Entry<String, JLineGroup> entry: selectedJC.getUsesJLineGroupsList().entrySet()){
+                                entry.getValue().getStartPoint().addOffsetForMouseReleased(pointOffsetX, pointOffsetY);
                             }
                     } catch (Exception e) {
                         System.err.println(e);
@@ -400,26 +416,25 @@ public class DataManager {
                 }else{
                     for (JClass jclass : jList.getItems()){
                         if (jclass.getInterfaceParentList()!=null){
-                            int index = jclass.getInterfaceParentList().indexOf(selectedJC.getPackageName()+"."+selectedJC.getClassName());
-                            if (index!=-1){
-                                jclass.getJLineGroupList().get(index).getEndPoint().addOffsetForMouseReleased(pointOffsetX, pointOffsetY);
+                            //int index = jclass.getInterfaceParentList().indexOf(selectedJC.getPackageName()+"."+selectedJC.getClassName());
+                            if (jclass.getJLineGroupList().containsKey(selectedJC.getPackageName()+"."+selectedJC.getClassName())){
+                                jclass.getJLineGroupList().get(selectedJC.getPackageName()+"."+selectedJC.getClassName()).getEndPoint().addOffsetForMouseReleased(pointOffsetX, pointOffsetY);
                             }
                         }
                     }
-                    
                 }
                 
                 for (JClass jclass : jList.getItems()){
-                    int index = jclass.getAggregationClassList().indexOf(selectedJC.getClassName());
-                    if (index!=-1){
-                        jclass.getAggregationJLineGroupsList().get(index).getEndPoint().addOffsetForMouseReleased(pointOffsetX, pointOffsetY);
+                    //int index = jclass.getAggregationClassList().indexOf(selectedJC.getClassName());
+                    if (jclass.getAggregationJLineGroupsList().containsKey(selectedJC.getClassName())){
+                        jclass.getAggregationJLineGroupsList().get(selectedJC.getClassName()).getEndPoint().addOffsetForMouseReleased(pointOffsetX, pointOffsetY);
                     }
                 }
                 
                 for (JClass jclass : jList.getItems()){
-                    int index = jclass.getUsesClassList().indexOf(selectedJC.getClassName());
-                    if (index!=-1){
-                        jclass.getUsesJLineGroupsList().get(index).getEndPoint().addOffsetForMouseReleased(pointOffsetX, pointOffsetY);
+                    //int index = jclass.getUsesClassList().indexOf(selectedJC.getClassName());
+                    if (jclass.getUsesJLineGroupsList().containsKey(selectedJC.getClassName())){
+                        jclass.getUsesJLineGroupsList().get(selectedJC.getClassName()).getEndPoint().addOffsetForMouseReleased(pointOffsetX, pointOffsetY);
                     }
                 }
 ////                  
@@ -457,7 +472,7 @@ public class DataManager {
                     selectedJC.setJParent(null);
                     HandleEvent.getWorkPane().root.getChildren().remove(selectedJC.getLine());
                     selectedJC.removeJLineGroup();
-                    selectedJC.removeJLineGroup();
+                    //selectedJC.removeJLineGroup();
                     }else {
                         if (selectedJC.getJParent()!=null){
                             preParent = selectedJC.getJParent().getPackageName()+"."+ selectedJC.getJParent().getClassName();
@@ -613,8 +628,8 @@ public class DataManager {
         currentCursor.set(DataManager.currentCursor.get()+1);  
     }
     
-    @Override
-    public String toString(){
+    //@Override
+    public String tosString(){
         String str = "";
                
         if (historyList.isEmpty()){
@@ -632,6 +647,23 @@ public class DataManager {
     //                   + "\"cursor\":" + index
                        + "}\n"; 
         }          
+        return str;
+    }
+        @Override
+    public String toString(){
+        String str = "";      
+        if (jList.getItems().isEmpty()){
+            str ="{}";
+        }else{
+            str ="{\n"
+                +"\"classes\":[\n";
+            SimpleIntegerProperty i = new SimpleIntegerProperty(0);
+            for (JClass jc : jList.getItems()){
+                str = str+ "{\""+i.get()+"\":" + jc.toString() + "},\n";
+                i.set(i.get()+1);
+            }
+               str = str + "{\""+i.get()+"\":{}}]}\n"; 
+        }        
         return str;
     }
 }
