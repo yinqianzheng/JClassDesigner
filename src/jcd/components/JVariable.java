@@ -105,6 +105,7 @@ public class JVariable {
     }
       
     public Label getLabel(){
+        variableLabel.setText(toText());
         return variableLabel;
     }
     
@@ -150,7 +151,8 @@ public class JVariable {
                     }
                 }
                 }
-                DataManager.setSaved(false);
+                if (!t.equals(t1))
+                    DataManager.setSaved(false);
             }
         });
         
@@ -158,7 +160,8 @@ public class JVariable {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
                 variableLabel.setText(toText());
-                DataManager.setSaved(false);
+                if (!t.equals(t1))
+                    DataManager.setSaved(false);
             }
         });
         
@@ -167,7 +170,8 @@ public class JVariable {
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                 // update label (acess)
                 variableLabel.setText(toText());
-                DataManager.setSaved(false);
+                if (!t.equals(t1))
+                    DataManager.setSaved(false);
             }
         });
     }

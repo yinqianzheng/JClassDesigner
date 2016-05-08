@@ -14,6 +14,7 @@ import java.io.PrintWriter;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.scene.Cursor;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
@@ -22,9 +23,12 @@ import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import jcd.components.JClass;
+import jcd.components.JLine;
 import jcd.components.JLineGroup;
 import jcd.components.JLineGroupFactory;
+import jcd.components.JLinePoint;
 import jcd.data.DataManager;
+import static jcd.data.DataManager.isResizeMode;
 import jcd.gui.HandleEvent;
 
 /**
@@ -90,8 +94,18 @@ public class JFileManager {
         return  jsonList;    
     }
     
+    public static void createHistoryList(JsonObject source){
+        DataManager.getHistoryList().clear();
+//        createClasses(((JsonObject)((JsonObject)((JsonArray)source.get("history")).get(1)).get("1")));
+        int size = ((JsonArray)source.get("history")).size();
+        for (int i=0; i<size; i++){
+                DataManager.getHistoryList().add(((JsonObject)((JsonObject)((JsonArray)source.get("history")).get(i)).get(String.valueOf(i))).toString());
+        }
+        
+        DataManager.currentCursor.set(Integer.parseInt(source.get("cursor").toString()));
+    }
+    
     private static JsonObject createJsonObject(String jsonFilePath) throws IOException {
-	linesList.clear();
         InputStream is = new FileInputStream(jsonFilePath);
 	JsonReader jsonReader = Json.createReader(is);
 	JsonObject json = jsonReader.readObject();
@@ -101,6 +115,7 @@ public class JFileManager {
     }
     
     public static void createClasses(JsonObject jObj) {
+        linesList.clear();
         JsonObject classes;
         for (int i = 0; i<100; i++){ 
             try {
@@ -115,6 +130,13 @@ public class JFileManager {
             }     
         }
         addLines();
+        if (jObj.get("zoomValue")!=null)
+            HandleEvent.getWorkPane().setZoomValue(Double.parseDouble(jObj.get("zoomValue").toString()));
+        linesList.clear();
+        if (isResizeMode.get())
+            for (JClass jc : DataManager.getJClassList().getItems()){
+                jc.setOnMouseEntered(e->jc.setCursor(Cursor.SE_RESIZE));
+            }
     }
     
     public static void createClass(JsonObject jObj){
@@ -141,8 +163,10 @@ public class JFileManager {
         j.setClassName(name);
         j.setPackageName(packageName);
         j.setAbstract(isAbstract);
-        
-        // create variables
+        j.resize(Double.parseDouble(temp.get("width").toString()), Double.parseDouble(temp.get("hight").toString()));
+//        j.setPrefSize(Double.parseDouble(temp.get("width").toString()), Double.parseDouble(temp.get("hight").toString()));
+        j.getVariableBox().resize(Double.parseDouble(temp.get("variableBoxWidth").toString()), Double.parseDouble(temp.get("variableBoxHight").toString()));
+        j.getMethodBox().resize(Double.parseDouble(temp.get("methodBoxWidth").toString()), Double.parseDouble(temp.get("methodBoxHight").toString()));
         for (int i = 0; i<100; i++){   
             tempvList = ((JsonObject)((JsonObject)((JsonArray)variableList.get("variables")).get(i)).get(String.valueOf(i)));
             if (tempvList==null)
@@ -170,17 +194,41 @@ public class JFileManager {
     }
     
     private static void addLines(){
-        System.out.println(linesList.size());
         for (JsonObject jso: linesList){
-            System.out.println(jso);
             if (((JsonObject)((JsonObject)((JsonArray)jso.get("lines")).get(0)).get("extends")).containsKey("childClass")){
-                String childClass =((JsonObject)((JsonObject)((JsonArray)jso.get("lines")).get(0)).get("extends")).get("childClass").toString();
+                HandleEvent.getWorkPane().root.getChildren().add(addLinesHelper(((JsonObject)((JsonObject)((JsonArray)jso.get("lines")).get(0)).get("extends")), 0));
+            }   
+            
+            for (int i = 0; i<100; i++){
+                if (((JsonObject)((JsonArray)((JsonObject)((JsonArray)jso.get("lines")).get(1)).get("implements")).get(i)).containsKey("childClass"))
+                    HandleEvent.getWorkPane().root.getChildren().add(addLinesHelper(((JsonObject)((JsonArray)((JsonObject)((JsonArray)jso.get("lines")).get(1)).get("implements")).get(i)), 1)); 
+                else
+                    break;
+            }
+            
+            for (int i = 0; i<100; i++){
+                if (((JsonObject)((JsonArray)((JsonObject)((JsonArray)jso.get("lines")).get(2)).get("uses")).get(i)).containsKey("childClass"))
+                    HandleEvent.getWorkPane().root.getChildren().add(addLinesHelper(((JsonObject)((JsonArray)((JsonObject)((JsonArray)jso.get("lines")).get(2)).get("uses")).get(i)), 2)); 
+                else
+                    break;
+            }
+            
+            for (int i = 0; i<100; i++){
+                if (((JsonObject)((JsonArray)((JsonObject)((JsonArray)jso.get("lines")).get(3)).get("aggregation")).get(i)).containsKey("childClass"))
+                    HandleEvent.getWorkPane().root.getChildren().add(addLinesHelper(((JsonObject)((JsonArray)((JsonObject)((JsonArray)jso.get("lines")).get(3)).get("aggregation")).get(i)), 3)); 
+                else
+                    break;
+            }
+        }
+    }
+    private static JLineGroup addLinesHelper(JsonObject obj, int indexNum){
+                String childClass = obj.get("childClass").toString();
                 childClass = childClass.substring(1, childClass.length()-1);
-                String parentClass =((JsonObject)((JsonObject)((JsonArray)jso.get("lines")).get(0)).get("extends")).get("parentClass").toString();
+                String parentClass = obj.get("parentClass").toString();
                 parentClass = parentClass.substring(1, parentClass.length()-1);
-                System.out.println(childClass+" "+parentClass);
-                JsonObject startP = ((JsonObject)((JsonObject)((JsonObject)((JsonArray)jso.get("lines")).get(0)).get("extends")).get("startPoit"));
-                JsonObject endP = ((JsonObject)((JsonObject)((JsonObject)((JsonArray)jso.get("lines")).get(0)).get("extends")).get("endPoint"));
+                JsonObject startP = (JsonObject) obj.get("startPoint");
+                JsonObject endP = ((JsonObject)obj.get("endPoint"));
+                JsonArray points = ((JsonArray)obj.get("points"));
                 JClass child = null, parent = null;
                 for (JClass jc : DataManager.getJClassList().getItems()){
                     if ((jc.getPackageName()+"."+jc.getClassName()).equals(childClass))
@@ -188,7 +236,6 @@ public class JFileManager {
                     if ((jc.getPackageName()+"."+jc.getClassName()).equals(parentClass))
                         parent = jc;
                 }
-                System.out.println(((JsonObject)((JsonObject)((JsonObject)((JsonArray)jso.get("lines")).get(0)).get("extends")).get("startPoit")));
                 double sx = Double.parseDouble(startP.get("x").toString());
                 double sy = Double.parseDouble(startP.get("y").toString());
                 double sr = Double.parseDouble(startP.get("rotateValue").toString());
@@ -196,16 +243,65 @@ public class JFileManager {
                 double ey = Double.parseDouble(endP.get("y").toString());
                 double er = Double.parseDouble(endP.get("rotateValue").toString());
                 
-                JLineGroup jlg = JLineGroupFactory.createJLineGroupforInheritance(child, parent, sx, sy, ex, ey);
+                JLineGroup jlg;
+                if (indexNum==0||indexNum==1)
+                    jlg = JLineGroupFactory.createJLineGroupforInheritance(child, parent, sx, sy, ex, ey);
+                else if (indexNum==2)
+                    jlg = JLineGroupFactory.createJLineGroupforUses(child, parent, sx, sy, ex, ey);
+                else 
+                    jlg = JLineGroupFactory.createJLineGroupforAggregation(child, parent, sx, sy, ex, ey);
                 jlg.getStartPoint().setRotateForConnector(sr);
                 jlg.getEndPoint().setRotateForConnector(er);
-                child.setLine(jlg);
-                child.setJParent(parent);
-                HandleEvent.getWorkPane().root.getChildren().add(jlg);
-            }   
+                if (indexNum == 0){
+                    child.setLine(jlg);
+                    child.setJParent(parent);
+                }else if (indexNum == 1){
+                    child.addParent(parentClass);
+                    child.getJLineGroupList().put(parentClass, jlg);
+                }else if (indexNum == 2)
+                    child.getUsesJLineGroupsList().put(parent.getClassName(), jlg);
+                else
+                    child.getAggregationJLineGroupsList().put(parent.getClassName(), jlg);
+                addPoints(points, jlg);
+                return jlg;
+    }
+    
+    private static void addPoints(JsonArray ja, JLineGroup jlg){
+        for (int i=0; i<100; i++){
+            if (ja.get(i).toString().equals("{}"))
+                break;
+            else{
+                JLinePoint a = jlg.getEndPoint().getSubLine1().getStartPoint();
+                JLinePoint b = jlg.getEndPoint();
+                jlg.getChildren().remove(jlg.getEndPoint().getSubLine1());
+                JsonObject p = (JsonObject)ja.get(i);
+                JLinePoint jlp = new JLinePoint(jlg, Double.parseDouble(p.get("x").toString()), Double.parseDouble(p.get("y").toString()));
+                JLine l1 = new JLine(jlg);
+                JLine l2 = new JLine(jlg);
+                l1.SetStartPoint(a);
+                l1.setStartX(a.getX());
+                l1.setStartY(a.getY());
+                l1.setEndPoint(jlp);
+                l1.setEndX(jlp.getX());
+                l1.setEndY(jlp.getY());
+                l2.SetStartPoint(jlp);
+                l2.setEndPoint(b);
+                l2.setStartX(jlp.getX());
+                l2.setStartY(jlp.getY());
+                l2.setEndX(b.getX());
+                l2.setEndY(b.getY());
+                jlp.setSubLine1(l1);
+                jlp.setSubLine2(l2);
+                a.setSubLine2(l1);
+                b.setSubLine1(l2);
+                jlp.toFront();
+                jlg.getStartPoint().connectorToFront();
+                b.connectorToFront();
+                jlg.getChildren().add(jlp);
+            }
         }
     }
-        
+    
     private static void createVariable(JsonObject variableList, JClass j){
         String varName = variableList.get("name").toString();
         varName = varName.substring(1, varName.length()-1);

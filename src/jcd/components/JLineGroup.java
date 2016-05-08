@@ -139,10 +139,34 @@ public class JLineGroup extends Group{
     public String toString(){
         String str =  "{\n\"childClass\":\""+child.getPackageName()+"."+child.getClassName()+"\",\n"
                 + "\"parentClass\":\""+parent.getPackageName()+"."+parent.getClassName()+"\",\n"
-                + "\"startPoit\":"+startPoint.toString()+",\n"
+                + "\"startPoint\":"+startPoint.toString()+",\n"
                 + "\"endPoint\":"+endPoint.toString()+",\n"
-                + "\"points\":[{}]\n"
+                + "\"points\":["+ getPoints() +"]\n"
                 + "}";
         return str;
+    }
+    
+    private String getPoints(){
+        String str = "";
+        JLinePoint indexP = startPoint.getSubLine2().getEndPoint();
+        if (isLastPoint(indexP))
+            str = "{}";
+        else{
+            while (!isLastPoint(indexP)){
+                str = str + indexP.toString() + ",";
+        
+                
+                
+                indexP = indexP.getSubLine2().getEndPoint();
+            }
+            str = str+ "{}";
+        }
+        return str;
+    }
+    
+    private boolean isLastPoint(JLinePoint p){
+        if (p.equals(endPoint))
+            return true;
+        return false;
     }
 }

@@ -67,7 +67,10 @@ public class VariableBox extends VBox{
                 break;
             }
         }
+        if (variableBox.getJClass().getInterface().get())
+            jv.setStatic(true);
         vTable.getItems().add(jv);
+        DataManager.setSaved(false);
         addListenersToVariable(jv);
         this.getChildren().add(jv.getLabel());
     }
@@ -78,12 +81,14 @@ public class VariableBox extends VBox{
         JVariable jv = new JVariable(variableBox, access, type, name, b);
         vTable.getItems().add(jv);
         this.getChildren().add(jv.getLabel());
+        addListenersToVariable(jv);
     }
         
     public void removeVariable(){
         ObservableList<JVariable> variableSelected = vTable.getSelectionModel().getSelectedItems();
         this.getChildren().remove(variableSelected.get(0).getLabel());
-        vTable.getItems().removeAll(variableSelected); 
+        vTable.getItems().removeAll(variableSelected);
+        DataManager.setSaved(false);
     }
     
     
@@ -185,9 +190,8 @@ public class VariableBox extends VBox{
                 // update label (name)
                 jv.getLabel().setText(jv.toText());
                 if (!t.equals(t1)){
-                    System.out.println(t);
-                    System.out.println(t1);
                     DataManager.setSaved(false);
+
                 }
             }
         });

@@ -101,6 +101,10 @@ public class WorkSpace extends Application{
         return zoomValue.get();
     }
     
+    public void setZoomValue(double v){
+        zoomValue.set(v);
+    }
+    
     private void gridBackGroundSetActions(){
         snap.setDisable(true);
         grid.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -129,18 +133,12 @@ public class WorkSpace extends Application{
     
     private void initFunctionForZoom_In_Out(){
         buttonMap.get("zoom in").setOnAction(e->{
-            stackPane.setScaleX(zoomValue.get()*1.2);
-            stackPane.setScaleY(zoomValue.get()*1.2);
             zoomValue.set(zoomValue.get()*1.2);
         });
         buttonMap.get("zoom out").setOnAction(e->{
-            stackPane.setScaleX(zoomValue.get()/1.2);
-            stackPane.setScaleY(zoomValue.get()/1.2);
             zoomValue.set(zoomValue.get()/1.2);
         });
         buttonMap.get("original").setOnAction(e->{
-            stackPane.setScaleX(1);
-            stackPane.setScaleY(1);
             zoomValue.set(1);
         });
         zoomValue.addListener(new ChangeListener<Number>() {
@@ -154,6 +152,8 @@ public class WorkSpace extends Application{
                     buttonMap.get("zoom in").setDisable(false);
                     buttonMap.get("zoom out").setDisable(false);
                 }
+                stackPane.setScaleX(zoomValue.get());
+                stackPane.setScaleY(zoomValue.get());
                     
             }
         });
@@ -406,6 +406,23 @@ public class WorkSpace extends Application{
         clearClassNameInput();
         clearPackageNameInput();
         DataManager.clear();
+        buttonMap.get("undo").setDisable(true);
+        buttonMap.get("redo").setDisable(true);
+        root.setScaleX(1);
+        root.setScaleY(1);
+    }
+    
+    public void reloadForUndoRedo(){
+        root.getChildren().clear();
+        variablePane.setContent(null);
+        methodPane.setContent(null);
+        addVariable.setDisable(true);
+        deleteVariable.setDisable(true);
+        addMethod.setDisable(true);
+        deleteMethod.setDisable(true);
+        clearClassNameInput();
+        clearPackageNameInput();
+        DataManager.clearForUndoRedo();
         root.setScaleX(1);
         root.setScaleY(1);
     }

@@ -8,6 +8,7 @@ package jcd.components;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
+import java.util.Map;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -84,10 +85,6 @@ public class JClass extends VBox{
         
         if (isParent == true)
             parentList.add(str);
-        for (String s: parentList){
-            System.out.println(s);
-        }
-        System.out.println(parentList.indexOf(".NewClass1"));
         return isParent;
     }
     
@@ -274,6 +271,12 @@ public class JClass extends VBox{
                 +"\"0\":{\n"  
                 +"\"name\":\""+ className.getText()+"\",\n" 
                 +"\"package\":\""+ packageName+"\",\n" 
+                +"\"width\":"+ this.getWidth()+",\n" 
+                +"\"hight\":"+ this.getHeight()+",\n" 
+                +"\"variableBoxWidth\":"+ this.getVariableBox().getWidth()+",\n" 
+                +"\"variableBoxHight\":"+ this.getVariableBox().getHeight()+",\n" 
+                +"\"methodBoxWidth\":"+ this.getMethodBox().getWidth()+",\n" 
+                +"\"methodBoxHight\":"+ this.getMethodBox().getHeight()+",\n" 
                 +"\"abstract\":"+ isAbstract.get()+",\n" 
                 +"\"interface\":"+ isInterface.get()+",\n" 
                 +"\"x\":"+ (this.getLayoutX()+this.getTranslateX())+",\n"
@@ -297,7 +300,10 @@ public class JClass extends VBox{
                 +"{\n"
                 +"\"3\":{\n"
                 +"\"lines\":["
-                + getLines()
+                + getParentLines()
+                +getInterfaceLines()
+                +getUsesLine()
+                +getAggregationLines()
                 + "]"
                 +"}\n"
                 +"}\n"   
@@ -306,12 +312,55 @@ public class JClass extends VBox{
         return str;
     }
     
-    private String getLines(){
+    private String getParentLines(){
         String lines = "";
         if (linkToParent==null)
-            lines = "{\"extends\":{}}";
+            lines = "{\"extends\":{}},";
         else
-            lines = "{\"extends\":"+linkToParent.toString()+ "}";
+            lines = "{\"extends\":"+linkToParent.toString()+ "},";
+        return lines;
+    }
+    
+    private String getInterfaceLines(){
+        String lines = "";
+        if (jLineGroupsList.isEmpty())
+            lines = "{\"implements\":[{}]},";
+        else{
+            lines = "{\"implements\":[";
+            for (Map.Entry<String, JLineGroup> entry: jLineGroupsList.entrySet()){
+                lines = lines + entry.getValue().toString() + ",";
+            }
+            
+            lines = lines +"{}]},";
+        }
+        return lines;
+    }
+    private String getUsesLine(){
+        String lines = "";
+        if (usesJLineGroupsList.isEmpty())
+            lines = "{\"uses\":[{}]},";
+        else{
+            lines = "{\"uses\":[";
+            for (Map.Entry<String, JLineGroup> entry: usesJLineGroupsList.entrySet()){
+                lines = lines + entry.getValue().toString() + ",";
+            }
+            
+            lines = lines +"{}]},";
+        }
+        return lines;
+    }
+    private String getAggregationLines(){
+        String lines = "";
+        if (aggregationJLineGroupsList.isEmpty())
+            lines = "{\"aggregation\":[{}]}";
+        else{
+            lines = "{\"aggregation\":[";
+            for (Map.Entry<String, JLineGroup> entry: aggregationJLineGroupsList.entrySet()){
+                lines = lines + entry.getValue().toString() + ",";
+            }
+            
+            lines = lines +"{}]}";
+        }
         return lines;
     }
     

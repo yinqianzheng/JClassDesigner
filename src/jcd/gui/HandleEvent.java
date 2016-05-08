@@ -85,9 +85,10 @@ public class HandleEvent {
                     if (!promoteUserToSave())
                         return;
                 wp.reload();
+                wp.reload();
                 String path = JFileManager.getDirectory(wp.primaryStageWindow);
                 JsonObject jsonObj = JFileManager.loadFile(path);
-                JFileManager.createClasses(jsonObj);
+                JFileManager.createHistoryList(jsonObj);
                 DataManager.setSaved(true);
             } catch (IOException ex) {
                 Logger.getLogger(HandleEvent.class.getName()).log(Level.SEVERE, null, ex);
@@ -98,12 +99,13 @@ public class HandleEvent {
     static  EventHandler saveEvent = new EventHandler() {
         @Override
         public void handle(Event event) {
+            DataManager.addToHistoryList();
             if (DataManager.hasDirectory().get())
                 try {
                     JFileManager.saveData(DataManager.getInstance(obj), DataManager.getDirectory());
-            } catch (IOException ex) {
-                Logger.getLogger(HandleEvent.class.getName()).log(Level.SEVERE, null, ex);
-            }
+                } catch (IOException ex) {
+                    Logger.getLogger(HandleEvent.class.getName()).log(Level.SEVERE, null, ex);
+                }
             else
                 try {
                     JFileManager.saveAs(DataManager.getInstance(obj), wp.primaryStageWindow);
@@ -117,6 +119,7 @@ public class HandleEvent {
     static  EventHandler saveAsEvent = new EventHandler() {
         @Override
         public void handle(Event event) {
+            DataManager.addToHistoryList();
             try {
                 JFileManager.saveAs(DataManager.getInstance(obj), wp.primaryStageWindow);
             } catch (IOException ex) {
@@ -225,8 +228,6 @@ public class HandleEvent {
     static EventHandler addClass = new EventHandler<MouseEvent>() {
         @Override
         public void handle(MouseEvent click) {
-                            System.out.println(click.getX()+ "  "+ click.getY());
-
             if (click.getClickCount() == 2){     
                 JClass jc = new JClass(click.getX(), click.getY());
                 String name;
@@ -279,9 +280,9 @@ public class HandleEvent {
         @Override
         public void handle(Event event) {
             if (dataManager.getSelectedJC()!=null){
+                dataManager.removeChildrenLines();
                 wp.root.getChildren().removeAll(dataManager.getSelectedJC(), dataManager.getSelectedJC().getLine());
                 removeAllLines(dataManager.getSelectedJC());
-                dataManager.removeChildrenLines();
                 dataManager.removeClass(dataManager.getSelectedJC());
                 dataManager.setSelectedJC(null);
                 wp.addVariable.setDisable(true);

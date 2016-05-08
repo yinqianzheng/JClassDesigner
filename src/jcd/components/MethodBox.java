@@ -81,16 +81,18 @@ public class MethodBox extends VBox{
                 break;
             }
         }
-        jm.setAbstract(isInterface.get());
+        jm.setAbstract(methodBox.getJClass().getInterface().get());
         mTable.getItems().add(jm);
+        DataManager.setSaved(false);
         jm.getNameProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                 // update label (name)
                 jm.getLabel().setText(jm.toText());
-                DataManager.setSaved(false);
+                if (!t.equals(t1))
+                    DataManager.setSaved(false);
             }
-        });;
+        });
         this.getChildren().add(jm.getLabel());
     }
     
@@ -98,6 +100,15 @@ public class MethodBox extends VBox{
             boolean a, String arg1, String arg2, String arg3){
         JMethod jm = new JMethod(methodBox, methodAccess, methodType, methodName, s, a, arg1, arg2, arg3);
         mTable.getItems().add(jm);
+        jm.getNameProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
+                // update label (name)
+                jm.getLabel().setText(jm.toText());
+                if (!t.equals(t1))
+                    DataManager.setSaved(false);
+            }
+        });
         this.getChildren().add(jm.getLabel());
     }     
     
@@ -105,6 +116,7 @@ public class MethodBox extends VBox{
         ObservableList<JMethod> methodSelected = mTable.getSelectionModel().getSelectedItems();
         this.getChildren().remove(methodSelected.get(0).getLabel());
         mTable.getItems().removeAll(methodSelected); 
+        DataManager.setSaved(false);
     }
     
     

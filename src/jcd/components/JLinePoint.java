@@ -131,7 +131,15 @@ public class JLinePoint extends Circle{
             jLinePoint.setStroke(Color.TRANSPARENT);
                 });
     }
-    
+    public void connectorToFront(){
+        if (diamond!=null)
+            diamond.toFront();
+        if (triangle!=null)
+            triangle.toFront();
+        if (arrow!=null)
+            arrow.toFront();
+        this.toFront();
+    }
     public void setRotateForConnector(double value){
         if (rotateValue == null){
             rotateValue.addListener(new ChangeListener<Number>() {

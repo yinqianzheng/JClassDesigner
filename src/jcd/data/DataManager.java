@@ -23,7 +23,6 @@ import javafx.scene.Cursor;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableView;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javax.json.Json;
@@ -94,7 +93,9 @@ public class DataManager {
         for (JClass jclass : jList.getItems()){
             if (jclass.getJParent()!=null){
                 if (jclass.getJParent().equals(selectedJC)){
-                    HandleEvent.getWorkPane().root.getChildren().remove(jclass.getLine());
+                    System.out.println(HandleEvent.getWorkPane().root.getChildren());
+                    HandleEvent.getWorkPane().root.getChildren().removeAll(jclass.getLine());
+                    System.out.println(HandleEvent.getWorkPane().root.getParent());
                 }
             }
         }
@@ -192,6 +193,11 @@ public class DataManager {
                 } catch (Exception e) {
                 }
             }
+            
+            if (!selectedJC.getJLineGroupList().isEmpty())
+                            for (Map.Entry<String, JLineGroup> entry: selectedJC.getJLineGroupList().entrySet()){
+                                System.out.println(entry.getKey());
+                            }
             
             if (selectedJC.getJParent()!=null){
                 selectedJC.getLine().getEndPoint().setTranslateY(selectedJC.getLine().getEndY()-selectedJC.getLine().getEndPoint().getCenterY());
@@ -309,7 +315,6 @@ public class DataManager {
                 
                 if (!selectedJC.getInterface().get()){
                     for (JClass jclass : jList.getItems()){
-                         System.out.println("class");
                         if (jclass.getJParent()!=null){
                             if (jclass.getJParent().equals(selectedJC)){
                                 jclass.getLine().getEndPoint().addOffset(offsetX/HandleEvent.getWorkPane().getZoomValue(), offsetY/HandleEvent.getWorkPane().getZoomValue());
@@ -361,8 +366,6 @@ public class DataManager {
     private static EventHandler released = new EventHandler<MouseEvent>() {
         @Override
         public void handle(MouseEvent release) {
-//            System.out.println(selectedJC.getLayoutX()+selectedJC.getTranslateX());
-//                System.out.println(selectedJC.getLayoutY()+selectedJC.getTranslateY());
             if (HandleEvent.getWorkPane().isGridSnapActived()){
                 if (HandleEvent.getWorkPane().isSelectMode==true){
                     double x = ((JClass)(release.getSource())).getLayoutX() + ((JClass)(release.getSource())).getTranslateX();
@@ -370,7 +373,6 @@ public class DataManager {
                     
                     double pointOffsetX =((int)(x/40)*40) - x;
                     double pointOffsetY =((int)(y/40)*40) - y;
-                    System.out.println(pointOffsetX+" "+pointOffsetY);
                     x = (int)(x/40)*40;
                     y = (int)(y/40)*40;
                     
@@ -406,7 +408,6 @@ public class DataManager {
 //                
                 if (!selectedJC.getInterface().get()){
                     for (JClass jclass : jList.getItems()){
-                         System.out.println("class");
                         if (jclass.getJParent()!=null){
                             if (jclass.getJParent().equals(selectedJC)){
                                 jclass.getLine().getEndPoint().addOffsetForMouseReleased(pointOffsetX, pointOffsetY);
@@ -512,12 +513,10 @@ public class DataManager {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
                 if (t1){
-                    System.out.println(t1);
                     for (JClass jc : jList.getItems()){
                         jc.setOnMouseEntered(e->jc.setCursor(Cursor.SE_RESIZE));
                     }}
                 else{
-                    System.out.println(t1);
                     for (JClass jc : jList.getItems()){
                         jc.setOnMouseEntered(e->jc.setCursor(Cursor.OPEN_HAND));
                     }}
@@ -527,7 +526,6 @@ public class DataManager {
         currentCursor.addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                System.out.println("nani");
                 if (currentCursor.get()<= 0)
                     HandleEvent.getWorkPane().buttonMap.get("undo").setDisable(true);
                 else
@@ -539,10 +537,13 @@ public class DataManager {
                     HandleEvent.getWorkPane().buttonMap.get("redo").setDisable(false);
                 
                 try {
-                        if (!historyList.isEmpty())
-                            HandleEvent.getWorkPane().reload();
+                        if (!historyList.isEmpty()){
+                            HandleEvent.getWorkPane().reloadForUndoRedo();
+                            HandleEvent.getWorkPane().reloadForUndoRedo();
+                            HandleEvent.getWorkPane().reloadForUndoRedo();
                             jList.getItems().clear();
                             createJsonObjectByString(historyList.get(currentCursor.get()));
+                        }
                     } catch (IOException ex) {
                         Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -587,14 +588,20 @@ public class DataManager {
     
     public static void setUnSaved(){
         isSaved.set(false);
-        System.out.println("addtohistorylist");
-        //addToHistoryList();
+        addToHistoryList();
     }
     
-    public static void clear(){
+    public static void clearForUndoRedo(){
         jList.getItems().clear();
         selectedJC = null;
         preSelectedJC = null;
+    }
+    
+    public static void clear(){
+        clearForUndoRedo();
+        currentCursor.set(0);
+        historyList.clear();
+        historyList.add("{}");
     }
     
     public static void createJsonObjectByString(String str) throws IOException {
@@ -622,14 +629,16 @@ public class DataManager {
                 str = str+ "{\""+i.get()+"\":" + jc.toString() + "},\n";
                 i.set(i.get()+1);
             }
-               str = str + "{\""+i.get()+"\":{}}]}\n"; 
+               str = str + "{\""+i.get()+"\":{}}],\n"
+                       + "\"zoomValue\":" + HandleEvent.getWorkPane().getZoomValue()
+                       + "}\n";
         }          
         historyList.add(str);
         currentCursor.set(DataManager.currentCursor.get()+1);  
     }
     
     //@Override
-    public String tosString(){
+    public String toString(){
         String str = "";
                
         if (historyList.isEmpty()){
@@ -643,27 +652,29 @@ public class DataManager {
                 str = str+ "{\""+i.get()+"\":" + str_jList + "},\n";
                 i.set(i.get()+1);
             }
-               str = str + "{\""+i.get()+"\":{}}]\n"
-    //                   + "\"cursor\":" + index
+               str = str.substring(0, str.length()-2) + "],\n"
+                       + "\"cursor\":" + currentCursor.get()
                        + "}\n"; 
         }          
         return str;
     }
-        @Override
-    public String toString(){
-        String str = "";      
-        if (jList.getItems().isEmpty()){
-            str ="{}";
-        }else{
-            str ="{\n"
-                +"\"classes\":[\n";
-            SimpleIntegerProperty i = new SimpleIntegerProperty(0);
-            for (JClass jc : jList.getItems()){
-                str = str+ "{\""+i.get()+"\":" + jc.toString() + "},\n";
-                i.set(i.get()+1);
-            }
-               str = str + "{\""+i.get()+"\":{}}]}\n"; 
-        }        
-        return str;
-    }
+//        @Override
+//    public String toString(){
+//        String str = "";      
+//        if (jList.getItems().isEmpty()){
+//            str ="{}";
+//        }else{
+//            str ="{\n"
+//                +"\"classes\":[\n";
+//            SimpleIntegerProperty i = new SimpleIntegerProperty(0);
+//            for (JClass jc : jList.getItems()){
+//                str = str+ "{\""+i.get()+"\":" + jc.toString() + "},\n";
+//                i.set(i.get()+1);
+//            }
+//               str = str + "{\""+i.get()+"\":{}}],\n"
+//                       + "\"zoomValue\":" + HandleEvent.getWorkPane().getZoomValue()
+//                       + "}\n"; 
+//        }        
+//        return str;
+//    }
 }
