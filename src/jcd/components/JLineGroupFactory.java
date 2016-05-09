@@ -122,7 +122,6 @@ public class JLineGroupFactory {
             ((JLinePoint)(release.getSource())).setY(((JLinePoint)(release.getSource())).getCenterY()
                             +((JLinePoint)(release.getSource())).getTranslateY());
                 
-            System.out.println(((JLinePoint)(release.getSource())).getX()+" "+((JLinePoint)(release.getSource())).getY());
 
         }
     };

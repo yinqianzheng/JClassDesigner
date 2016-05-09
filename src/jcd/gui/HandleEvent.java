@@ -29,6 +29,7 @@ import jcd.components.JClass;
 import jcd.components.JLineGroup;
 import jcd.controller.JFileManager;
 import jcd.data.DataManager;
+import static jcd.data.DataManager.currentCursor;
 
 /**
  *
@@ -99,7 +100,8 @@ public class HandleEvent {
     static  EventHandler saveEvent = new EventHandler() {
         @Override
         public void handle(Event event) {
-            DataManager.addToHistoryList();
+            if (!DataManager.getHistoryList().get(DataManager.currentCursor.get()).equals(dataManager.currentDiagram()))
+                DataManager.addToHistoryList();
             if (DataManager.hasDirectory().get())
                 try {
                     JFileManager.saveData(DataManager.getInstance(obj), DataManager.getDirectory());
@@ -119,7 +121,8 @@ public class HandleEvent {
     static  EventHandler saveAsEvent = new EventHandler() {
         @Override
         public void handle(Event event) {
-            DataManager.addToHistoryList();
+            if (!DataManager.getHistoryList().get(DataManager.currentCursor.get()).equals(dataManager.currentDiagram()))
+                DataManager.addToHistoryList();
             try {
                 JFileManager.saveAs(DataManager.getInstance(obj), wp.primaryStageWindow);
             } catch (IOException ex) {
@@ -269,11 +272,13 @@ public class HandleEvent {
 //                wp.interfaceCheckBox.setSelected(jc.getInterface().get());
                 wp.variablePane.setContent(jc.getVariableBox().getVariableTable());
                 wp.methodPane.setContent(jc.getMethodBox().getMethodTable());
-                if (dataManager.getSelectedJC()!=null)
+          
+                if (dataManager.getSelectedJC()!=null){
                     wp.addVariable.setDisable(false);
                     wp.deleteVariable.setDisable(false);
                     wp.addMethod.setDisable(false);
                     wp.deleteMethod.setDisable(false);
+                }
     }
     
     static EventHandler removeClass = new EventHandler() {
@@ -429,10 +434,21 @@ public class HandleEvent {
             yesNoDialog.getButtonTypes().setAll(buttonTypeYes, buttonTypeNo, buttonTypeCancel);
             Optional<ButtonType> result = yesNoDialog.showAndWait();
             if (result.get() == buttonTypeYes) {
+                if (!DataManager.getHistoryList().get(DataManager.currentCursor.get()).equals(dataManager.currentDiagram()))
+                    DataManager.addToHistoryList();
                 if (DataManager.hasDirectory().get())
-                    JFileManager.saveData(DataManager.getSelectedJC(), DataManager.getDirectory());
+                    try {
+                        JFileManager.saveData(DataManager.getInstance(obj), DataManager.getDirectory());
+                    } catch (IOException ex) {
+                        Logger.getLogger(HandleEvent.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 else
-                    JFileManager.saveAs(DataManager.getSelectedJC(), wp.primaryStageWindow);
+                    try {
+                        JFileManager.saveAs(DataManager.getInstance(obj), wp.primaryStageWindow);
+                    } catch (IOException ex) {
+                        Logger.getLogger(HandleEvent.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                DataManager.setSaved(true);
                 return true;
             }else if (result.get() == buttonTypeNo){
                 return true;
@@ -443,7 +459,7 @@ public class HandleEvent {
     }
     
     
-    private static void removeAllLines(JClass jc){
+    public static void removeAllLines(JClass jc){
         if (!jc.getAggregationJLineGroupsList().isEmpty())
             for (Map.Entry<String, JLineGroup> entry: jc.getAggregationJLineGroupsList().entrySet()){
                 wp.root.getChildren().remove(entry.getValue());

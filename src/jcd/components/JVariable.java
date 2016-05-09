@@ -145,7 +145,6 @@ public class JVariable {
                         HandleEvent.getWorkPane().root.getChildren().add(jlg);
                         
                         variableBox.getJClass().getAggregationJLineGroupsList().put(t1,jlg);
-                        System.out.println(variableBox.getJClass().getClassName()+"\n "+variableBox.getJClass().getAggregationJLineGroupsList());
 
                         break;
                     }

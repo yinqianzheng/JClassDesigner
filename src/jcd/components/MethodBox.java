@@ -82,6 +82,7 @@ public class MethodBox extends VBox{
             }
         }
         jm.setAbstract(methodBox.getJClass().getInterface().get());
+        jm.getLabel().setText(jm.toText());
         mTable.getItems().add(jm);
         DataManager.setSaved(false);
         jm.getNameProperty().addListener(new ChangeListener<String>() {

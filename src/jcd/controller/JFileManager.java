@@ -163,10 +163,9 @@ public class JFileManager {
         j.setClassName(name);
         j.setPackageName(packageName);
         j.setAbstract(isAbstract);
-        j.resize(Double.parseDouble(temp.get("width").toString()), Double.parseDouble(temp.get("hight").toString()));
-//        j.setPrefSize(Double.parseDouble(temp.get("width").toString()), Double.parseDouble(temp.get("hight").toString()));
-        j.getVariableBox().resize(Double.parseDouble(temp.get("variableBoxWidth").toString()), Double.parseDouble(temp.get("variableBoxHight").toString()));
-        j.getMethodBox().resize(Double.parseDouble(temp.get("methodBoxWidth").toString()), Double.parseDouble(temp.get("methodBoxHight").toString()));
+        j.setPrefSize(Double.parseDouble(temp.get("width").toString()), Double.parseDouble(temp.get("hight").toString()));
+        j.getVariableBox().setPrefSize(Double.parseDouble(temp.get("variableBoxWidth").toString()), Double.parseDouble(temp.get("variableBoxHight").toString()));
+        j.getMethodBox().setPrefSize(Double.parseDouble(temp.get("methodBoxWidth").toString()), Double.parseDouble(temp.get("methodBoxHight").toString()));
         for (int i = 0; i<100; i++){   
             tempvList = ((JsonObject)((JsonObject)((JsonArray)variableList.get("variables")).get(i)).get(String.valueOf(i)));
             if (tempvList==null)
@@ -250,14 +249,19 @@ public class JFileManager {
                     jlg = JLineGroupFactory.createJLineGroupforUses(child, parent, sx, sy, ex, ey);
                 else 
                     jlg = JLineGroupFactory.createJLineGroupforAggregation(child, parent, sx, sy, ex, ey);
+                
                 jlg.getStartPoint().setRotateForConnector(sr);
                 jlg.getEndPoint().setRotateForConnector(er);
+                
                 if (indexNum == 0){
                     child.setLine(jlg);
                     child.setJParent(parent);
                 }else if (indexNum == 1){
-                    child.addParent(parentClass);
-                    child.getJLineGroupList().put(parentClass, jlg);
+                    try {
+                        child.addParent(parent.getClassName());
+                        child.getJLineGroupList().put(parentClass, jlg);
+                    } catch (Exception e) {
+                    }
                 }else if (indexNum == 2)
                     child.getUsesJLineGroupsList().put(parent.getClassName(), jlg);
                 else

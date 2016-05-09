@@ -72,7 +72,6 @@ public class JLine extends Line{
     private EventHandler lineBePressed = new EventHandler<MouseEvent>() {
         @Override
         public void handle(MouseEvent pressed) {
-            System.out.println(pressed.getX()+ "  "+ pressed.getY());
             a = new JLine(jLineGroup);
             b = new JLine(jLineGroup);
             sceneX = pressed.getSceneX();
@@ -122,10 +121,6 @@ public class JLine extends Line{
             jLineGroup.getChildren().addAll(b, lp);
             a.toBack();
             b.toBack();
-            System.out.println(jLineGroup.getLayoutX());
-            System.out.println(released);
-            
-            System.out.println(released.getX()+" "+released.getSceneX()+" "+released.getScreenX());
         }
     };
             

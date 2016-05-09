@@ -93,9 +93,34 @@ public class DataManager {
         for (JClass jclass : jList.getItems()){
             if (jclass.getJParent()!=null){
                 if (jclass.getJParent().equals(selectedJC)){
-                    System.out.println(HandleEvent.getWorkPane().root.getChildren());
                     HandleEvent.getWorkPane().root.getChildren().removeAll(jclass.getLine());
-                    System.out.println(HandleEvent.getWorkPane().root.getParent());
+                    jclass.setLine(null);
+                    jclass.setJParent(null);
+                }       
+            }
+            if (!jclass.getJLineGroupList().isEmpty()){
+                    for (Map.Entry<String, JLineGroup> entry: jclass.getJLineGroupList().entrySet()){
+                        if (entry.getKey().equals(selectedJC.getPackageName()+"."+selectedJC.getClassName())){
+                            HandleEvent.getWorkPane().root.getChildren().removeAll(entry.getValue());
+                            jclass.getJLineGroupList().remove(selectedJC.getPackageName()+"."+selectedJC.getClassName());
+                            jclass.getInterfaceParentList().remove(selectedJC.getPackageName()+"."+selectedJC.getClassName());
+                    }
+                }
+            }
+            if (!jclass.getUsesJLineGroupsList().isEmpty()){
+                    for (Map.Entry<String, JLineGroup> entry: jclass.getUsesJLineGroupsList().entrySet()){
+                        if (entry.getKey().equals(selectedJC.getClassName())){
+                            HandleEvent.getWorkPane().root.getChildren().removeAll(entry.getValue());
+                            jclass.getUsesJLineGroupsList().remove(selectedJC.getClassName());
+                    }
+                }
+            }
+            if (!jclass.getAggregationJLineGroupsList().isEmpty()){
+                    for (Map.Entry<String, JLineGroup> entry: jclass.getAggregationJLineGroupsList().entrySet()){
+                        if (entry.getKey().equals(selectedJC.getClassName())){
+                            HandleEvent.getWorkPane().root.getChildren().removeAll(entry.getValue());
+                            jclass.getAggregationJLineGroupsList().remove(selectedJC.getClassName());
+                    }
                 }
             }
         }
@@ -103,7 +128,8 @@ public class DataManager {
     
     public static void renewParentList(){
         parentList.getItems().clear();
-        parentList.getItems().add("none");
+        parentList.getItems().add("(remove parent class)");
+        parentList.getItems().add("(remove all)");
             for (JClass jclass : jList.getItems()){
                 if (!jclass.equals(selectedJC))
                     parentList.getItems().add(jclass.getPackageName()+
@@ -193,11 +219,7 @@ public class DataManager {
                 } catch (Exception e) {
                 }
             }
-            
-            if (!selectedJC.getJLineGroupList().isEmpty())
-                            for (Map.Entry<String, JLineGroup> entry: selectedJC.getJLineGroupList().entrySet()){
-                                System.out.println(entry.getKey());
-                            }
+           
             
             if (selectedJC.getJParent()!=null){
                 selectedJC.getLine().getEndPoint().setTranslateY(selectedJC.getLine().getEndY()-selectedJC.getLine().getEndPoint().getCenterY());
@@ -467,13 +489,22 @@ public class DataManager {
         parentList.valueProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                String preParent = "none";
+                String preParent = "(remove parent class)";
                 try {                   
-                    if (t1.equals("none")){
+                    if (t1.equals("(remove parent class)")){
                     selectedJC.setJParent(null);
                     HandleEvent.getWorkPane().root.getChildren().remove(selectedJC.getLine());
                     selectedJC.removeJLineGroup();
                     //selectedJC.removeJLineGroup();
+                    }else if (t1.equals("(remove all)")){
+                        selectedJC.setJParent(null);
+                        HandleEvent.getWorkPane().root.getChildren().remove(selectedJC.getLine());
+                        selectedJC.removeJLineGroup();
+                        HandleEvent.removeAllLines(selectedJC);
+                        selectedJC.getUsesJLineGroupsList().clear();
+                        selectedJC.getAggregationJLineGroupsList().clear();
+                        selectedJC.getJLineGroupList().clear();
+                        selectedJC.getInterfaceParentList().clear();
                     }else {
                         if (selectedJC.getJParent()!=null){
                             preParent = selectedJC.getJParent().getPackageName()+"."+ selectedJC.getJParent().getClassName();
@@ -481,8 +512,12 @@ public class DataManager {
                         for (JClass jclass : jList.getItems()){
                             if ((jclass.getPackageName()+"."+ jclass.getClassName()).equals(t1)){
                                 if (jclass.getInterface().get()){
-                                    if (selectedJC.addParent(t1))
+                                    if (selectedJC.addParent(jclass.getClassName()))
                                         HandleEvent.getWorkPane().root.getChildren().add(selectedJC.linkToInterface(jclass));
+                                    else if (selectedJC.removeParent(jclass.getClassName())){
+                                        HandleEvent.getWorkPane().root.getChildren().removeAll(selectedJC.getJLineGroupList().get(jclass.getPackageName()+"."+ jclass.getClassName()));
+                                        selectedJC.getJLineGroupList().remove(jclass.getPackageName()+"."+ jclass.getClassName());
+                                    }
                                 }else{
                                     selectedJC.setJParent(jclass);
                                     try {
@@ -538,11 +573,13 @@ public class DataManager {
                 
                 try {
                         if (!historyList.isEmpty()){
+                            if (!historyList.get(currentCursor.get()).equals(currentDiagram())){
                             HandleEvent.getWorkPane().reloadForUndoRedo();
                             HandleEvent.getWorkPane().reloadForUndoRedo();
                             HandleEvent.getWorkPane().reloadForUndoRedo();
                             jList.getItems().clear();
                             createJsonObjectByString(historyList.get(currentCursor.get()));
+                            }
                         }
                     } catch (IOException ex) {
                         Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
@@ -658,23 +695,23 @@ public class DataManager {
         }          
         return str;
     }
-//        @Override
-//    public String toString(){
-//        String str = "";      
-//        if (jList.getItems().isEmpty()){
-//            str ="{}";
-//        }else{
-//            str ="{\n"
-//                +"\"classes\":[\n";
-//            SimpleIntegerProperty i = new SimpleIntegerProperty(0);
-//            for (JClass jc : jList.getItems()){
-//                str = str+ "{\""+i.get()+"\":" + jc.toString() + "},\n";
-//                i.set(i.get()+1);
-//            }
-//               str = str + "{\""+i.get()+"\":{}}],\n"
-//                       + "\"zoomValue\":" + HandleEvent.getWorkPane().getZoomValue()
-//                       + "}\n"; 
-//        }        
-//        return str;
-//    }
+
+    public String currentDiagram(){
+                String str = "";      
+        if (jList.getItems().isEmpty()){
+            str ="{}";
+        }else{
+            str ="{\n"
+                +"\"classes\":[\n";
+            SimpleIntegerProperty i = new SimpleIntegerProperty(0);
+            for (JClass jc : jList.getItems()){
+                str = str+ "{\""+i.get()+"\":" + jc.toString() + "},\n";
+                i.set(i.get()+1);
+            }
+               str = str + "{\""+i.get()+"\":{}}],\n"
+                       + "\"zoomValue\":" + HandleEvent.getWorkPane().getZoomValue()
+                       + "}\n";
+        }       
+        return str;
+    }
 }

@@ -333,7 +333,7 @@ public class WorkSpace extends Application{
         initbuttons(editToolbar, "file:./images/Select.png" , 35, 40, "select", HandleEvent.selectEvent, false);
         initbuttons(editToolbar, "file:./images/Resize.png" , 35, 40, "resize", HandleEvent.resizeEvent, true);
         initbuttons(editToolbar, "file:./images/AddClass.png" , 35, 40, "add class", HandleEvent.addEvent, false);
-        initbuttons(editToolbar, "file:./images/AddClass.png" , 35, 40, "add interface", HandleEvent.addInterface, false);
+        initbuttons(editToolbar, "file:./images/AddInterface.png" , 35, 40, "add interface", HandleEvent.addInterface, false);
         initbuttons(editToolbar, "file:./images/Remove.png" , 35, 40, "remove", HandleEvent.removeClass, false);
         initbuttons(editToolbar, "file:./images/undo.png" , 35, 40, "undo", HandleEvent.undoEvent, true);
         initbuttons(editToolbar, "file:./images/redo.png" , 35, 40, "redo", HandleEvent.redoEvent,true);

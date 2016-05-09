@@ -41,6 +41,7 @@ public class JClass extends VBox{
     
     
     public JClass(double x, double y){
+        this.setPrefWidth(109);
         parentList = new LinkedList<>();
         jLineGroupsList = new HashMap<String, JLineGroup>();
         usesJLineGroupsList = new HashMap<String, JLineGroup>();
@@ -85,6 +86,20 @@ public class JClass extends VBox{
         
         if (isParent == true)
             parentList.add(str);
+        return isParent;
+    }
+    
+    public boolean removeParent(String str){
+        boolean isParent = false;
+        
+        if (!parentList.isEmpty())
+            for (String parent: parentList){
+                if (parent.equals(str))
+                    isParent = true; 
+            }
+        
+        if (isParent == true)
+            parentList.remove(str);
         return isParent;
     }
     
@@ -164,11 +179,9 @@ public class JClass extends VBox{
         linkToParent = null;
     }
     public JLineGroup setLinkToJParent(String str){
-        System.out.println(str);
-        System.out.println(this.getPackageName()+"."+ this.getClassName());
         if (jParent!=null){
             if (linkToParent != null){
-                if (!(jParent.getPackageName()+"."+ jParent.getClassName()).equals(str)||str.equals("none")){
+                if (!(jParent.getPackageName()+"."+ jParent.getClassName()).equals(str)||str.equals("(remove parent class)")){
                     HandleEvent.getWorkPane().root.getChildren().remove(linkToParent);
                     linkToParent = JLineGroupFactory.createJLineGroupforInheritance(this, this.jParent, this.getLayoutX()+this.getTranslateX(),
                         this.getLayoutY()+this.getTranslateY(),
